@@ -1,0 +1,176 @@
+
+=head1 Manual for Game Development with SDL Perl
+
+=over 1
+
+=item Name:
+
+Kartik Thakore
+
+=item Email:
+
+thakore.kartik 'at' gmail.com
+
+=item Amount Requested:
+
+$1500
+
+=back
+
+=head2 Synopsis
+
+This project will improve the Game Development tutorials for Perl using the SDL library. The primary goal is to introduce newcomers to Game Development in Perl. The secondary goal is to attract people to try Perl as a Game Scripting and Prototyping language.
+
+=head2 The Background of SDL Perl
+
+SDL stands for Simple DirectMedia Library, and provides cross-platform access to various multimedia devices. These include audio, keyboard, mouse, joystick, 2D video framebuffer and 3D hardware via OpenGL. The main application of SDL is to create games that are cross-platform.
+
+SDL Perl was created by David J. Goehrig, prior 2004. Since then many people have worked on it, including chromatic. However, since 2004, the project's core team unfortunately disappeared. The reason for this had been mainly the overwhelming amount of work required for the slightest of change or bugfix, the way it was initially designed. Updating the module and making it work on different systems was becoming unfeasible, and eventually the maintainers decided to pursue other interests, leaving this amazing project in a stall.
+
+In order to revitalize the project and eliminate such shortcomings, a complete overhaul was necessary. Standing on the shoulders of giants, I started to tackle minor bug fixes. Before long I contact David and worked with him to make the first release in 5 years[1]. Eventually I was made the new maintainer and was releasing regularly in the old API[2]. 
+
+After much deliberation and discussions with chromatic, Leon Brocard (acme) and several others, it became evident that a complete overhaul was necessary to eliminate all shortcomings and fully revitalize the project. I decided to rewrite SDL Perl into a layered approach. The first layer which has been mostly completed is a 1:1 match with the C API. We have also added a better building system with the Alien::SDL pipeline. Additionally we have added more tests and cross platform support. Finally, we began work on a second layer of extensions - SDLx - that provides a much needed sugar coating over the raw API, removing any drudge and error-prone constructions and making game development a much easier and fun experience with Perl.
+
+[1] http://search.cpan.org/~dgoehrig/SDL_Perl-2.2.0/ 
+
+[2] http://search.cpan.org/~kthakore/SDL_Perl-v2.2.6/
+
+=head2 Benefits to the Perl Community
+
+B<Implications for Perl>
+
+SDL bindings to Perl allow for rapid game prototyping and game scripting. The rapid development speed of Perl and power of the CPAN becomes a large selling point for Game Developers. This renewed union between modern Perl and SDL will most definitely showcase Perl to a very enthusiastic audience and bring in more users, like the Pygame project did for the Python language. Moreover learning a language to make a game has a universal appeal that users can understand. 
+
+B<Need for Tutorials>
+
+The SDL Perl is at a stage of writing SDL extensions that will require a lot of review and insight into the module. For this pool to be generated we need to attract developers and users to the current low level API. From the generated feedback, new SDLx modules can be born. Perl has considerable amount of documentation, books, tutorials, and articles written for various topics. However, one area still lacking is game development. The last article writing for game development in Perl and SDL has been in 2006. Since then, lots of changes have happened in both the SDL library and in bringing game development to Perl. For one, the SDL bindings has been completely rewritten. 
+
+There is no other module providing Game Development from the Perl ecosystem as focused as SDL. With these new tutorials beginners to both Perl and Game Development will be able to get up to speed. Game Development should attract more users into the Perl ecosystem, providing an extra appeal to newcomers and making a potentially dramatic change on the stigma of Perl as a terminal-only, archaic language.
+
+=head2 Deliverables
+
+Getting started tutorials that comprise of the following:
+
+=over
+
+=item Your first SDL Application in Perl
+
+=item Drawing Primitives and Sprites
+
+=item Handling Events
+
+=item The Game Loop 
+
+=item Making the Pong Game 
+
+=item Making the Tetris Game using Object Oriented Perl
+
+=item Handling Music and Sound
+
+=item Using modules from CPAN to reuse code in Games ( JSON and Moose )
+
+=item Profiling your Games with NYTProf to find trouble spots
+
+=item Using XS to optimize Game effects
+
+=item Interfacing raw data with other Modules ( PDL and OpenGL)
+
+=back
+
+Moreover, each tutorial will be provided with working code scripts. Lastly the documentation will be released as SDL::Manual with SDL Perl on CPAN.
+
+=head2 Project Details
+
+The tutorials will cover
+
+=over
+
+=item Your first SDL Application
+
+Installing SDL, where to get help and showing a simple window on screen.
+
+=item Drawing Primitives and Sprites
+
+Creating primitives (pixels, lines, rectangles, circles, triangles). Loading images into sprites. Then writing to the screen. 
+
+=item Handling Events
+
+Showing how SDL can handle events from the keyboard, mouse and other input devices. 
+
+=item The Game Loop 
+
+How to put together the core loop of the game. This is the beginning of most games.
+
+=item Making the Pong Game 
+
+Using what we have learned so to create a simple game. 
+
+=item Making the Tetris Game using Object Oriented Perl
+
+Using Pure Perl object oriented code we will create a Tetris clone. 
+
+=item Handling Music and Sound
+
+We will add background game music to Pong and Tetris. Also we will show how channels can be used for Sound Effects.
+
+=item Using modules from CPAN to reuse code in Games ( JSON and Moose )
+
+Using JSON to model Game Data. And improving OOP syntax with Moose.
+
+=item Profiling your Games with NYTProf to find trouble spots
+
+Games need to be fast and the NYTProf is unique profiling tool to Perl. 
+
+=item Using XS to optimize Game effects
+
+Performing operations directly on Surface pixels using Perl to prototype and XS to optimize.
+
+=item Interfacing raw data with other Modules
+
+Interfacing SDL Surfaces to PDL (Perl Data Language) and the Perl OpenGL.
+
+=back
+
+=head2 Completeness Criteria
+
+The completeness of the project can be gauged with my regular blog posts and emails to sdl-devel@perl.org . Also all code will be available on github.com for auditing. The project is complete when SDL::Manual is release with SDL perl on CPAN.
+
+=head2 Project Schedule
+
+The project should take 1 - 2 months. I will begin work on this project as soon as possible, regardless of the grant status. Without the grant it will take a lot longer to complete (or I may not even complete) this project as I will have to look for alternative sources of income.
+
+=head2 Description
+
+Most of the work for this grant will consist of creating new documentations. In some cases prior existing documentation will be cleaned up. The overall activities can be broken down into 4 tasks.
+
+=over
+
+=item Writing simple and clean examples for the tutorials
+
+This should take 1-2 weeks.
+
+=item Writing the tutorials and keeping them available on github.com
+
+This will be overlapping with the last week and 3rd week.
+
+=item Posting information on regular Blog Posts and the mailing to get the content reviewed 
+
+I will start releasing alpha versions on the end of the 3rd week and ask for reviews until the end of the 4th week
+
+=item Improving and cleaning up the documents based on the reviews
+
+The last 2-3 weeks will be spent on updating any Code and Documentations.
+
+=back
+
+I will be spending apporximately 20 hours a week on the project. The total will be around 100 hours.
+
+=head2 Bio
+
+I am a Toronto based developer. I am the current maintainer of SDL Perl and have made several releases to [1] CPAN. Currently I have also helped with port Frozen-Bubble to the new SDL API and made it cross platform. I will be going into my 4th year of Software Engineering at University of Western Ontario. Besides SDL I have contributed in minor roles to Padre and Parrot. All my code is available from [2]Github.
+
+[1] http://search.cpan.org/~KTHAKORE
+
+[2] http://github.com/kthakore
+
+=cut

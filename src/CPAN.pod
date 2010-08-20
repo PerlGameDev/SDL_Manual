@@ -1,0 +1,20 @@
+=head0 The Basics
+
+Making a screen:
+
+=begin programlisting
+
+    use SDL:
+    use SDLx::App;
+
+    SDLx::App->new();
+  
+    sleep( 2 );
+    
+=end programlisting
+
+This makes a screen as below:
+
+WIP
+
+=for vim: spell

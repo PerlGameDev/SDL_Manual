@@ -1,0 +1,88 @@
+=head0 Preface
+
+SimpleMedia Direct Library is a cross-platform C library that provides access
+to several input and output devices. Most popularly it is used for it's access
+to the 2D video framebuffer and inputs for games. 
+
+In addition to the core libsdl there are several other libraries that provide many
+features such as: Text, Mixers, Images and GFX. 
+
+SDL Perl binds several of these libraries as closely as possible in the SDL::* namespace.
+Moreover SDL Perl provides several high level libraries in the SDLx::* namespace.
+
+=head1 Audience
+
+This book is written for new users of SDL Perl who have done some Perl. It is not nesscessary 
+for the audience to be aware SDL internals, as this books covers most areas as it goes.
+
+=head1 Format of this book
+
+This book will be formated into chapters that progressively increase in topics and complexities. However 
+each chapter can be treated as separate tutorials to jump to and learn.
+
+Each chapter will have a specific task (i.e. Making Pong ), which we will work towards. The source
+for each chapter will be broken up and exaplained. Sources and data files will be provided on http://sdl.perl.org.
+
+Finally the chapters will end with a excercise the reader can try out.
+
+=head1 Purpose of this book
+
+WIP
+
+=head1 Installing SDL Perl
+
+    $ cpan SDL
+
+=head1 Troubles with Alien SDL
+
+=head1 Getting involved
+
+Hopefully this book shows you areas where SDL Perl can be improve. If you
+want to help see below:
+
+=over
+
+=item World Wide Web
+
+SDL Perl's homepage is at C<http://sdl.perl.org/>.
+
+=item IRC
+
+The channel C<#sdl> on C<irc.perl.net> is very active and a great resource for help and getting involved.
+
+=item Mailing lists
+
+If you need help with SDL Perl, send an email to
+C<sdl-devel@perl.org>.
+
+=back
+
+=for editors
+
+=head1 Copy-n-paste doesn't work
+
+Can't safely copy-n-paste examples from the PDF because many don't flow sanely.
+
+Examples use non-ASCII quote chars (ideally fix or else explain in sidebar).
+
+=head1 Examples
+
+Tell readers how to download examples. Perhaps suggest they copy-n-paste from
+the pod on github.
+
+=head1 Entering non-ASCII ops
+
+Many users won't know how to enter non-ASCII ops like the double arrows.
+Add explanations for PC and Mac keyboards (but beware of variations in national
+keyboards, so also give meta help, like using "open -a KeyboardViewer" on OS X
+and pressing the meta keys like Alt and Shift to see the characters).
+
+=head1 Glossary
+
+Add a glossary of terms (immutable, desugar etc)
+
+=head1 Acknowledgements
+
+Surely we'll want to thank some people!  :-)
+
+=end for
