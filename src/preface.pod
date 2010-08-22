@@ -27,13 +27,13 @@ Finally the chapters will end with a excercise the reader can try out.
 
 =head1 Purpose of this book
 
-WIP
+This book is intended to introduce Game Development to Perl programmers and at the same time introduce Modern Perl
+through game development. The book will aim to provide simple to intermidate examples and provide suggestions for more
+advance endeavours. 
 
 =head1 Installing SDL Perl
 
     $ cpan SDL
-
-=head1 Troubles with Alien SDL
 
 =head1 Getting involved
 
@@ -42,7 +42,7 @@ want to help see below:
 
 =over
 
-=item World Wide Web
+=item Internet
 
 SDL Perl's homepage is at C<http://sdl.perl.org/>.
 
