@@ -37,7 +37,7 @@ advance endeavours.
 
     $ cpan SDL
 
-For most platforms a CPAN install will suffice. Supported and tested platforms are mentioned L< here | http://pass.cpantesters.org/distro/S/SDL.html>.
+For most platforms a CPAN install will suffice. Supported and tested platforms are displayed here U<http://pass.cpantesters.org/distro/S/SDL.html>.
 
 =head3 SDL dependencies
 
@@ -67,26 +67,26 @@ Alien::SDL will compile SDL deps from scratch with no problems as long some prer
 
 =item * Packagers
 
-The packages required are mentioned here: L< Deps | http://sdlperl.ath.cx/projects/SDLPerl/wiki/Testing>
+The packages required are mentioned on our wiki. U<http://sdlperl.ath.cx/projects/SDLPerl/wiki/Testing>
 
 =item * Compiling Dependencies
 
-Ubuntu sometimes has problems with SDL so compiling from scratch is recommended. These steps can be applied to other linuxes as well. L< Header Packages | http://sdlperl.ath.cx/projects/SDLPerl/wiki/videoProblem >.
+Compiling will require some Header Packages. U<http://sdlperl.ath.cx/projects/SDLPerl/wiki/videoProblem>.
 
 =back
 
 =back
 
-=head1 Getting involved
+=head1 Contact
 
-Hopefully this book shows you areas where SDL Perl can be improve. If you
-want to help see below:
+Hopefully this book shows you areas where SDL Perl can be improved, Or you may need help with some issues. Please 
+contact us with one of the following methods:
 
 =over
 
 =item Internet
 
-SDL Perl's homepage is at C<http://sdl.perl.org/>.
+SDL Perl's homepage is at U<http://sdl.perl.org/>.
 
 =item IRC
 
