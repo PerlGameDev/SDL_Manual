@@ -1,0 +1,37 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use feature ':5.10';
+use Getopt::Long;
+use SDLManualLatex;
+use Template;
+
+main();
+
+sub main {
+    my $paper;
+    GetOptions(
+
+        # Should be one of: a4, letter.
+        'paper:s' => \$paper,
+    ) or die;
+
+    my $output;
+    for (@ARGV) {
+        my $parser = SDLManualLatex->new();
+        $parser->emit_environments( sidebar => "sidebar" );
+        $parser->codes_in_verbatim(1);
+        $parser->output_string( \$output );
+        $parser->parse_file($_);
+    }
+
+    my $tt = Template->new( { INCLUDE_PATH => 'lib', } );
+
+    print $tt->process(
+        'book.sty', {
+            content  => $output,
+            paper    => $paper,
+        } );
+
+} ## end sub main
+
