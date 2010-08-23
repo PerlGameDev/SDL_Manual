@@ -1,20 +1,49 @@
-=head0 The Basics
+=head0 The Screen
 
-Making a screen:
+In SDL there is a single screen which is attached to the video device. This screen is created by X<SDLx::App>.
 
 =begin programlisting
 
     use SDL:
     use SDLx::App;
 
-    SDLx::App->new();
+    my $app = SDLx::App->new();
   
     sleep( 2 );
     
 =end programlisting
 
-This makes a screen as below:
+The above code will make a window with nothing in it. So lets add a line to make the screen a default black.
 
-WIP
+=begin programlisting
+
+    $app->update();
+
+=end programlisting
+
+SDLx::App will also allow you to specify several options for our application. 
+
+=head1 SDLx::App Options
+
+=head2 Dimensions
+
+First are the physical dimensions of the screen itself. Lets make the screen a square size of 400x400. Change the initialization line to:
+
+=begin programlisting
+
+   my $app = SDLx::App->new( width => 400, height => 400 );
+
+=end programlisting
+
+=head2 Title
+
+You will notice that the window's title is either blank or the script's path, depending on your OS. Suppose we want a title for our new Pong Clone.
+
+=begin programlisting
+
+  my $app = SDLx::App->new( width => 400, height => 400, title => 'Ping - A clone');
+
+=end programlisting
+
 
 =for vim: spell
