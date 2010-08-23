@@ -31,7 +31,7 @@ First are the physical dimensions of the screen itself. Lets make the screen a s
 
 =begin programlisting
 
-   my $app = SDLx::App->new( width => 400, height => 400 );
+    my $app = SDLx::App->new( width => 400, height => 400 );
 
 =end programlisting
 
@@ -41,7 +41,7 @@ You will notice that the window's title is either blank or the script's path, de
 
 =begin programlisting
 
-  my $app = SDLx::App->new( width => 400, height => 400, title => 'Ping - A clone');
+    my $app = SDLx::App->new( width => 400, height => 400, title => 'Ping - A clone');
 
 =end programlisting
 
