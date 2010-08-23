@@ -45,5 +45,11 @@ You will notice that the window's title is either blank or the script's path, de
 
 =end programlisting
 
+At this point your screen will look something like this:
+
+=for figure 
+       \includegraphics[width=0.5\textwidth]{../src/images/first.png}      
+        \caption{Your first SDL screen!}               
+        \label{fig:first_screen}   
 
 =for vim: spell
