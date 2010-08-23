@@ -67,11 +67,13 @@ Alien::SDL will compile SDL deps from scratch with no problems as long some prer
 
 =item * Packagers
 
-The packages required are mentioned on our wiki. U<http://sdlperl.ath.cx/projects/SDLPerl/wiki/Testing>
+The packages required are mentioned on our wiki.
+U<http://sdlperl.ath.cx/projects/SDLPerl/wiki/Testing>
 
 =item * Compiling Dependencies
 
-Compiling will require some Header Packages. U<http://sdlperl.ath.cx/projects/SDLPerl/wiki/videoProblem>.
+Compiling will require some Header Packages. 
+U<http://sdlperl.ath.cx/projects/SDLPerl/wiki/videoProblem>.
 
 =back
 
