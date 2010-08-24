@@ -1,51 +1,51 @@
 =head0 Preface
 
-SimpleMedia Direct Library is a cross-platform C library that provides access
-to several input and output devices. Most popularly it is used for it's access
+I<SimpleMedia Direct Library> is a cross-platform C library that provides access
+to several input and output devices. Most popularly it is used for its access
 to the 2D video framebuffer and inputs for games. 
 
 In addition to the core libsdl there are several other libraries that provide many
-features such as: Text, Mixers, Images and GFX. 
+features such as I<Text>, I<Mixers>, I<Images> and I<GFX>.
 
-SDL Perl binds several of these libraries as closely as possible in the SDL::* namespace.
-Moreover SDL Perl provides several high level libraries in the SDLx::* namespace.
+SDL Perl binds several of these libraries as closely as possible in the C<SDL::*> namespace.
+Moreover SDL Perl provides several high level libraries in the C<SDLx::*> namespace.
 
 =head1 Audience
 
-This book is written for new users of SDL Perl who have done some Perl. It is not necessary 
+This book is written for new users of SDL Perl who have done some Perl. It is not necessary
 for the audience to be aware SDL internals, as this book covers most areas as it goes.
 
 =head1 Format of this book
 
-This book will be formated into chapters that progressively increase in topics and complexities. However 
+This book will be formated into chapters that progressively increase in topics and complexity. However
 each chapter can be treated as separate tutorials to jump to and learn.
 
-Each chapter will have a specific task (i.e. Making Pong ), which we will work towards. The source
-for each chapter will be broken up and explained. Sources and data files will be provided on http://sdl.perl.org.
+Each chapter will have a specific task (i.e. I<Making Pong>), which we will work towards. The source
+for each chapter will be broken up and exaplained. Sources and data files will be provided on L<http://sdl.perl.org>.
 
 Finally the chapters will end with a exercise the reader can try out.
 
 =head1 Purpose of this book
 
-This book is intended to introduce Game Development to Perl programmers and at the same time introduce Modern Perl
+This book is intended to introduce game development to Perl programmers and at the same time introduce Modern Perl
 through game development. The book will aim to provide simple to intermediate examples and provide suggestions for more
-advance endeavours. 
+advanced endeavours.
 
 =head1 Installing SDL Perl
 
 =head2 CPAN install 
 
-    $ cpan SDL
+    cpan SDL
 
-For most platforms a CPAN install will suffice. Supported and tested platforms are displayed here U<http://pass.cpantesters.org/distro/S/SDL.html>.
-
+For most platforms a CPAN install will suffice. Supported and tested platforms are displayed at U<http://pass.cpantesters.org/distro/S/SDL.html>.
+ 
 =head3 SDL dependencies
 
 =over 3
 
 =item * Windows
 
-Alien::SDL will install binaries for 32bit and 64bit so there is no need to compile anything. 
+C<Alien::SDL> will install binaries for 32bit and 64bit so there is no need to compile anything.
 
 =item * MacOSX
 
@@ -53,11 +53,11 @@ Alien::SDL will install binaries for 32bit and 64bit so there is no need to comp
 
 =item * Fink
 
-Fink has packages for SDLperl available. However Pango is not currently supported.
+Fink has packages for SDL Perl available. However Pango is not currently supported.
 
 =item * Compiling Dependencies
 
-Alien::SDL will compile SDL deps from scratch with no problems as long some prerequisites are installed. libfreetype6, libX11, libvorbis, and libpng headers will suffice for most examples in this book.
+C<Alien::SDL> will compile SDL dependencies from scratch with no problems as long some prerequisites are installed. C<libfreetype6>, C<libX11>, C<libvorbis>, and C<libpng> headers will suffice for most examples in this book.
 
 =back 
 
@@ -101,32 +101,12 @@ C<sdl-devel@perl.org>.
 
 =back
 
-=for editors
-
-=head1 Copy-n-paste doesn't work
-
-Can't safely copy-n-paste examples from the PDF because many don't flow sanely.
-
-Examples use non-ASCII quote chars (ideally fix or else explain in sidebar).
 
 =head1 Examples
 
-Tell readers how to download examples. Perhaps suggest they copy-n-paste from
-the pod on github.
-
-=head1 Entering non-ASCII ops
-
-Many users won't know how to enter non-ASCII ops like the double arrows.
-Add explanations for PC and Mac keyboards (but beware of variations in national
-keyboards, so also give meta help, like using "open -a KeyboardViewer" on OS X
-and pressing the meta keys like Alt and Shift to see the characters).
-
-=head1 Glossary
-
-Add a glossary of terms (immutable, desugar etc)
+The code examples in this books are provided on U<http://github.com/kthakore/SDL_Manual/tree/master/code_listings> .
 
 =head1 Acknowledgements
 
-Surely we'll want to thank some people!  :-)
+Perl community on #sdl and #perl
 
-=end for
