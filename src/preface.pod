@@ -12,8 +12,8 @@ Moreover SDL Perl provides several high level libraries in the SDLx::* namespace
 
 =head1 Audience
 
-This book is written for new users of SDL Perl who have done some Perl. It is not nesscessary 
-for the audience to be aware SDL internals, as this books covers most areas as it goes.
+This book is written for new users of SDL Perl who have done some Perl. It is not necessary 
+for the audience to be aware SDL internals, as this book covers most areas as it goes.
 
 =head1 Format of this book
 
@@ -21,14 +21,14 @@ This book will be formated into chapters that progressively increase in topics a
 each chapter can be treated as separate tutorials to jump to and learn.
 
 Each chapter will have a specific task (i.e. Making Pong ), which we will work towards. The source
-for each chapter will be broken up and exaplained. Sources and data files will be provided on http://sdl.perl.org.
+for each chapter will be broken up and explained. Sources and data files will be provided on http://sdl.perl.org.
 
-Finally the chapters will end with a excercise the reader can try out.
+Finally the chapters will end with a exercise the reader can try out.
 
 =head1 Purpose of this book
 
 This book is intended to introduce Game Development to Perl programmers and at the same time introduce Modern Perl
-through game development. The book will aim to provide simple to intermidate examples and provide suggestions for more
+through game development. The book will aim to provide simple to intermediate examples and provide suggestions for more
 advance endeavours. 
 
 =head1 Installing SDL Perl
@@ -57,7 +57,7 @@ Fink has packages for SDLperl available. However Pango is not currently supporte
 
 =item * Compiling Dependencies
 
-Alien::SDL will compile SDL deps from scratch with no problems as long some prerequistes are installed. libfreetype6, libX11, libvorbis, and libpng headers will suffice for most examples in this book.
+Alien::SDL will compile SDL deps from scratch with no problems as long some prerequisites are installed. libfreetype6, libX11, libvorbis, and libpng headers will suffice for most examples in this book.
 
 =back 
 
