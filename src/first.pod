@@ -41,11 +41,13 @@ You will notice that the window's title is either blank or the script's path, de
 
 =begin programlisting
 
-    my $app = SDLx::App->new( width => 400, height => 400, title => 'Ping - A clone');
+    my $app = SDLx::App->new( width => 400, 
+                              height => 400, 
+                              title => 'Ping - A clone');
 
 =end programlisting
 
-At this point your screen will look something like this:
+At this point your screen will look something like Fig:X<first_screen>. 
 
 =for figure 
        \includegraphics[width=0.5\textwidth]{../src/images/first.png}      
