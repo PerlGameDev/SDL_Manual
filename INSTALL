@@ -1,0 +1,14 @@
+= DEPS =
+    * GNU make
+    * perl 5.10
+    * the Perl 5 module Pod::PseudoPod::LaTeX version 1.101050 or newer
+    * A number of LaTeX packages (see lib/*.sty). Ubuntu 10.04
+      supplies most of what is needed with its texlive-latex-base,
+      texlive-latex-extra, texlive-xetex, texlive-fonts-extra and
+      texlive-latex-recommended packages.
+    * We use the ttf-liberation packages for fonts
+
+= RUN =
+
+$ make
+
