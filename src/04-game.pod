@@ -15,17 +15,31 @@
 
 =head2 Problems
 
+Not good.
+
 =head1 Fixed FPS
 
+Lets try this. 
+
 =head2 Problems
+
+Nah ....
 
 =head1 Variable FPS
 
+Lets try this one.
+
 =head2 Problems
+
+Ugh ...
 
 =head1 Integrating Physics
 
+Looks goods
+
 =head2 Problems
+
+but ok.
 
 =head1 Learn More
 

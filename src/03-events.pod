@@ -2,22 +2,40 @@
 
 =head1 The SDL Queue and Events
 
+The SDL Events are all head on a single queue.
+
 =head2 On Exit
+
+Lets make our first SDL app close properly. 
 
 =head2 Polling an Event
 
+Polling Events give us the next event.
+
 =head1 Input Devices
+
+Events can tell us the status of our input devices.
 
 =head1 Keyboard
 
+The ultimate input device.
+
 =head1 Mouse
 
+Swift input for our axis.
+
 =head2 Joystick
+
+Yes! We can make a fighter pilot game now :D
 
 =head1 System 
 
 =head2 Window
 
+Resizing and what not
+
 =head1 Others
+
+Magics!
 
 =for vim: spell

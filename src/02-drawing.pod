@@ -1,27 +1,50 @@
 =head0 Drawing 
 
-Now that we have a screen we ca begin to draw on the screen.
+Now that we have a screen we can begin to draw on the screen.
 
 =head1 On the Fly
 
+Sometimes we must draw graphics on the fly. 
+
 =head2 Rectangles
+
+Rectangles are a common building blocks for games.
 
 =head2 Circles
 
+Circles are pretty groovy. We use SDL_gfx library for this. 
+
 =head2 GFX
+
+SDL_gfx also provides these other neat drawing functions.
 
 =head1 Multiple Surfaces
 
-=head2 Images
+Now we don't always use one surface. Most games use many Surfaces. These are held in memory.
+You can make blank ones and draw on them. Or you can make Surfaces from various data. 
 
-=head2 Sprites
+=head2 Creating Surfaces
 
-=head1 Text
+=head3 Images
 
-=head2 Default GFX
+Images can be loaded as surfaces.
 
-=head2 TrueType 
+=head3 Sprites
 
-=head2 Pango 
+Sprites is a lot better way to think of this.
+
+=head3 Text
+
+=head4 Default GFX
+
+It is ugly but can be useful.
+
+=head4 TrueType 
+
+This is probably the more common way to use text in SDL. However it has its limitations
+
+=head4 Pango 
+
+Pango features several rendering options, and thus is heavy. It is good for multilingual support.
 
 =for vim: spell
