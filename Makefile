@@ -10,10 +10,11 @@ ifneq "$(TEST)" ""
 else
 	BOOK = build/SDL_Manual.$(PAPER)
 	CHAPTERS = \
-    src/preface.pod \
-    src/first.pod \
-    src/drawing.pod \
-    src/events.pod
+    src/00-preface.pod \
+    src/01-first.pod \
+    src/02-drawing.pod \
+    src/03-events.pod \
+    src/04-game.pod  
 endif
 
 default: prepare pdf clean

@@ -1,20 +1,32 @@
-=head0 The Basics
+=head0 The Game Loop 
 
-Making a screen:
+=head1 Simplest Game Loop
 
-=begin programlisting
+=for programlisting
 
-    use SDL:
-    use SDLx::App;
+    while($quit)
+    {
+       do_events();
+       calculate_next_positions();
+       render();
+    }
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+=for programlisting
 
-This makes a screen as below:
+=head2 Problems
 
-WIP
+=head1 Fixed FPS
+
+=head2 Problems
+
+=head1 Variable FPS
+
+=head2 Problems
+
+=head1 Integrating Physics
+
+=head2 Problems
+
+=head1 Learn More
 
 =for vim: spell
