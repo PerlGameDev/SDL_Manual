@@ -11,7 +11,9 @@ else
 	BOOK = build/SDL_Manual.$(PAPER)
 	CHAPTERS = \
     src/preface.pod \
-    src/first.pod 
+    src/first.pod \
+    src/drawing.pod \
+    src/events.pod
 endif
 
 default: prepare pdf clean

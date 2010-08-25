@@ -1,20 +1,23 @@
-=head0 The Basics
+=head0 Handling Events
 
-Making a screen:
+=head1 The SDL Queue and Events
 
-=begin programlisting
+=head2 On Exit
 
-    use SDL:
-    use SDLx::App;
+=head2 Polling an Event
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+=head1 Input Devices
 
-This makes a screen as below:
+=head1 Keyboard
 
-WIP
+=head1 Mouse
+
+=head2 Joystick
+
+=head1 System 
+
+=head2 Window
+
+=head1 Others
 
 =for vim: spell

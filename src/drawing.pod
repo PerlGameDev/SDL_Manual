@@ -1,20 +1,27 @@
-=head0 The Basics
+=head0 Drawing 
 
-Making a screen:
+Now that we have a screen we ca begin to draw on the screen.
 
-=begin programlisting
+=head1 On the Fly
 
-    use SDL:
-    use SDLx::App;
+=head2 Rectangles
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+=head2 Circles
 
-This makes a screen as below:
+=head2 GFX
 
-WIP
+=head1 Multiple Surfaces
+
+=head2 Images
+
+=head2 Sprites
+
+=head1 Text
+
+=head2 Default GFX
+
+=head2 TrueType 
+
+=head2 Pango 
 
 =for vim: spell
