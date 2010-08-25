@@ -14,7 +14,8 @@ else
     src/01-first.pod \
     src/02-drawing.pod \
     src/03-events.pod \
-    src/04-game.pod  
+    src/04-game.pod \
+    src/05-pong.pod 
 endif
 
 default: prepare pdf clean
