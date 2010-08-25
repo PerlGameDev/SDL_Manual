@@ -1,20 +1,23 @@
-=head0 The Basics
+=head0 Pong! 
 
-Making a screen:
+=head1 The Game
 
-=begin programlisting
+=head2 Paddles and Balls
 
-    use SDL:
-    use SDLx::App;
+=head3 Collisions
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+=head2 Player
 
-This makes a screen as below:
+=head3 Score 
 
-WIP
+=head1 Animations
+
+=head2 Ball
+
+=head3 Kinematics
+
+=head2 Paddle
+
+=head3 Mapping Keys 
 
 =for vim: spell
