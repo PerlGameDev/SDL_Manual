@@ -2,17 +2,33 @@
 
 SDL provides several ways to draw on screen; these methods can be broken down into: Primitives, Images and Text. 
 All three methods draw on a single object the Surface. The Surface is represented by X<SDLx::Surface>. Even our 
-X<SDLx::App> is a C<SDLx::Surface>. This means that we can draw directly on the X<SDLx::App>, however there are 
+X<SDLx::App> is a C<SDLx::Surface>. This means that we can draw directly on the C<SDLx::App>, however there are 
 several advantages to drawing on multiple surfaces. In this chapter we will explore these methods of drawing, and 
 make a pretty picture.
 
-=head1 On the Fly
+=for programlisting
 
-Sometimes we must draw graphics on the fly. 
+    use SDL;
+    use SDLx::App;
+
+    my $app = SDLx::App->new( w => 400, h => 400 );
+
+    #Draw Code Starts Here
+
+
+    #Draw Code Ends Here
+  
+    sleep(2);
+
+=for programlisting
+
+=head1 Primitives
+
+X<Primitives> are simple shapes such as: 
 
 =head2 Rectangles
 
-Rectangles are a common building blocks for games.
+Rectangles are a common building blocks for games. Drawing them are 
 
 =head2 Circles
 
