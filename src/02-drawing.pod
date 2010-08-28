@@ -3,8 +3,8 @@
 =head1 Preview
 
 SDL provides several ways to draw on screen; these methods can be broken down into: Primitives, Images and Text. 
-All three methods draw on a single object the Surface. The Surface is represented by X<SDLx::Surface>. Even our 
-X<SDLx::App> is a C<SDLx::Surface>. This means that we can draw directly on the C<SDLx::App>, however there are 
+All three methods draw on a single object the Surface. The Surface is represented by C<SDLx::Surface>. Even our 
+C<SDLx::App> is a C<SDLx::Surface>. This means that we can draw directly on the C<SDLx::App>, however there are 
 several advantages to drawing on multiple surfaces. In this chapter we will explore these methods of drawing, and 
 make a pretty picture.
 
@@ -40,13 +40,13 @@ Parameters are usually provided as array references, to define areas and colors.
 
 Some parameters are just a quick definition of the positions and dimensions. For a rectangle that will be placed at C<(20, 20)> pixel units on the screen, and a dimension of C<40x40> pixel units the following would suffice.
 
-   my $rect = [20, 20, 40, 40];
+    my $rect = [20, 20, 40, 40];
 
 =head2 Color
 
 X<Color> in SDL is described by 4 numbers. The first three numbers define the Red, Blue, Green intensity of the color. The final number defines the transparency of the Color.
 
-  my $color = [255, 255, 255, 255];
+    my $color = [255, 255, 255, 255];
 
 The values of the numbers range from 0-255 for 32 depth in RGBA format.
 
@@ -54,7 +54,7 @@ The values of the numbers range from 0-255 for 32 depth in RGBA format.
 
 The bits of the surface are set when the surface or app is made. 
 
-   my $app = SDLx::App->new( ... depth => 32 ); 
+    my $app = SDLx::App->new( ... depth => 32 ); 
 
 Other options are 24,16 and 8. 32 is the default depth.
 
