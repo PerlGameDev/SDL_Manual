@@ -21,18 +21,47 @@ make a pretty picture.
 
 
     #Draw Code Ends Here
+
+    $app->update();
   
     sleep(2);
 
 =for programlisting
 
+=head1 Syntax Overview
+
+Drawing in SDL are done on Surfaces. The C<SDLx::Surface> object provides access to methods in the form of:
+
+    $surface->draw_{something}( .... );
+
+Parameters are usually provided as array references, to define areas and colors.
+
+=head2 Rectangular Parameters
+
+Some parameters are just a quick definition of the positions and dimensions. For a rectangle that will be placed at C<(20, 20)> pixel units on the screen, and a dimension of C<40x40> pixel units the following would suffice.
+
+   my $rect = [20, 20, 40, 40];
+
+=head2 Color
+
+X<Color> in SDL is described by 4 numbers. The first three numbers define the Red, Blue, Green intensity of the color. The final number defines the 
+
+
 =head1 Primitives
 
-Drawing X<Primitives> are simple shapes such as: 
+Drawing X<Primitives> are usually simples shapes that can be used for creating graphics dynamically. 
 
 =head2 Rectangles
 
-Rectangles are a common building blocks for games. Drawing them are 
+Rectangles are a common building blocks for games. In SDL rectangles are the most cost effective of the primitives to draw.
+
+=for programlisting
+
+    $app->draw_rect( [10,20, 40, 40 ], [255, 255, 255] );
+
+=for programlisting
+
+The above will add a white square onto the screen. 
 
 =head2 Circles
 

@@ -1,5 +1,7 @@
 =head0 The Screen
 
+=head1 Background
+
 In SDL there is a single screen which is attached to the video device. This screen is created by X<SDLx::App>.
 
 =begin programlisting
