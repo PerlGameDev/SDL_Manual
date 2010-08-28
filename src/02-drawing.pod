@@ -44,8 +44,21 @@ Some parameters are just a quick definition of the positions and dimensions. For
 
 =head2 Color
 
-X<Color> in SDL is described by 4 numbers. The first three numbers define the Red, Blue, Green intensity of the color. The final number defines the 
+X<Color> in SDL is described by 4 numbers. The first three numbers define the Red, Blue, Green intensity of the color. The final number defines the transparency of the Color.
 
+  my $color = [255, 255, 255, 255];
+
+The values of the numbers range from 0-255 for 32 depth in RGBA format.
+
+=begin sidebar
+
+The bits of the surface are set when the surface or app is made. 
+
+   my $app = SDLx::App->new( ... depth => 32 ); 
+
+Other options are 24,16 and 8. 32 is the default depth.
+
+=end sidebar
 
 =head1 Primitives
 
