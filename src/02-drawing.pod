@@ -48,7 +48,7 @@ X<Color> in SDL is described by 4 numbers. The first three numbers define the Re
 
     my $color = [255, 255, 255, 255];
 
-The values of the numbers range from 0-255 for 32 depth in RGBA format.
+The values of the numbers range from 0-255 for 32 bit depth in RGBA format.
 
 =begin sidebar
 
@@ -56,7 +56,7 @@ The bits of the surface are set when the surface or app is made.
 
     my $app = SDLx::App->new( ... depth => 32 ); 
 
-Other options are 24,16 and 8. 32 is the default depth.
+Other options are 24,16 and 8. 32 is the default bit depth.
 
 =end sidebar
 
