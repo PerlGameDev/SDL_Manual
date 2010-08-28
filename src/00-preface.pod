@@ -1,5 +1,7 @@
 =head0 Preface
 
+=head1 Background
+
 I<SimpleMedia Direct Library> is a cross-platform C library that provides access
 to several input and output devices. Most popularly it is used for its access
 to the 2D video framebuffer and inputs for games. 
@@ -33,74 +35,58 @@ advanced endeavours.
 
 =head1 Installing SDL Perl
 
-=head2 CPAN install 
-
-    cpan SDL
-
-For most platforms a CPAN install will suffice. Supported and tested platforms are displayed at U<http://pass.cpantesters.org/distro/S/SDL.html>.
+Depending on your platform you may need some dependencies. Then we can do a final CPAN install.
  
-=head3 SDL dependencies
-
-=over 3
-
-=item * Windows
+=head2 Windows
 
 C<Alien::SDL> will install binaries for 32bit and 64bit so there is no need to compile anything.
 
-=item * MacOSX
+=head2 MacOSX
 
-=over 2
-
-=item * Fink
+=head3 Packages
 
 Fink has packages for SDL Perl available. However Pango is not currently supported.
 
-=item * Compiling Dependencies
+=head3 Or Compiling Dependencies
 
-C<Alien::SDL> will compile SDL dependencies from scratch with no problems as long some prerequisites are installed. C<libfreetype6>, C<libX11>, C<libvorbis>, and C<libpng> headers will suffice for most examples in this book.
+C<Alien::SDL> will compile SDL dependencies from scratch with no problems as long some prerequisites are installed. C<libfreetype6>, C<libX11>, C<libvorbis>, C<libogg> and C<libpng> headers will suffice for most examples in this book.
 
-=back 
+=head2 Linux
 
-=item * Linux
+=head3 Packages
 
-=over
+You can use your package maintainers packages:
 
-=item * Packagers
+    sudo apt-get install libsdl-net1.2-dev libsdl-mixer1.2-dev libsmpeg-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev libsdl-gfx1.2-dev libsdl-pango-dev
 
-The packages required are mentioned on our wiki.
-U<http://sdlperl.ath.cx/projects/SDLPerl/wiki/Testing>
+=head3 Or Compiling Dependencies
 
-=item * Compiling Dependencies
+To compile from scratch some Header Packages are required.
 
-Compiling will require some Header Packages. 
-U<http://sdlperl.ath.cx/projects/SDLPerl/wiki/videoProblem>.
+    sudo apt-get install build-essential xorg-dev libx11-dev libpango1.0-dev libfreetype6-dev libvorbis-dev libpng12-dev libogg-dev
 
-=back
+=head2 CPAN install 
 
-=back
+    sudo cpan SDL
+
+For most platforms a CPAN install will suffice. Supported and tested platforms are displayed at U<http://pass.cpantesters.org/distro/S/SDL.html>.
 
 =head1 Contact
 
 Hopefully this book shows you areas where SDL Perl can be improved, Or you may need help with some issues. Please 
 contact us with one of the following methods:
 
-=over
-
-=item Internet
+=head2 Internet
 
 SDL Perl's homepage is at U<http://sdl.perl.org/>.
 
-=item IRC
+=head2 IRC
 
-The channel C<#sdl> on C<irc.perl.net> is very active and a great resource for help and getting involved.
+The X<IRC> channel C<#sdl> on C<irc.perl.net> is very active and a great resource for help and getting involved.
 
-=item Mailing lists
+=head2 Mailing lists
 
-If you need help with SDL Perl, send an email to
-C<sdl-devel@perl.org>.
-
-=back
-
+If you need help with SDL Perl, send an X<email> to C<sdl-devel@perl.org>.
 
 =head1 Examples
 
@@ -108,5 +94,5 @@ The code examples in this books are provided on U<http://github.com/kthakore/SDL
 
 =head1 Acknowledgements
 
-Perl community on #sdl and #perl
+Perl community on C<#sdl> and C<#perl>.
 

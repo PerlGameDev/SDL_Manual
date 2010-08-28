@@ -1,10 +1,14 @@
 =head0 Drawing
 
+=head1 Preview
+
 SDL provides several ways to draw on screen; these methods can be broken down into: Primitives, Images and Text. 
 All three methods draw on a single object the Surface. The Surface is represented by X<SDLx::Surface>. Even our 
 X<SDLx::App> is a C<SDLx::Surface>. This means that we can draw directly on the C<SDLx::App>, however there are 
 several advantages to drawing on multiple surfaces. In this chapter we will explore these methods of drawing, and 
 make a pretty picture.
+
+=head1 Program
 
 =for programlisting
 
@@ -24,7 +28,7 @@ make a pretty picture.
 
 =head1 Primitives
 
-X<Primitives> are simple shapes such as: 
+Drawing X<Primitives> are simple shapes such as: 
 
 =head2 Rectangles
 
