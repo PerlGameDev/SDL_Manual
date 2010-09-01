@@ -3,7 +3,7 @@ use warnings;
 
 use SDL;
 use SDLx::App;
-my $app = SDLx::App->new(width => 400, height => 400, title => 'Pong - A clone');
+my $app = SDLx::App->new(width => 400, height => 400, title => 'Drawing Examples');
 
 $app->draw_line( [200,20], [20,200], [255, 255, 0, 255] );
 
