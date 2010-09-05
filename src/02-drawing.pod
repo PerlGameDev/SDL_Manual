@@ -60,6 +60,21 @@ Other options are 24,16 and 8. 32 is the default bit depth.
 
 =end sidebar
 
+=head1 Pixels 
+
+All C<SDLx::Surface>s are made of pixels that can be read and written to via a tied array interface.
+
+    $app->[$x][$y] = $color;
+
+The C<$color> is defined as an unsigned integer value which is construct in the following format, C<0xRRBBGGAA>. 
+This is a hexidecimal number. Here are some examples:
+
+    $white = 0xFFFFFFFF;
+    $black = 0x000000FF;
+    $red   = 0xFF0000FF;
+    $blue  = 0x00FF00FF;
+    $green = 0x0000FFFF;
+
 =head1 Primitives
 
 Drawing X<Primitives> are usually simples shapes that can be used for creating graphics dynamically. 
