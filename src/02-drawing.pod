@@ -79,6 +79,11 @@ This is a hexidecimal number. Here are some examples:
 
 Drawing X<Primitives> are usually simples shapes that can be used for creating graphics dynamically. 
 
+=for figure 
+       \includegraphics[width=0.5\textwidth]{../src/images/draw-1.png}      
+        \caption{Drawing a line}               
+         \label{fig:draw_line}   
+
 =head2 Lines
 
     $app->draw_line( [200,20], [20,200], [255, 255, 0, 255] );
@@ -86,9 +91,9 @@ Drawing X<Primitives> are usually simples shapes that can be used for creating g
 This will draw a yellow line from positions C< (200,20) > to C< (20,200) >.
 
 =for figure 
-       \includegraphics[width=0.5\textwidth]{../src/images/draw-1.png}      
-        \caption{Drawing a line}               
-         \label{fig:draw_line}   
+       \includegraphics[width=0.5\textwidth]{../src/images/draw-2.png}      
+        \caption{Drawing a Rectangle}               
+         \label{fig:draw_rect}   
 
 =head2 Rectangles
 
@@ -97,20 +102,6 @@ Rectangles are a common building blocks for games. In SDL rectangles are the mos
     $app->draw_rect( [10,20, 40, 40 ], [255, 255, 255,255] );
 
 The above will add a white square of size C<40x40> onto the screen at the position C<(10,20)>.  
-
-=for figure 
-       \includegraphics[width=0.5\textwidth]{../src/images/draw-2.png}      
-        \caption{Drawing a Rectangle}               
-         \label{fig:draw_rect}   
-
-=head2 Circles
-
-Circles are drawn similarly either filled or unfilled.
-
-    $app->draw_circle( [100,100], 20, [255,0,0,255] );
-    $app->draw_circle_filled( [100,100], 19, [0,0,255,255] );
-
-Now we will have a filled circle, colored blue and unfilled circle, colored as red.
 
 =for figure                                                                                                                                                  
        \includegraphics[width=0.5\textwidth]{../src/images/draw-3.png}                                                                                       
@@ -121,6 +112,16 @@ Now we will have a filled circle, colored blue and unfilled circle, colored as r
        \includegraphics[width=0.5\textwidth]{../src/images/draw-4.png}                                                                                       
         \caption{Drawing a filled Circle}                                                                                                                        
          \label{fig:draw_filled_circle}
+
+
+=head2 Circles
+
+Circles are drawn similarly either filled or unfilled.
+
+    $app->draw_circle( [100,100], 20, [255,0,0,255] );
+    $app->draw_circle_filled( [100,100], 19, [0,0,255,255] );
+
+Now we will have a filled circle, colored blue and unfilled circle, colored as red.
 
 =head2 More GFX functions
 
