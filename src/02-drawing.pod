@@ -129,18 +129,37 @@ For more complex drawing functions have a look at C<SDL::GFX::Primitives>.
 
 =head1 Multiple Surfaces
 
-Now we don't always use one surface. Most games use many Surfaces. These are held in memory.
-You can make blank ones and draw on them. Or you can make Surfaces from various data. 
+So far we have been drawing only on one surface, the display. In SDL it is possible to write on 
+several surfaces that are in memory. These surfaces can later on be added on to the display to 
+show them. The Surface is defined as a C<SDLx::Surface> type in SDL Perl. 
 
 =head2 Creating Surfaces
 
-=head3 Images
+There are several ways whtat we can make a C<SDLx::Surface> for use.
 
-Images can be loaded as surfaces.
+=head3 Raw Surfaces
 
-=head3 Sprites
+For the purposes of preparing surfaces using only draw functions ( as mentioned above )
+we can create a surface using the C<SDLx::Surface>'s constructor.
 
-Sprites is a lot better way to think of this.
+    $surface = SDLx::Surface->new( width => $width, height => $height );
+
+=head3 Images in SDL
+
+Using C<SDL::Image> and C<SDL::Video> we can load images as surfaces too. 
+C<SDL::Image> provides support for all types of images, however it requires
+C<SDL_image> library support to be compiled with the right library. 
+
+    $surface = SDL::Image::load( 'picture.png' );
+
+In case the C<SDL_Image library is unavailable we can use the build in support
+for the C<.bmp> format.
+
+    $surface = SDL::Video::load_BMP( 'picture.bmp' );
+
+Generally however the C<SDLx::Sprite> module is used. 
+
+=head4 Sprites
 
 =head3 Text
 
