@@ -11,7 +11,7 @@ my $flower = SDLx::Sprite->new ( width => 50, height => 100 );
 
 $flower->surface->draw_rect   ( [0,0,50,100], 0x00000000 );
 
-$flower->surface->draw_rect   ( [23,30, 4, 50], 0x00FF00FF );
+$flower->surface->draw_rect   ( [23,30, 4, 100], 0x00FF00FF );
 $flower->surface->draw_circle_filled ( [25,25], 10, 0xBB0000FF );
 
 $flower->surface->draw_circle ( [25,25], 10, 0xFF0000FF );
@@ -27,8 +27,11 @@ foreach( 0..500 )
 {
 	my $y =  425 - rand( 50 );
 	$flower->draw_xy( $app, rand(500)-20, $y );
-#	$flower->alpha( 1- $y/425 +0.25);
-
 }
 $app->update();
+
+require SDL::Video;
+
+SDL::Video::save_BMP( $app, 'flower.bmp');
+
 sleep(2);
