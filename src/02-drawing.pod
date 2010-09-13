@@ -135,7 +135,7 @@ show them. The Surface is defined as a C<SDLx::Surface> type in SDL Perl.
 
 =head2 Creating Surfaces
 
-There are several ways whtat we can make a C<SDLx::Surface> for use.
+There are several ways to create C<SDLx::Surface> for use.
 
 =head3 Raw Surfaces
 
@@ -160,6 +160,9 @@ for the C<.bmp> format.
 Generally however the C<SDLx::Sprite> module is used. 
 
 =head4 Sprites
+
+Surface are generally expensive in terms on memory. Therefore, it is usually a good idea
+to keep a 
 
 =head3 Text
 
