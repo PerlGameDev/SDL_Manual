@@ -84,7 +84,7 @@ The values of the numbers range from 0-255 for 32 bit depth in RGBA format.
 
 =begin sidebar
 
-The bits of the surface are set when the surface or app is made. 
+The bits of the surface are set when the C<SDLx::Surface> or C<SDLx::App> is made. 
 
     my $app = SDLx::App->new(  depth => 32 ); 
 
@@ -92,14 +92,14 @@ Other options are 24,16 and 8. 32 is the default bit depth.
 
 =end sidebar
 
-=head1 Pixels 
+=head1 Note: Pixels 
 
 All C<SDLx::Surface>s are made of pixels that can be read and written to via a tied array interface.
 
     $app->[$x][$y] = $color;
 
 The C<$color> is defined as an unsigned integer value which is construct in the following format, C<0xRRBBGGAA>. 
-This is a hexidecimal number. Here are some examples:
+This is a hexadecimal number. Here are some examples:
 
     $white = 0xFFFFFFFF;
     $black = 0x000000FF;
@@ -198,7 +198,7 @@ Generally however the C<SDLx::Sprite> module is used.
 =head4 Sprites
 
 Surface are generally expensive in terms on memory. Therefore, it is usually a good idea
-to keep a 
+to keep only one copy of it, sort of like a palette.  
 
 =head3 Text
 
