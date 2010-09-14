@@ -86,7 +86,7 @@ SDL Perl's homepage is at U<http://sdl.perl.org/>.
 
 =head2 IRC
 
-The X<IRC> channel C<#sdl> on C<irc.perl.net> is very active and a great resource for help and getting involved.
+The X<IRC> channel C<#sdl> on C<irc.perl.org> is very active and a great resource for help and getting involved.
 
 =head2 Mailing lists
 
