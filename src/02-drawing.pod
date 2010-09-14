@@ -21,6 +21,8 @@ Using SDL we will try to construct the following image.
 
 =head1 Program
 
+Below is the program that generates the above image. 
+
 =for programlisting
 
     use SDL;
@@ -33,11 +35,11 @@ Using SDL we will try to construct the following image.
 
     my $flower = SDLx::Sprite->new ( width => 50, height => 100 );
 
-    $flower->surface->draw_rect   ( [0,0,50,100], 0x00000000 );
+    $flower->surface->draw_rect   ( [0,0,50,100], [0,0,0,0] );
 
-    $flower->surface->draw_rect   ( [23,30, 4, 100], 0x00FF00FF );
-    $flower->surface->draw_circle_filled ( [25,25], 10, 0xBB0000FF );
-    $flower->surface->draw_circle ( [25,25], 10, 0xFF0000FF );
+    $flower->surface->draw_rect   ( [23,30, 4, 100], [0,255,0,255] );
+    $flower->surface->draw_circle_filled ( [25,25], 10, [150,0,0,255] );
+    $flower->surface->draw_circle ( [25,25], 10, [255,0,0,255] );
     $flower->alpha_key( 0 );
 
     $app->draw_rect( [0,0,500,500], [20,50,170, 255] );
@@ -156,6 +158,10 @@ Now we will have a filled circle, colored blue and unfilled circle, colored as r
 =head2 More GFX functions
 
 For more complex drawing functions have a look at C<SDL::GFX::Primitives>. 
+
+=head1 Drawing the Flower, Sky and Field
+
+
 
 =head1 Multiple Surfaces
 
