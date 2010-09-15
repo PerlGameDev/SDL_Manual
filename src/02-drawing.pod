@@ -60,7 +60,11 @@ Below is the program that generates the above image.
 
 =for programlisting
 
-=head1 Syntax Overview
+=head1 Drawing the Flower
+
+To begin actually drawing the flower, we need to cover some theory.
+
+=head2 Syntax Overview
 
 Drawing in SDL are done on Surfaces. The C<SDLx::Surface> object provides access to methods in the form of:
 
@@ -68,13 +72,13 @@ Drawing in SDL are done on Surfaces. The C<SDLx::Surface> object provides access
 
 Parameters are usually provided as array references, to define areas and colors.
 
-=head2 Rectangular Parameters
+=head3 Rectangular Parameters
 
 Some parameters are just a quick definition of the positions and dimensions. For a rectangle that will be placed at C<(20, 20)> pixel units on the screen, and a dimension of C<40x40> pixel units the following would suffice.
 
     my $rect = [20, 20, 40, 40];
 
-=head2 Color
+=head3 Color
 
 X<Color> in SDL is described by 4 numbers. The first three numbers define the Red, Blue, Green intensity of the color. The final number defines the transparency of the Color.
 
@@ -84,6 +88,8 @@ The values of the numbers range from 0-255 for 32 bit depth in RGBA format.
 
 =begin sidebar
 
+=head4 NOTE: Depth of Surface
+
 The bits of the surface are set when the C<SDLx::Surface> or C<SDLx::App> is made. 
 
     my $app = SDLx::App->new(  depth => 32 ); 
@@ -92,7 +98,7 @@ Other options are 24,16 and 8. 32 is the default bit depth.
 
 =end sidebar
 
-=head1 Note: Pixels 
+=head2 Pixels 
 
 All C<SDLx::Surface>s are made of pixels that can be read and written to via a tied array interface.
 
@@ -107,7 +113,7 @@ This is a hexadecimal number. Here are some examples:
     $blue  = 0x00FF00FF;
     $green = 0x0000FFFF;
 
-=head1 Primitives
+=head2 Primitives
 
 Drawing X<Primitives> are usually simples shapes that can be used for creating graphics dynamically. 
 
@@ -116,7 +122,7 @@ Drawing X<Primitives> are usually simples shapes that can be used for creating g
         \caption{Drawing a line}               
          \label{fig:draw_line}   
 
-=head2 Lines
+=head3 Lines
 
     $app->draw_line( [200,20], [20,200], [255, 255, 0, 255] );
 
@@ -127,7 +133,7 @@ This will draw a yellow line from positions C< (200,20) > to C< (20,200) >.
         \caption{Drawing a Rectangle}               
          \label{fig:draw_rect}   
 
-=head2 Rectangles
+=head3 Rectangles
 
 Rectangles are a common building blocks for games. In SDL rectangles are the most cost effective of the primitives to draw.
 
@@ -146,7 +152,7 @@ The above will add a white square of size C<40x40> onto the screen at the positi
          \label{fig:draw_filled_circle}
 
 
-=head2 Circles
+=head3 Circles
 
 Circles are drawn similarly either filled or unfilled.
 
@@ -155,21 +161,60 @@ Circles are drawn similarly either filled or unfilled.
 
 Now we will have a filled circle, colored blue and unfilled circle, colored as red.
 
-=head2 More GFX functions
+=head3 More Primitives
 
 For more complex drawing functions have a look at C<SDL::GFX::Primitives>. 
 
-=head1 Drawing the Flower, Sky and Field
+=head2 Application: Primitives
+
+Using our knowledge of Primitives in SDL, lets draw our simple flower.
+
+=begin programlisting
+
+    use stricts;
+    use warnings;
+    use SDL;
+    use SDLx::App;
+
+    my $app = SDLx::App->new( w => 500, h => 500, d => 32, title => 'Pretty Flowers' );
+
+    # Make a surface 50x100 pixels
+    my $flower = SDLx::Surface->new    ( width => 50, height => 100 );
+    
+    # Lets make the background black
+    $flower->draw_rect                 ( [0,0,50,100], [0,0,0,0] );
+    
+    # Now for a pretty green stem 
+    $flower->draw_rect                 ( [23,30, 4, 100], [0,255,0,255] );
+    
+    # And the simple flower bud
+    $flower->draw_circle_filled        ( [25,25], 10, [150,0,0,255] );
+    $flower->draw_circle               ( [25,25], 10, [255,0,0,255] );
+
+    $flower->blit( [0,0,50,100], $app );
+   
+    $app->update();
+
+    sleep(1);
+
+=end programlisting
+
+=for figure                                                                                                                                                  
+       \includegraphics[width=0.5\textwidth]{../src/images/flower-1.png}                                                                                       
+        \caption{Looks so lonely there all alone}                                                                                                                        
+         \label{fig:draw_flower_lone}
 
 
 
-=head1 Multiple Surfaces
+=head1 Drawing a Field of Flowers
+
+=head2 Multiple Surfaces
 
 So far we have been drawing only on one surface, the display. In SDL it is possible to write on 
 several surfaces that are in memory. These surfaces can later on be added on to the display to 
 show them. The Surface is defined as a C<SDLx::Surface> type in SDL Perl. 
 
-=head2 Creating Surfaces
+=head3 Creating Surfaces
 
 There are several ways to create C<SDLx::Surface> for use.
 
@@ -195,12 +240,47 @@ for the C<.bmp> format.
 
 Generally however the C<SDLx::Sprite> module is used. 
 
-=head4 Sprites
+=head1 Lots of Flowers but One Seed
+
+=head2 Sprites
 
 Surface are generally expensive in terms on memory. Therefore, it is usually a good idea
-to keep only one copy of it, sort of like a palette.  
+to keep only one copy of it, sort of like a palette. Because we want lots of the same
+flower or C<SDLx::Surface> to be drawn lets make our flower a C<SDLx::Sprite>.
 
-=head3 Text
+=begin programlisting
+
+    use stricts;
+    use warnings;
+    use SDL;
+    use SDLx::App;
+
+    my $app = SDLx::App->new( w => 500, h => 500, d => 32, title => 'Pretty Flowers' );
+
+    my $flower = SDLx::Sprite->new( width => 50, height => 100 );
+  
+    # To access the SDLx::Surface to write to we use the ->surface() method
+ 
+    # Lets make the background black
+    $flower->surface->draw_rect                 ( [0,0,50,100], [0,0,0,0] );
+    
+    # Now for a pretty green stem 
+    $flower->surface->draw_rect                 ( [23,30, 4, 100], [0,255,0,255] );
+    
+    # And the simple flower bud
+    $flower->surface->draw_circle_filled        ( [25,25], 10, [150,0,0,255] );
+    $flower->surface->draw_circle               ( [25,25], 10, [255,0,0,255] );
+
+    $flower->draw_xy($app, 0,0);   
+
+    $app->update();
+
+    sleep(1);
+
+
+=end programlisting
+
+=head2 Text
 
 =head4 Default GFX
 
