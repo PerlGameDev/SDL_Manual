@@ -315,18 +315,4 @@ and insert the below code to get a field of flowers.
 
 =end programlisting
 
-=head2 Text
-
-=head4 Default GFX
-
-It is ugly but can be useful.
-
-=head4 TrueType 
-
-This is probably the more common way to use text in SDL. However it has its limitations
-
-=head4 Pango 
-
-Pango features several rendering options, and thus is heavy. It is good for multilingual support.
-
 =for vim: spell
