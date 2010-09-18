@@ -295,8 +295,11 @@ that we need for game images that move a lot. For now lets use C<SDLx::Sprite> f
 =end programlisting
 
 Obviously at this point we don't want our single flower floating in the sky, so we will draw several of them 
-on the ground. Delete everything including and after C< $flower->draw_xy($app, 0,0)>, and insert the below code to 
-get a field of flowers.
+on the ground. Delete everything including and after 
+
+    $flower->draw_xy($app, 0,0)
+
+and insert the below code to get a field of flowers.
 
 =begin programlisting
 
