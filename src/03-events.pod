@@ -2,11 +2,16 @@
 
 =head1 The SDL Queue and Events
 
-The SDL Events are all head on a single queue.
+SDL process events using a queue. The event queue holds all events that occur 
+until they are removed. SDL events are understood via the C<SDL::Event> object.
+This chapter will go through some examples of how to process various events for 
+common useage.
 
-=head2 On Exit
+=head1 Quitting with Grace
 
-Lets make our first SDL app close properly. 
+So far we have not been exiting an C<SDLx::App> in a graceful manner. Using 
+the built in C<SDLx::Controller> in the C<$app> we can handle events using 
+callbacks.
 
 =for programlisting
 
@@ -18,15 +23,22 @@ Lets make our first SDL app close properly.
 
     my $app = SDLx::App->new( w => 200, h => 200, d => 32, title => "Quit Events" );
 
+    #We can add an event handler 
     $app->add_event_handler( \&quit_event );
 
+    #Then we will run the app
+    #which will start a loop for keeping the app alive
     $app->run();
 
     sub quit_event
     {
-
+        #The callback is provided a SDLx::Event to use
 	    my $event = shift;
+
+        #If we return 0 the $app will exit for us
 	    return 0 if $event->type == SDL_QUIT;
+
+        #Otherwise we continue run()ing
 	    return 1;
     }
 
