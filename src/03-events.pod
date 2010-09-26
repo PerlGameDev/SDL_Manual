@@ -44,9 +44,13 @@ callbacks.
 
 =end programlisting
 
-=head2 Polling an Event
+C<SDLx::App> calls the event_handlers and expect either a 1 or 0 returned. When 0 is returned C<SDLx::App> will exit gracefully.
 
-Polling Events give us the next event.
+=for sidebar
+
+It is possible to do event processing with out using C<SDLx::App> callbacks. Have a look at the perldoc for C<SDL::Events>.
+
+=end sidebar
 
 =head1 Input Devices
 
