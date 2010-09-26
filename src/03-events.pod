@@ -50,17 +50,21 @@ C<SDLx::App> calls the event_handlers and expect either a 1 or 0 returned. When 
 
 It is possible to do event processing with out using C<SDLx::App> callbacks. Have a look at the perldoc for C<SDL::Events>.
 
+    perldoc SDL::Events 
+
 =end sidebar
 
-=head1 Input Devices
+=head1 Small Paint: Input Devices
 
-Events can tell us the status of our input devices.
+SDL events also allow us to handle input from various devices. To demonstrate two of the common devices, lets make a simple paint program.
+It will provide a small black window where you can draw with the mouse. Moreover when you press the number keys 0-10 it will pick different
+colors. By pressing 'q' or 'Q' we will exit. Pressing 'ctrl-s' will save our image to the file 'painted.bmp'. 
 
-=head1 Keyboard
+=head2 Keyboard
 
 The ultimate input device.
 
-=head1 Mouse
+=head2 Mouse
 
 Swift input for our axis.
 
@@ -68,13 +72,13 @@ Swift input for our axis.
 
 Yes! We can make a fighter pilot game now :D
 
-=head1 System 
+=head2 System 
 
-=head2 Window
+=head3 Window
 
 Resizing and what not
 
-=head1 Others
+=head2 Others
 
 Magics!
 
