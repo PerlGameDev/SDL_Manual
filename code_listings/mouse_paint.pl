@@ -32,7 +32,7 @@ sub mouse_event {
         $drawing = 1;
         my $x =  $event->button_x;
         my $y =  $event->button_y;
-        $app->[$x][$y] = $colors[$brush_color];
+        $app->draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
             $app->update();
     }
     $drawing = 0 if($event->type == SDL_MOUSEBUTTONUP );
@@ -67,8 +67,11 @@ sub keyboard_event {
         $brush_color = $key_name if $key_name =~ /\d/;
 
         my $mod_state = SDL::Events::get_mod_state();        
-        save_image if $key_name =~ /s/ && ($mod_state & KMOD_CTRL); 
+        save_image if $key_name =~ /^s$/ && ($mod_state & KMOD_CTRL); 
+
+        $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/
     }
+        $app->update();
     return 1;
 }
 

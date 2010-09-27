@@ -5,7 +5,7 @@
 SDL process events using a queue. The event queue holds all events that occur 
 until they are removed. SDL events are understood via the C<SDL::Event> object.
 This chapter will go through some examples of how to process various events for 
-common useage.
+common usage.
 
 =head1 Quitting with Grace
 
@@ -58,7 +58,16 @@ It is possible to do event processing with out using C<SDLx::App> callbacks. Hav
 
 SDL events also allow us to handle input from various devices. To demonstrate two of the common devices, lets make a simple paint program.
 It will provide a small black window where you can draw with the mouse. Moreover when you press the number keys 0-10 it will pick different
-colors. By pressing 'q' or 'Q' we will exit. Pressing 'ctrl-s' will save our image to the file 'painted.bmp'. 
+colors. By pressing 'q' or 'Q' we will exit. Similarity pressing 'c' or 'C' will clear the screen. Pressing 'ctrl-s' will save our image to
+the file 'painted.bmp'. 
+
+=for figure 
+       \includegraphics[width=0.5\textwidth]{../src/images/painted.png}      
+        \caption{Simple Paint: Smile}               
+         \label{fig:Smile   
+
+
+
 
 =head2 Keyboard
 
@@ -66,8 +75,22 @@ To handle the keyboard specifications we will create another event callback.
 
 =begin programlisting
 
-    ...
-    
+    use strict;
+    use warnings;
+    use SDL;
+    use Cwd;
+    use SDL::Event;
+    use SDLx::App;
+
+    my $app = SDLx::App->new( w => 200, h => 200, d => 32, title => "Simple Paint");
+    sub quit_event {
+
+        my $event = shift;
+        return 0 if $event->type == SDL_QUIT;
+        return 1;
+    }
+
+   
     my @colors = (  0xFF0000FF, 0x00FF00FF,
                     0x0000FFFF, 0xFFFF00FF,
                     0xFF00FFFF, 0x00FFFFFF,
@@ -76,8 +99,21 @@ To handle the keyboard specifications we will create another event callback.
 
     my $brush_color = 0;
 
-    ...
-  
+ 
+    sub save_image {
+
+       if( SDL::Video::save_BMP( $app, 'painted.bmp' ) == 0 && -e 'painted.bmp')
+        {
+             warn 'Saved painted.bmp to '.cwd();
+        }
+        else 
+        {
+            warn 'Could not save painted.bmp: '.SDL::get_errors();
+        }
+
+    }
+   
+
     sub keyboard_event
     {
         my $event = shift;
@@ -90,16 +126,36 @@ To handle the keyboard specifications we will create another event callback.
             
             #if our $key_name is a digit use it as a color
             my $brush_color = $key_name if $key_name =~ /^\d$/;
+           
+            #Get the keyboard modifier perldoc SDL::Events
+            # We are using any CTRL so KMOD_CTRL is fine
+            my $mod_state = SDL::Events::get_mod_state();
             
+            #Save the image.         
+            save_image if $key_name =~ /^s$/ && ($mod_state & KMOD_CTRL); 
+
+            #Clear the screen if we pressed C or c
+            $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/
         }
+        $app->update();    
     }
 
     ...
-
+    $app->add_event_handler(\&quit_event);
     $app->add_event_handler(\&keyboard_event);
     $app->run()
   
 =end programlisting
+
+=for sidebar
+
+=head4 NOTE: Globals and Callbacks
+
+When adding a callback to C<SDLx::App> which uses globals ( C<$brush_color> and C<@colors> in this case ), be sure
+to define them before declaring the subroutine. Also add it to the C<SDLx::App> after the subroutine is defined.
+The reason for this is so that C<SDLx::App> is aware of the globals before it calls the callback internally.
+
+=end sidebar
 
 =head2 Mouse
 
