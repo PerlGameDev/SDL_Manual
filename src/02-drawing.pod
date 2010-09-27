@@ -252,7 +252,7 @@ Generally however the C<SDLx::Sprite> module is used.
 
 You might have noticed that putting another C<SDLx::Surface> on the C<$app> requires the useage 
 of a C<blit( )> function, which may not clarify as to what is going on there. Forutunately a C<SDLx::Sprite> 
-can be used to make our flower. Besides a making drawing simpler, C<SDLx::Sprite> adds several other features 
+can be used to make our flower. Besides making drawing simpler, C<SDLx::Sprite> adds several other features 
 that we need for game images that move a lot. For now lets use C<SDLx::Sprite> for our flowers.
 
 =begin programlisting
