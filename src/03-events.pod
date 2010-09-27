@@ -62,7 +62,44 @@ colors. By pressing 'q' or 'Q' we will exit. Pressing 'ctrl-s' will save our ima
 
 =head2 Keyboard
 
-The ultimate input device.
+To handle the keyboard specifications we will create another event callback.
+
+=begin programlisting
+
+    ...
+    
+    my @colors = (  0xFF0000FF, 0x00FF00FF,
+                    0x0000FFFF, 0xFFFF00FF,
+                    0xFF00FFFF, 0x00FFFFFF,
+                    0xCCFFCCFF, 0xFFCC33FF,
+                    0x000000FF, 0xFFFFFFFF );
+
+    my $brush_color = 0;
+
+    ...
+  
+    sub keyboard_event
+    {
+        my $event = shift;
+        
+        #Check that our type of event press is a SDL_KEYDOWN
+        if( $event->type == SDL_KEYDOWN )
+        {
+            #Convert the key_symbol (integer) to a keyname
+            my $key_name = SDL::Events::get_key_name( $event->key_sym );
+            
+            #if our $key_name is a digit use it as a color
+            my $brush_color = $key_name if $key_name =~ /^\d$/;
+            
+        }
+    }
+
+    ...
+
+    $app->add_event_handler(\&keyboard_event);
+    $app->run()
+  
+=end programlisting
 
 =head2 Mouse
 
