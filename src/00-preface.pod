@@ -2,7 +2,7 @@
 
 =head1 Background
 
-I<SimpleMedia Direct Layer> is a cross-platform C library that provides access
+I<Simple DirectMedia Layer> is a cross-platform C library that provides access
 to several input and output devices. Most popularly it is used for its access
 to the 2D video framebuffer and inputs for games. 
 
