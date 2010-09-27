@@ -67,8 +67,6 @@ the file 'painted.bmp'.
          \label{fig:Smile   
 
 
-
-
 =head2 Keyboard
 
 To handle the keyboard specifications we will create another event callback.
@@ -128,7 +126,7 @@ To handle the keyboard specifications we will create another event callback.
             my $brush_color = $key_name if $key_name =~ /^\d$/;
            
             #Get the keyboard modifier perldoc SDL::Events
-            # We are using any CTRL so KMOD_CTRL is fine
+            #We are using any CTRL so KMOD_CTRL is fine
             my $mod_state = SDL::Events::get_mod_state();
             
             #Save the image.         
@@ -140,7 +138,6 @@ To handle the keyboard specifications we will create another event callback.
         $app->update();    
     }
 
-    ...
     $app->add_event_handler(\&quit_event);
     $app->add_event_handler(\&keyboard_event);
     $app->run()
@@ -159,7 +156,41 @@ The reason for this is so that C<SDLx::App> is aware of the globals before it ca
 
 =head2 Mouse
 
-Swift input for our axis.
+=begin programlisting
+
+    #Keep track if we are drawing 
+    my $drawing = 0;
+    sub mouse_event {
+
+        my $event = shift;
+        
+        #We will detect Mouse Button events
+        #and check if we already started drawing
+        if($event->type == SDL_MOUSEBUTTONDOWN || $drawing)
+        {
+            # set drawing to 1 
+            $drawing = 1;
+
+            # get the X and Y values of the mouse
+            my $x =  $event->button_x;
+            my $y =  $event->button_y;
+            
+            # Draw a rect at the specified position
+            $app->draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
+    
+            # Update the application
+            $app->update();
+        }
+
+        # Turn drawing off if we lift the mouse button
+        $drawing = 0 if($event->type == SDL_MOUSEBUTTONUP );
+        return 1;
+    }
+
+
+    $app->add_event_handler( \&mouse_event );
+
+=end programlisting
 
 =head2 Joystick
 

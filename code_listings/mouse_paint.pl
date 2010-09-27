@@ -13,7 +13,7 @@ sub quit_event {
     return 1;
 }
 
-my $drawing = 0;
+
 
 my @colors = (  0xFF0000FF, 0x00FF00FF,
         0x0000FFFF, 0xFFFF00FF,
@@ -22,18 +22,21 @@ my @colors = (  0xFF0000FF, 0x00FF00FF,
         0x000000FF, 0xFFFFFFFF );
 
 my $brush_color = 0;
+
+
+my $drawing = 0;
 sub mouse_event {
 
     my $event = shift;
 
     if($event->type == SDL_MOUSEBUTTONDOWN || $drawing)
     {
-# now you can handle the details;
+
         $drawing = 1;
         my $x =  $event->button_x;
         my $y =  $event->button_y;
         $app->draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
-            $app->update();
+        $app->update();
     }
     $drawing = 0 if($event->type == SDL_MOUSEBUTTONUP );
 
