@@ -156,6 +156,8 @@ The reason for this is so that C<SDLx::App> is aware of the globals before it ca
 
 =head2 Mouse
 
+Now we will go about capturing our Mouse events, by inserting the following code after the C<keyboard_event> subroutine.
+
 =begin programlisting
 
     #Keep track if we are drawing 
@@ -192,18 +194,7 @@ The reason for this is so that C<SDLx::App> is aware of the globals before it ca
 
 =end programlisting
 
-=head2 Joystick
-
-Yes! We can make a fighter pilot game now :D
-
-=head2 System 
-
-=head3 Window
-
-Resizing and what not
-
-=head2 Others
-
-Magics!
+Currently we don't make a distinction between what mouse click is done. This can be accomplished by taking a look at the
+C<button_button()> method in C<SDL::Event>. At this point we have a simple paint application done.
 
 =for vim: spell
