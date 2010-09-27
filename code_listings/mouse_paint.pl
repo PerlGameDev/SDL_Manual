@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use SDL;
+use Cwd;
 use SDL::Event;
 use SDLx::App;
 
@@ -40,6 +41,21 @@ sub mouse_event {
     return 1;
 }
 
+
+sub save_image {
+
+   if( SDL::Video::save_BMP( $app, 'painted.bmp' ) == 0 && -e 'painted.bmp')
+    {
+         warn 'Saved painted.bmp to '.cwd();
+    }
+    else 
+    {
+        warn 'Could not save painted.bmp: '.SDL::get_errors();
+    }
+
+}
+
+
 sub keyboard_event {
 
     my $event = shift;
@@ -50,7 +66,8 @@ sub keyboard_event {
 
         $brush_color = $key_name if $key_name =~ /\d/;
 
-        warn 'Brush color is '.$brush_color;
+        my $mod_state = SDL::Events::get_mod_state();        
+        save_image if $key_name =~ /s/ && ($mod_state & KMOD_CTRL); 
     }
     return 1;
 }
