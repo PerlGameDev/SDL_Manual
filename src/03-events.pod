@@ -3,9 +3,28 @@
 =head1 The SDL Queue and Events
 
 SDL process events using a queue. The event queue holds all events that occur 
-until they are removed. SDL events are understood via the C<SDL::Event> object.
-This chapter will go through some examples of how to process various events for 
-common usage.
+until they are removed. Events are any inputs such as: key presses, mouse movements 
+and clicks, window focuses, and joystick presses. Every time the window sees one of 
+these events, it puts it on the event queue once. The queue holds SDL events, which can 
+be read via an C<SDL::Event> object. We can process the Event Queue
+manually by pumping and polling the queue, constantly.
+
+    my $event = SDL::Event->new();
+    while(1)
+    {
+        SDL::Video::pump_events(); #Updates the queue to recent events
+    
+        #Process all events that are available
+        while( SDL::Video::poll_events( $event ) )
+        {
+            #Check by Event type
+            do_key if $event->type == SDL_KEYDOWN;
+        }
+    }
+
+C<SDLx::Controller> via the C<SDLx::App> handles this loop by accepting Event Callbacks. 
+Every application loop, each event callback is called repetitively with each event in the queue. 
+This chapter will go through some examples of how to process various events for common usage.
 
 =head1 Quitting with Grace
 
