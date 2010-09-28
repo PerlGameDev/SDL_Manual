@@ -30,33 +30,37 @@ Below is the program that generates the above image.
     use SDLx::App;
     use SDLx::Sprite;
 
-    my $app = SDLx::App->new( w => 500, h => 500, d => 32, title => 'Pretty Flowers' );
+    my $app = SDLx::App->new(
+        w     => 500,
+        h     => 500,
+        d     => 32,
+        title => 'Pretty Flowers'
+    );
 
     # Draw Code Starts here
 
-    my $flower = SDLx::Sprite->new ( width => 50, height => 100 );
+    my $flower = SDLx::Sprite->new( width => 50, height => 100 );
 
-    $flower->surface->draw_rect   ( [0,0,50,100], [0,0,0,0] );
+    $flower->surface->draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
 
-    $flower->surface->draw_rect   ( [23,30, 4, 100], [0,255,0,255] );
-    $flower->surface->draw_circle_filled ( [25,25], 10, [150,0,0,255] );
-    $flower->surface->draw_circle ( [25,25], 10, [255,0,0,255] );
-    $flower->alpha_key( 0 );
+    $flower->surface->draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+    $flower->surface->draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
+    $flower->surface->draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+    $flower->alpha_key(0);
 
-    $app->draw_rect( [0,0,500,500], [20,50,170, 255] );
+    $app->draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
 
-    $app->draw_rect( [0,400,500,100], [50,170,20,100] );
+    $app->draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
 
-    foreach( 0..500 )
-    {
-	my $y =  425 - rand( 50 );
-	$flower->draw_xy( $app, rand(500)-20, $y );
+    foreach ( 0 .. 500 ) {
+        my $y = 425 - rand(50);
+        $flower->draw_xy( $app, rand(500) - 20, $y );
     }
 
     #Draw Code Ends Here
 
     $app->update();
-  
+
     sleep(2);
 
 =for programlisting
@@ -177,29 +181,34 @@ Using our knowledge of Primitives in SDL, lets draw our field, sky and a simple 
     use SDL;
     use SDLx::App;
 
-    my $app = SDLx::App->new( w => 500, h => 500, d => 32, title => 'Pretty Flowers' );
+    my $app = SDLx::App->new(
+        w     => 500,
+        h     => 500,
+        d     => 32,
+        title => 'Pretty Flowers'
+    );
 
     #Adding the blue skies
-    $app->draw_rect( [0,0,500,500], [20,50,170, 255] );
+    $app->draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
 
     #Draw our green field
-    $app->draw_rect( [0,400,500,100], [50,170,20,100] );
+    $app->draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
 
     # Make a surface 50x100 pixels
-    my $flower = SDLx::Surface->new    ( width => 50, height => 100 );
-    
-    # Lets make the background black
-    $flower->draw_rect                 ( [0,0,50,100], [0,0,0,0] );
-    
-    # Now for a pretty green stem 
-    $flower->draw_rect                 ( [23,30, 4, 100], [0,255,0,255] );
-    
-    # And the simple flower bud
-    $flower->draw_circle_filled        ( [25,25], 10, [150,0,0,255] );
-    $flower->draw_circle               ( [25,25], 10, [255,0,0,255] );
+    my $flower = SDLx::Surface->new( width => 50, height => 100 );
 
-    $flower->blit( [0,0,50,100], $app );
-   
+    # Lets make the background black
+    $flower->draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
+
+    # Now for a pretty green stem
+    $flower->draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+
+    # And the simple flower bud
+    $flower->draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
+    $flower->draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+
+    $flower->blit( [ 0, 0, 50, 100 ], $app );
+
     $app->update();
 
     sleep(1);
@@ -264,34 +273,38 @@ that we need for game images that move a lot. For now lets use C<SDLx::Sprite> f
     use SDLx::App;
     use SDLx::Sprite;
 
-    my $app = SDLx::App->new( w => 500, h => 500, d => 32, title => 'Pretty Flowers' );
+    my $app = SDLx::App->new(
+        w     => 500,
+        h     => 500,
+        d     => 32,
+        title => 'Pretty Flowers'
+    );
 
     #Adding the blue skies
-    $app->draw_rect( [0,0,500,500], [20,50,170, 255] );
+    $app->draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
 
     #Draw our green field
-    $app->draw_rect( [0,400,500,100], [50,170,20,100] );
+    $app->draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
 
     my $flower = SDLx::Sprite->new( width => 50, height => 100 );
-  
-    # To access the SDLx::Surface to write to we use the ->surface() method
- 
-    # Lets make the background black
-    $flower->surface->draw_rect ( [0,0,50,100], [0,0,0,0] );
-    
-    # Now for a pretty green stem 
-    $flower->surface->draw_rect ( [23,30, 4, 100], [0,255,0,255] );
-    
-    # And the simple flower bud
-    $flower->surface->draw_circle_filled ( [25,25], 10, [150,0,0,255] );
-    $flower->surface->draw_circle ( [25,25], 10, [255,0,0,255] );
 
-    $flower->draw_xy($app, 0,0);   
+    # To access the SDLx::Surface to write to we use the ->surface() method
+
+    # Lets make the background black
+    $flower->surface->draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
+
+    # Now for a pretty green stem
+    $flower->surface->draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+
+    # And the simple flower bud
+    $flower->surface->draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
+    $flower->surface->draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+
+    $flower->draw_xy( $app, 0, 0 );
 
     $app->update();
 
     sleep(1);
-
 
 =end programlisting
 
@@ -306,8 +319,8 @@ and insert the below code to get a field of flowers.
 
     foreach( 0..500 )
     {
-	my $y =  425 - rand( 50 );
-	$flower->draw_xy( $app, rand(500)-20, $y );
+	    my $y =  425 - rand( 50 );
+	    $flower->draw_xy( $app, rand(500)-20, $y );
     }
 
     $app->update();
