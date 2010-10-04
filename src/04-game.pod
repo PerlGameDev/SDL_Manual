@@ -2,16 +2,21 @@
 
 =head1 Simplest Game Loop
 
+The simplest game loop can be boiled down to the following. 
+
 =for programlisting
 
     while($quit)
     {
-       do_events();
+       get_events();
        calculate_next_positions();
        render();
     }
 
 =for programlisting
+
+In C<get_events()> we get events from what input devices that we need. It is important to process events first to prevent lag.
+In C<calculate_next_positions> we update the game state according to animations and the events captured. In C<render()> we will update the screen and show the game to the player. 
 
 =head2 Problems
 
