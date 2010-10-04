@@ -9,8 +9,9 @@ my $app = SDLx::App->new( w => 200, h => 200, d => 32, title => "Simple Paint");
 sub quit_event {
 
     my $event = shift;
-    return 0 if $event->type == SDL_QUIT;
-    return 1;
+    my $controller = shift;
+    $controller->stop if $event->type == SDL_QUIT;
+
 }
 
 
@@ -39,9 +40,6 @@ sub mouse_event {
         $app->update();
     }
     $drawing = 0 if($event->type == SDL_MOUSEBUTTONUP );
-
-
-    return 1;
 }
 
 
@@ -62,7 +60,7 @@ sub save_image {
 sub keyboard_event {
 
     my $event = shift;
-
+    my $controller = shift;
     if ( $event->type == SDL_KEYDOWN )
     {
         my $key_name = SDL::Events::get_key_name( $event->key_sym );
@@ -72,7 +70,8 @@ sub keyboard_event {
         my $mod_state = SDL::Events::get_mod_state();        
         save_image if $key_name =~ /^s$/ && ($mod_state & KMOD_CTRL); 
 
-        $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/
+        $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/;
+        $controller->stop() if $key_name =~ /^q$/
     }
         $app->update();
     return 1;

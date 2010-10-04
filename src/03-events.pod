@@ -54,16 +54,16 @@ callbacks.
         #The callback is provided a SDLx::Event to use
 	    my $event = shift;
 
-        #If we return 0 the $app will exit for us
-	    return 0 if $event->type == SDL_QUIT;
+	#Each event handler also returns you back the Controller call it
+	    my $controller = shift;
 
-        #Otherwise we continue run()ing
-	    return 1;
+        #Stoping the controller for us will exit $app->run() for us
+	    $controller->stop if $event->type == SDL_QUIT;
     }
 
 =end programlisting
 
-C<SDLx::App> calls the event_handlers and expect either a 1 or 0 returned. When 0 is returned C<SDLx::App> will exit gracefully.
+C<SDLx::App> calls the event_handlers, from an internal C<SDLx::Controller>, until a C<SDLx::Controller->stop()> is called. C<SDLx::App> will exit gracefully once it is stoped.
 
 =for sidebar
 
@@ -103,8 +103,8 @@ To handle the keyboard specifications we will create another event callback.
     sub quit_event {
 
         my $event = shift;
-        return 0 if $event->type == SDL_QUIT;
-        return 1;
+	my $controller = shift;
+        $controller->stop() if $event->type == SDL_QUIT;
     }
 
    
@@ -153,6 +153,9 @@ To handle the keyboard specifications we will create another event callback.
 
             #Clear the screen if we pressed C or c
             $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/
+            
+            #Exit if we press a Q or q
+            $app->stop() if $key_name =~ /^q$/
         }
         $app->update();    
     }
@@ -205,7 +208,7 @@ Now we will go about capturing our Mouse events, by inserting the following code
 
         # Turn drawing off if we lift the mouse button
         $drawing = 0 if($event->type == SDL_MOUSEBUTTONUP );
-        return 1;
+     
     }
 
 
@@ -214,6 +217,8 @@ Now we will go about capturing our Mouse events, by inserting the following code
 =end programlisting
 
 Currently we don't make a distinction between what mouse click is done. This can be accomplished by taking a look at the
-C<button_button()> method in C<SDL::Event>. At this point we have a simple paint application done.
+C<button_button()> method in C<SDL::Event>. At this point we have a simple paint application done. 
+
+Another point to note is that each event_handler is called in the order that it was attached.
 
 =for vim: spell
