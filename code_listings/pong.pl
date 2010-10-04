@@ -12,7 +12,7 @@ my $app = SDLx::App->new( w => 500, h => 500, dt => 0.02 );
 my $ball =
   SDLx::Controller::Interface->new( x => 10, h => 10, v_x => 150, v_y => 150 );
 
-$app->add_event_handler( sub { return 0 if $_[0]->type == SDL_QUIT; return 1 }
+$app->add_event_handler( sub { $_[1]->stop() if $_[0]->type == SDL_QUIT;  }
 );
 
 $ball->set_acceleration(
@@ -45,7 +45,7 @@ $ball->attach(
     $app,
     sub {
         $app->draw_rect(
-            [ $ball->previous->x - 10, $ball->previous->y - 10, 22, 22 ], 0 );
+            [ 0,0, $app->w, $app->h ], 0 );
         $app->draw_rect( [ $_[0]->x, $_[0]->y, 10, 10 ], 0xFF0000FF );
         $app->update();
     }

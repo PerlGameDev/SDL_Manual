@@ -18,9 +18,12 @@ The simplest game loop can be boiled down to the following.
 In C<get_events()> we get events from what input devices that we need. It is important to process events first to prevent lag.
 In C<calculate_next_positions> we update the game state according to animations and the events captured. In C<render()> we will update the screen and show the game to the player. 
 
-=head2 Problems
+=head2 Issues
 
-Not good.
+This game loop works really well for consoles and devices where the CPU clock speed is always known. All of your user will be using the 
+processor to run this code. This means that each animation and calculation will happen at the exact same time in each machine. This is
+a critical assumption when we have users with various CPU clock speeds. 
+
 
 =head1 Fixed FPS
 
