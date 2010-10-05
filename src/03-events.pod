@@ -63,7 +63,7 @@ callbacks.
 
 =end programlisting
 
-C<SDLx::App> calls the event_handlers, from an internal C<SDLx::Controller>, until a C<SDLx::Controller->stop()> is called. C<SDLx::App> will exit gracefully once it is stoped.
+C<SDLx::App> calls the event_handlers, from an internal C<SDLx::Controller>, until a C<SDLx::Controller::stop()> is called. C<SDLx::App> will exit gracefully once it is stoped.
 
 =for sidebar
 
