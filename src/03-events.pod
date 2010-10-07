@@ -69,7 +69,7 @@ C<SDLx::App> calls the event_handlers, from an internal C<SDLx::Controller>, unt
 =head2 Event Type Defines
 
 In the above sample C<SDL_QUIT> was used to define the type of event we have. SDL uses a lot of integers to define different types of objects and states. 
-Fourtunately these integers are wrapped in constant functions like C<SDL_QUIT>. More defines are explained in the C<SDL::Events> documentation. Have a look at the perldoc for C<SDL::Events>.
+Fortunately these integers are wrapped in constant functions like C<SDL_QUIT>. More defines are explained in the C<SDL::Events> documentation. Have a look at the perldoc for C<SDL::Events>.
 
     perldoc SDL::Events 
 
