@@ -15,7 +15,8 @@ In SDL there is a single screen which is attached to the video device. This scre
     
 =end programlisting
 
-The above code will make a window with nothing in it. So let us add a line to make the screen a default black.
+The above code will make a window with nothing in it. Most current systems have a default black screen shown. For some systems, however,
+a transparent window will be shown. Therefore it is a good idea to update the C<$app> to ensure the correct screen is shown for all.
 
 =begin programlisting
 
@@ -23,9 +24,9 @@ The above code will make a window with nothing in it. So let us add a line to ma
 
 =end programlisting
 
-C<SDLx::App> will also allow you to specify several options for our application.
-
 =head1 C<SDLx::App> Options
+
+C<SDLx::App> will also allow you to specify several options for our application.
 
 =head2 Dimensions
 
