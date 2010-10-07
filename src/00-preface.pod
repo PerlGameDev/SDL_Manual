@@ -2,11 +2,11 @@
 
 =head1 Background
 
-I<Simple DirectMedia Layer> is a cross-platform C library that provides access
+I<Simple DirectMedia Layer> (a.k.a I<libsdl>) is a cross-platform C library that provides access
 to several input and output devices. Most popularly it is used for its access
 to the 2D video framebuffer and inputs for games. 
 
-In addition to the core libsdl there are several other libraries that provide many
+In addition to the core library there are several other libraries that provide many
 features such as I<Text>, I<Mixers>, I<Images> and I<GFX>.
 
 SDL Perl binds several of these libraries as closely as possible in the C<SDL::*> namespace.
@@ -73,17 +73,20 @@ While drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
 
        sleep(5);
 
-A secondary purpose of the C<SDLx::*> is to add addtional features for user, such as Layers, Game Loop handling and more.
+A secondary purpose of the C<SDLx::*> is to add addtional features for users, such as Layers, Game Loop handling and more.
 
 =head1 Audience
 
-This book is written for new users of SDL Perl who have done some Perl. It is not necessary
-for the audience to be aware of SDL internals, as this book covers most areas as it goes.
+This book is written for new users of SDL Perl who have some experience
+with Perl, but not much experience with SDL. It is not necessary for
+the audience to be aware of SDL internals, as this book covers most
+areas as it goes.
 
 =head1 Format of this book
 
-This book will be formated into chapters that progressively increase in topics and complexity. However
-each chapter can be treated as separate tutorials to jump to and learn.
+This book will be formated into chapters that progressively increase in
+complexity. However each chapter can be treated as a separate tutorial
+to jump to and learn.
 
 Each chapter will have a specific task (e.g. I<Making Pong>), which we will work towards. The source
 for each chapter will be broken up and explained. Sources and data files will be provided on L<http://sdl.perl.org>.
