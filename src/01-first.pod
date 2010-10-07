@@ -12,9 +12,9 @@ In SDL there is a single screen which is attached to the video device. This scre
     use SDLx::App;
 
     my $app = SDLx::App->new();
-  
+
     sleep( 2 );
-    
+
 =end programlisting
 
 The above code will make a window with nothing in it. Most current systems have a default black screen shown. For some systems, however,
@@ -46,17 +46,29 @@ You will notice that the window's title is either blank or the script's path, de
 
 =begin programlisting
 
-    my $app = SDLx::App->new( width  => 400, 
-                              height => 400, 
-	                      title  => 'Ping - A clone' );
+    my $app = SDLx::App->new( width  => 400,
+                              height => 400,
+                              title  => 'Ping - A clone' );
 
 =end programlisting
 
 At this point your screen will be:
 
-=for figure 
-       \includegraphics[width=0.5\textwidth]{../src/images/first.png}      
-        \caption{Your first SDL screen!}               
-         \label{fig:first_screen}   
+=for figure
+       \includegraphics[width=0.5\textwidth]{../src/images/first.png}
+        \caption{Your first SDL screen!}
+         \label{fig:first_screen}
 
 =for vim: spell
+
+=head2 Shortcuts
+
+There are also short-hand versions of the parameter names used in the call to C<new()>.  The parameters C<width>, C<height>, and C<title> may be abbreviated as C<w>, C<h> and C<t> respectively.  So, the previous example may also be written like this:
+
+=begin programlisting
+
+    my $app = SDLx::App->new( w => 400,
+                              h => 400,
+                              t => 'Ping - A clone' );
+
+=end programlisting
