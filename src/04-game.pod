@@ -81,7 +81,9 @@ generally the whole game will be really fast, and hard for the user to play.
 
 =head1 Fixed FPS
 
-Lets try this. 
+One way to solve this problem is to fix the Frames Per Second your game runs at. The frame is defined by each new redraw of the screen.
+
+
 
 =head2 Problems
 
