@@ -12,6 +12,69 @@ features such as I<Text>, I<Mixers>, I<Images> and I<GFX>.
 SDL Perl binds several of these libraries as closely as possible in the C<SDL::*> namespace.
 Moreover SDL Perl provides several high level libraries in the C<SDLx::*> namespace.
 
+=head2 The C<SDLx::> layer
+
+The main purpose of the C<SDLx::*> layer is to smooth out the drudgery from the C<SDL::*> layer.
+For example drawing a rectangle involves the following work. 
+
+=for sidebar 
+
+=head4 NOTE:
+
+Don't worry about understanding the code at this moment. Just compare the two code lisitings below.
+
+=end sidebar
+
+        use SDL;
+        use SDL::Video;
+        use SDL::Surface;
+        use SDL::Rect;
+
+        # the size of the window box or the screen resolution if fullscreen
+        my $screen_width   = 800;
+        my $screen_height  = 600;
+
+        SDL::init(SDL_INIT_VIDEO);
+
+        # setting video mode
+        my $screen_surface = SDL::Video::set_video_mode($screen_width, 
+							$screen_height, 
+							32, 
+							SDL_ANYFORMAT);
+
+        # drawing a rectangle with the blue color
+        my $mapped_color   = SDL::Video::map_RGB($screen_surface->format(), 0, 0, 255);
+        SDL::Video::fill_rect($screen_surface,
+                              SDL::Rect->new($screen_width / 4, $screen_height / 4,
+                                             $screen_width / 2, $screen_height / 2), 
+			      $mapped_color);
+
+        # update an area on the screen so its visible
+        SDL::Video::update_rect($screen_surface, 0, 0, $screen_width, $screen_height);
+
+        sleep(5); # just to have time to see it
+
+        SDL::quit();
+
+
+While in the C<SDLx::*> layer is as simple as:
+
+       use strict;
+       use warnings;
+       
+       use SDL;
+       use SDLx::App;
+
+       my $app = SDLx::App->new( width=> 800, height => 600 );
+       
+       $app->draw_rect([ $app->width/4, $app->height / 4, $app->width /2, $app->height / 2 ], [0,0,255,255] );
+
+       $app->update();
+
+       sleep(5);
+
+A secondary purpose of the C<SDLx::*> is to add addtional features for user, such as Layers, Game Loop handling and more.
+
 =head1 Audience
 
 This book is written for new users of SDL Perl who have done some Perl. It is not necessary
