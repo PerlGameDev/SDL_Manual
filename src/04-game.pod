@@ -76,8 +76,8 @@ A practical example of this is a moving Lazer.
 
 This game loop works really well for consoles and devices where the CPU clock speed is always known. All of your user will be using the 
 processor to run this code. This means that each animation and calculation will happen at the exact same time in each machine. This is
-a critical assumption when we have users with various CPU clock speeds. 
-
+a critical assumption when we have users with various CPU clock speeds. For faster CPU this means that all animations, calculations and 
+generally the whole game will be really fast, and hard for the user to play.
 
 =head1 Fixed FPS
 
