@@ -51,7 +51,7 @@ callbacks.
 
     sub quit_event
     {
-        #The callback is provided a SDLx::Event to use
+        #The callback is provided a SDL::Event to use
 	    my $event = shift;
 
 	#Each event handler also returns you back the Controller call it
