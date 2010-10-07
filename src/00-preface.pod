@@ -57,7 +57,7 @@ Don't worry about understanding the code at this moment. Just compare the two co
         SDL::quit();
 
 
-While in the C<SDLx::*> layer is as simple as:
+While drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
 
        use strict;
        use warnings;
