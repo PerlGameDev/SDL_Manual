@@ -6,6 +6,8 @@ In SDL there is a single screen which is attached to the video device. This scre
 
 =begin programlisting
 
+    use strict;
+    use warnings;
     use SDL;
     use SDLx::App;
 
