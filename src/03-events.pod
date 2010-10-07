@@ -65,11 +65,18 @@ callbacks.
 
 C<SDLx::App> calls the event_handlers, from an internal C<SDLx::Controller>, until a C<SDLx::Controller::stop()> is called. C<SDLx::App> will exit gracefully once it is stoped.
 
-=for sidebar
 
-It is possible to do event processing with out using C<SDLx::App> callbacks. Have a look at the perldoc for C<SDL::Events>.
+=head2 Event Type Defines
+
+In the above sample C<SDL_QUIT> was used to define the type of event we have. SDL uses a lot of integers to define different types of objects and states. 
+Fourtunately these integers are wrapped in constant functions like C<SDL_QUIT>. More defines are explained in the C<SDL::Events> documentation. Have a look at the perldoc for C<SDL::Events>.
 
     perldoc SDL::Events 
+
+=begin sidebar
+
+Events can also be processed without using callbacks from C<SDLx::App>. Chapter 5 goes more in detail for this topic. The perldoc for C<SDL::Events> will also
+show how do the processing. 
 
 =end sidebar
 
