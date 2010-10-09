@@ -53,34 +53,11 @@ sub render {
 
 my $fps_check = (1000/60);
 
-while ( !$quit ) {
+sub calculate_fps_at_frame_end
+{
 
-	$start = SDL::get_ticks();
-
-	if( $ARGV[1] )
-	{
-		if ( $delta_time > $fps_check ) {
-			$end = SDL::get_ticks();
-			if ( $frames < 10 ) {
-				$frames++;
-				$delta_time += $end - $start;
-			}
-			else {
-				$FPS        = int( ( $frames * 100 ) / $delta_time );
-				$frames     = 0;
-				$delta_time = 0;
-			}
-
-			next;		  
-
-		}
-
-	}
-
-	get_events();
-	calculate_next_positions();
-	render();
 	$end = SDL::get_ticks();
+
 	if ( $frames < 10 ) {
 		$frames++;
 		$delta_time += $end - $start;
@@ -90,6 +67,34 @@ while ( !$quit ) {
 		$frames     = 0;
 		$delta_time = 0;
 	}
+
+
+
+}
+
+while ( !$quit ) {
+
+
+	$start = SDL::get_ticks();
+
+	get_events();
+
+	if( $ARGV[1] )
+	{
+		if ( $delta_time > $fps_check ) {
+
+			calculate_fps_at_frame_end();
+			next;		  
+
+		}
+
+	}
+	calculate_next_positions();
+	render();
+
+
+	calculate_fps_at_frame_end();
+
 
 	if ( $ARGV[0] ) {
 		if ( $delta_time < $fps_check ) {
