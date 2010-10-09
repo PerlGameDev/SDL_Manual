@@ -1,0 +1,61 @@
+#!/usr/bin/env perl
+
+use Modern::Perl;
+package ExtractProgramListing;
+use base "Pod::Parser";
+use File::Basename;
+use IO::All;
+use Perl::Tidy 'perltidy';
+
+my $listing = 0;
+my $prefix = "#!/usr/bin/env perl\n\n";
+my $program = $prefix;
+my $seq = 1;
+my $example_dir = "eg";
+
+sub textblock {}
+sub interior_sequence {}
+sub begin_input{ $seq = 1 }
+
+sub command {
+    shift;
+    if ($_[1] =~ /^programlisting/) {
+
+        if ($_[0] eq 'begin') {
+            $listing++;
+        }
+        elsif ($_[0] eq 'end') {
+
+            my $file = basename($_[3]{-file});
+            $file =~ s/\.pod/-$seq.pl/;
+            $file = "$example_dir/$file";
+
+            $program =~ s/^\s+//;
+            my $fmt;
+
+            perltidy(
+                argv => [],
+                source => \$program,
+                destination => \$fmt
+            );
+
+            $fmt > io($file);
+
+            $program = $prefix;
+            $listing--;
+            $seq++;
+        }
+    }
+} 
+
+sub verbatim {
+    shift;
+     $program .= $_[0] if ($listing);
+} 
+
+package main;
+
+my $p = ExtractProgramListing->new();
+
+mkdir('eg') unless (-d 'eg');
+$p->parse_from_file($_) for (@ARGV);
