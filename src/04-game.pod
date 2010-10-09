@@ -18,7 +18,9 @@ The simplest game loop can be boiled down to the following.
 In C<get_events()> we get events from what input devices that we need. It is important to process events first to prevent lag.
 In C<calculate_next_positions> we update the game state according to animations and the events captured. In C<render()> we will update the screen and show the game to the player. 
 
-A practical example of this is a moving Lazer. 
+A practical example of this is a moving laser bolt. 
+
+=begin programlisting
 
     use strict;
     use warnings;
@@ -50,7 +52,7 @@ A practical example of this is a moving Lazer.
                   }
 
     sub calculate_next_positions{
-	# Move the Lazer over
+	# Move the laser over
         $laser++;
 	# If the laser goes off the screen bring it back
 	$laser = 0 if $laser > $app->w();
@@ -78,19 +80,22 @@ A practical example of this is a moving Lazer.
          render();
     }
 
+=end programlisting
+
 =head2 Issues
 
-This game loop works really well for consoles and devices where the CPU clock speed is always known. All of your user will be using the 
-processor to run this code. This means that each animation and calculation will happen at the exact same time in each machine. This is
-a critical assumption when we have users with various CPU clock speeds. For faster CPU this means that all animations, calculations and 
-generally the whole game will be really fast, and hard for the user to play.
+This game loop works well for consoles and devices where the share of CPU clock speed is always known. The game users will be using the 
+same processor characteristics to run this code. This means that each animation and calculation will happen at the exact same time in each machine. Unfortunately this is typical not typical true for modern operating systems and hardware.
+For faster CPUs and systems with varying loads we need to regulate updates 
+so game play will be consistent in most cases.
 
 =head1 Fixed FPS
 
-One way to solve this problem is to fix the Frames Per Second your game runs at. The frame is defined by each new redraw of the screen.
-What we can do is keep track of the number of frames we are having and divide it by the time elapsed from the last frame sample. 
+One way to solve this problem is to regulate the "Frames Per Second" for your games updates.  A "frame" is defined as a complete redraw of the screen representing the updated game state.
+We can keep track of the number of frames we are delivering each second and control it using the technique illustrated below. 
 
 =head2 Exercise 
+
 First run the below script with no fps fixing:
 
     perl game_fixed.pl
@@ -103,13 +108,15 @@ Next fix the upper bounds of the FPS
 
 This will prevent the laser from going too fast, in this case faster then 60 frames per second.
 
-Finally adding the fix the lower bounds of the FPS
+Finally fix the lower bounds of the FPS
 
     perl game_fixed.pl 1 1
 
 At this point the FPS should be at a steady 60 frames per second. However if this is not the case
 read on to the problems below.
 
+
+=begin programlisting
 
 	use strict;
 	use warnings;
@@ -132,7 +139,7 @@ read on to the problems below.
 	# We will aim for a rate of 60 frames per second 
 	my $fixed_rate = 60;
 
-	# Our times are in micro second, so we will compenstate for it
+	# Our times are in micro second, so we will compensate for it
 	my $fps_check = (1000/ $fixed_rate );
 
 	#Don't need to quit yet
@@ -251,10 +258,12 @@ read on to the problems below.
 
 	}
 
+=end programlisting
+
 =head2 Problems
 
-Generally this method is sufficient for most computers out there. The animations will be consistent
-enough that we see the same thing on differing CPU, in terms of speed. However there are some serious
+Generally this method is sufficient for most computers out there. The animations will be smooth
+enough that we see the same game play on differing hardware. However there are some serious
 problems with this method. First if a computer is too slow for 60 frames for second it will skip a
 lot of rendering, and the animation will look sparse and jittery. Maybe it would be better for 30 fps
 or lower for that machine, which is hard for the developer to predict. Secondly if a CPU is fast, a 
@@ -273,10 +282,10 @@ animation speeds for different CPUs.
 
 To solve the problem of the rendering being coupled with the CPU speed, we must derive our rendering and physics 
 for time. Objects moving according to real time will be consistent to all CPU, with proper interpolation. To be able 
-to perform interpolation we need 2 points that define the object. To achive these points we will use the real time 
+to perform interpolation we need 2 points that define the object. To achieve these points we will use the real time 
 to get. 
 
-Our laser can be defined as having a behaviour of 
+Our laser can be defined as having a behavior of 
 
     X = Velocity * Change in Time, Y = 100
 
