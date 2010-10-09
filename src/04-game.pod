@@ -278,14 +278,14 @@ to get.
 
 Our laser can be defined as having a behaviour of 
 
-   X = Velocity * Change in Time, Y = 100
+    X = Velocity * Change in Time, Y = 100
 
 Which will give us points like, from time 0 to 20 secs:
 
-   1,100
-   5,100
-   10,100
-   20,100
+    1,100
+    5,100
+    10,100
+    20,100
 
 Note that, at this point it doesn't matter at what CPU speed this equation is processed at the values are coupled to 
 real time. The only problem with this sort of solution is that for many objects and callbacks the implementation is non trivial,
