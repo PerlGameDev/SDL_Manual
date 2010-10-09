@@ -4,7 +4,7 @@
 
 The simplest game loop can be boiled down to the following. 
 
-=for programlisting
+=begin programlisting
 
     while(!$quit)
     {
@@ -13,7 +13,7 @@ The simplest game loop can be boiled down to the following.
        render();
     }
 
-=for programlisting
+=end programlisting
 
 In C<get_events()> we get events from what input devices that we need. It is important to process events first to prevent lag.
 In C<calculate_next_positions> we update the game state according to animations and the events captured. In C<render()> we will update the screen and show the game to the player. 

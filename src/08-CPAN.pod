@@ -4,7 +4,7 @@ Making a screen:
 
 =begin programlisting
 
-    use SDL:
+    use SDL;
     use SDLx::App;
 
     SDLx::App->new();
