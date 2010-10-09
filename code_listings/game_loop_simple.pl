@@ -15,8 +15,8 @@
     #Don't need to quit yet
     my $quit = 0;
 
-    #Start lazer on the left
-    my $lazer = 0;
+    #Start laser on the left
+    my $laser = 0;
 
     sub get_events {
 
@@ -31,8 +31,8 @@
     }
 
     sub calculate_next_positions {
-        $lazer++;
-        $lazer = 0 if $lazer > $app->w();
+        $laser++;
+        $laser = 0 if $laser > $app->w();
     }
 
     sub render {
@@ -40,8 +40,8 @@
         #Draw the background first
         $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 );
 
-        #Draw the lazer
-        $app->draw_rect( [ $lazer, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
+        #Draw the laser
+        $app->draw_rect( [ $laser, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
 
         $app->update();
 

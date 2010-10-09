@@ -34,8 +34,8 @@ A practical example of this is a moving Lazer.
 
     #Don't need to quit yet
     my $quit = 0;
-    #Start lazer on the left
-    my $lazer = 0;
+    #Start laser on the left
+    my $laser = 0;
     sub get_events{ 
 
                     my $event = SDL::Event->new();
@@ -50,21 +50,27 @@ A practical example of this is a moving Lazer.
                   }
 
     sub calculate_next_positions{
-        $lazer++;
+	# Move the Lazer over
+        $laser++;
+	# If the laser goes off the screen bring it back
+	$laser = 0 if $laser > $app->w();
+
     }
     
     sub render { 
         
         #Draw the background first
-        $app->draw( [0,0,$app->w, $app->h], 0 );
+        $app->draw_rect( [0,0,$app->w, $app->h], 0 );
 
-        #Draw the lazer
-        $app->draw( [$lazer, $app->h/2, 10, 2], [255,0,0,255]);
+        #Draw the laser, in the middle height of the screen
+        $app->draw_rect( [$laser, $app->h/2, 10, 2], [255,0,0,255]);
 
         $app->update();
 
     }
 
+
+    # Until we quit stay looping 
     while(!$quit)
     {
          get_events();
@@ -132,8 +138,8 @@ read on to the problems below.
 	#Don't need to quit yet
 	my $quit = 0;
 
-	#Start lazer on the left
-	my $lazer = 0;
+	#Start laser on the left
+	my $laser = 0;
 
 	sub get_events {
 
@@ -148,9 +154,9 @@ read on to the problems below.
 	}
 
 	sub calculate_next_positions {
-		$lazer++;
+		$laser++;
 
-		$lazer = 0 if $lazer > $app->w;
+		$laser = 0 if $laser > $app->w;
 	}
 
 	sub render {
@@ -158,8 +164,8 @@ read on to the problems below.
 	#Draw the background first
 		$app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 );
 
-	#Draw the lazer
-		$app->draw_rect( [ $lazer, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
+	#Draw the laser
+		$app->draw_rect( [ $laser, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
 
 	#Draw our FPS on the screen so we can see
 		$app->draw_gfx_text( [ 10, 10 ], [ 255, 0, 255, 255 ], "FPS: $FPS" );
