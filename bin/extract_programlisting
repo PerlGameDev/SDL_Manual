@@ -36,7 +36,8 @@ sub command {
             perltidy(
                 argv => [],
                 source => \$program,
-                destination => \$fmt
+                destination => \$fmt,
+                perltidyrc => 'lib/perltidyrc',
             );
 
             $fmt > io($file);
