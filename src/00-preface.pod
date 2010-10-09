@@ -6,25 +6,26 @@ I<Simple DirectMedia Layer> (a.k.a I<libsdl>) is a cross-platform C library that
 to several input and output devices. Most popularly it is used for its access
 to the 2D video framebuffer and inputs for games. 
 
-In addition to the core library there are several other libraries that provide many
+In addition to the core library there are several other libraries that provide useful
 features such as I<Text>, I<Mixers>, I<Images> and I<GFX>.
 
-SDL Perl binds several of these libraries as closely as possible in the C<SDL::*> namespace.
-Moreover SDL Perl provides several high level libraries in the C<SDLx::*> namespace.
+SDL Perl binds several of these libraries together int the C<SDL::*> namespace.
+Moreover, SDL Perl provides several high level libraries in the C<SDLx::*> namespace that encapsulate valuable game writing abstractions.
 
 =head2 The C<SDLx::> layer
 
-The main purpose of the C<SDLx::*> layer is to smooth out the drudgery from the C<SDL::*> layer.
+The main purpose of the C<SDLx::*> layer is to smooth out the drudgery of using the C<SDL::*> layer directly.
 For example drawing a rectangle involves the following work. 
 
 =for sidebar 
 
 =head4 NOTE:
 
-Don't worry about understanding the code at this moment. Just compare the two code lisitings below.
+Don't worry about understanding the code at this moment. Just compare the two code listings below.
 
 =end sidebar
 
+=cut
         use SDL;
         use SDL::Video;
         use SDL::Surface;
@@ -56,9 +57,11 @@ Don't worry about understanding the code at this moment. Just compare the two co
 
         SDL::quit();
 
+=pod
 
 While drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
 
+=cut
        use strict;
        use warnings;
        
@@ -73,7 +76,9 @@ While drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
 
        sleep(5);
 
-A secondary purpose of the C<SDLx::*> is to add addtional features for users, such as Layers, Game Loop handling and more.
+=pod
+
+A secondary purpose of the C<SDLx::*> modules are to manage additional features for users, such as Layers, Game Loop handling and more.
 
 =head1 Audience
 
@@ -88,19 +93,20 @@ This book will be formated into chapters that progressively increase in
 complexity. However each chapter can be treated as a separate tutorial
 to jump to and learn.
 
-Each chapter will have a specific task (e.g. I<Making Pong>), which we will work towards. The source
-for each chapter will be broken up and explained. Sources and data files will be provided on L<http://sdl.perl.org>.
+Each chapter will have a specific goal (e.g. I<Making Pong>), which we will work towards. The source code 
+for each chapter will be broken up and explained in some detail. Sources and data files are all provided on L<http://sdl.perl.org>.
 
 Finally the chapters will end with an exercise the reader can try out.
 
 =head1 Purpose of this book
 
-This book is intended to introduce game development to Perl programmers and at the same time introduce Modern Perl
-through game development. The book will aim to provide simple to intermediate examples and provide suggestions for more
-advanced endeavours.
+This book is intended to introduce game development to Perl programmers and at the same time introduce Modern Perl concepts
+through game development. The book provides a progression of simple to intermediate examples and provide suggestions for more
+advanced endeavors.
 
 =head1 Installing SDL Perl
 
+We assume that a recent perl language and supporting packages have been installed on your system. 
 Depending on your platform you may need some dependencies. Then we can do a final CPAN install.
  
 =head2 Windows
@@ -119,9 +125,11 @@ C<Alien::SDL> will compile SDL dependencies from scratch with no problems as lon
 
 =head2 Linux
 
+Most current linux distributions include all the parts needed for this tutorial in the default install and in their package management system.  It is also always possible to install on linux using the available open source code from their repositories.  The Alien::SDL perl module automates much of downloading, compiling and installing the needed libraries.
+
 =head3 Packages
 
-You can use your package maintainers packages:
+You can probably use your distribution's packages.  On Ubuntu and Debian try:
 
     sudo apt-get install libsdl-net1.2-dev libsdl-mixer1.2-dev \
     libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev \ 
@@ -129,7 +137,7 @@ You can use your package maintainers packages:
 
 =head3 Or Compiling Dependencies
 
-To compile from scratch some Header Packages are required.
+To compile from scratch a compiler, system header packages and some libraries are required.
 
     sudo apt-get install build-essential xorg-dev libx11-dev \
     libpango1.0-dev libfreetype6-dev libvorbis-dev libpng12-dev \
@@ -139,12 +147,11 @@ To compile from scratch some Header Packages are required.
 
     sudo cpan SDL
 
-For most platforms a CPAN install will suffice. Supported and tested platforms are displayed at U<http://pass.cpantesters.org/distro/S/SDL.html>.
+For most platforms a CPAN install will suffice. Supported and tested platforms are listed at U<http://pass.cpantesters.org/distro/S/SDL.html>.  
 
 =head1 Contact
 
-Hopefully this book shows you areas where SDL Perl can be improved, or you may need help with some issues. Please 
-contact us with one of the following methods:
+Hopefully this book answers most of your questions.  If you find you need assistance please contact us in one of the following methods:
 
 =head2 Internet
 

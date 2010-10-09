@@ -2,7 +2,7 @@
 
 =head1 Background
 
-In SDL there is a single screen which is attached to the video device. This screen is created by X<SDLx::App>.
+SDL manages a single screen which is attached to the video device.  The screen may contain one or more Surfaces of different kinds. But we'll leave that issue till later.  This screen is typically created using the X<SDLx::App> class.
 
 =begin programlisting
 
@@ -17,8 +17,8 @@ In SDL there is a single screen which is attached to the video device. This scre
 
 =end programlisting
 
-The above code will make a window with nothing in it. Most current systems have a default black screen shown. For some systems, however,
-a transparent window will be shown. Therefore it is a good idea to update the C<$app> to ensure the correct screen is shown for all.
+The above code causes a window to appear on the desktop with nothing in it. Most current systems will fill it with a default black screen as shown. For some systems, however,
+a transparent window will might be shown.  It is a good idea to ensure what we intend to display is shown. So we update the C<$app> to ensure that.
 
 =begin programlisting
 
@@ -28,7 +28,7 @@ a transparent window will be shown. Therefore it is a good idea to update the C<
 
 =head1 C<SDLx::App> Options
 
-C<SDLx::App> will also allow you to specify several options for our application.
+C<SDLx::App> also allows you to specify several options for your application.
 
 =head2 Dimensions
 
@@ -42,7 +42,7 @@ First are the physical dimensions of the screen itself. Lets make the screen a s
 
 =head2 Title
 
-You will notice that the window's title is either blank or the script's path, depending on your operating system. Suppose we want a title for our new Pong clone.
+You will notice that the window's title is either blank or on some window managers it displays the path to the script file, depending on your operating system. Suppose we want a title for a new Pong clone game:
 
 =begin programlisting
 
@@ -63,7 +63,7 @@ At this point your screen will be:
 
 =head2 Shortcuts
 
-There are also short-hand versions of the parameter names used in the call to C<new()>.  The parameters C<width>, C<height>, and C<title> may be abbreviated as C<w>, C<h> and C<t> respectively.  So, the previous example may also be written like this:
+There are short-hand versions of the parameter names used in the call to C<new()>.  The parameters C<width>, C<height>, and C<title> may be abbreviated as C<w>, C<h> and C<t> respectively.  So, the previous example could be written like this:
 
 =begin programlisting
 
