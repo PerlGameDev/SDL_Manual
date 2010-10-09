@@ -82,6 +82,86 @@ generally the whole game will be really fast, and hard for the user to play.
 =head1 Fixed FPS
 
 One way to solve this problem is to fix the Frames Per Second your game runs at. The frame is defined by each new redraw of the screen.
+What we can do is keep track of the number of frames we are having and divide it by the time elasped from the last frame. 
+
+    use strict;
+    use warnings;
+    use SDL;
+    use SDL::Event;
+    use SDL::Events;
+    use SDLx::App;
+    use Time::HiRes qw/time/;
+    
+    my $app = SDLx::App->new( 
+                             width=> 200, height => 200,
+                             title=> 'Pew Pew'
+                            );
+
+    #Don't need to quit yet
+    my $quit = 0;
+    #Start lazer on the left
+    my $lazer = 0;
+
+    # Frames holding and time
+    my $time = time;
+    my $frame = 1;
+    my $FPS = 0;
+    sub get_events{ 
+
+                    my $event = SDL::Event->new();
+                    
+                    #Pump the event queue
+                    SDL::Events::pump_events;
+
+                    while( SDL::Events::poll_event($event) )
+                    {
+                        $quit = 1 if $event->type == SDL_QUIT  
+                    }
+                  }
+
+    sub calculate_next_positions{
+        $lazer++;
+    }
+    
+    sub render { 
+        
+        #Draw the background first
+        $app->draw( [0,0,$app->w, $app->h], 0 );
+
+        #Draw the lazer
+        $app->draw( [$lazer, $app->h/2, 10, 2], [255,0,0,255]);
+
+       
+	$app->draw_gfx_text( [10,10], "FPS: $FPS", [255,0,255,255]);
+
+		
+	$app->update();
+    }
+
+    while(!$quit)
+    {
+
+	
+	#Each update defines a frame
+	$frame++;
+
+	
+	if( $frame == 10 )
+	{
+		while( $FPS > 30 )
+		{
+			$FPS = $frame / (time - $time);
+		}
+		$time = time;
+		$frame = 0;
+	}
+
+         get_events();
+         calculate_next_positions();
+         render();
+
+
+    }
 
 
 
