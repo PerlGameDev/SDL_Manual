@@ -82,100 +82,186 @@ generally the whole game will be really fast, and hard for the user to play.
 =head1 Fixed FPS
 
 One way to solve this problem is to fix the Frames Per Second your game runs at. The frame is defined by each new redraw of the screen.
-What we can do is keep track of the number of frames we are having and divide it by the time elasped from the last frame. 
+What we can do is keep track of the number of frames we are having and divide it by the time elasped from the last frame sample. 
 
-    use strict;
-    use warnings;
-    use SDL;
-    use SDL::Event;
-    use SDL::Events;
-    use SDLx::App;
-    use Time::HiRes qw/time/;
-    
-    my $app = SDLx::App->new( 
-                             width=> 200, height => 200,
-                             title=> 'Pew Pew'
-                            );
 
-    #Don't need to quit yet
-    my $quit = 0;
-    #Start lazer on the left
-    my $lazer = 0;
+	use strict;
+	use warnings;
+	use SDL;
+	use SDL::Event;
+	use SDL::Events;
+	use SDLx::App;
 
-    # Frames holding and time
-    my $time = time;
-    my $frame = 1;
-    my $FPS = 0;
-    sub get_events{ 
+	my $app = SDLx::App->new(
+			width  => 200,
+			height => 200,
+			title  => 'Pew Pew'
+			);
 
-                    my $event = SDL::Event->new();
-                    
-                    #Pump the event queue
-                    SDL::Events::pump_events;
+	# Variables 
+	# to save our start/end and delta times for each frame
+	# to save our frames and FPS 
+	my ( $start, $end, $delta_time, $FPS, $frames ) = ( 0, 0, 0, 0, 0 );
 
-                    while( SDL::Events::poll_event($event) )
-                    {
-                        $quit = 1 if $event->type == SDL_QUIT  
-                    }
-                  }
+	# We will aim for a rate of 60 frames per second 
+	my $fixed_rate = 60;
 
-    sub calculate_next_positions{
-        $lazer++;
-    }
-    
-    sub render { 
-        
-        #Draw the background first
-        $app->draw( [0,0,$app->w, $app->h], 0 );
+	# Our times are in micro second, so we will compenstate for it
+	my $fps_check = (1000/ $fixed_rate );
 
-        #Draw the lazer
-        $app->draw( [$lazer, $app->h/2, 10, 2], [255,0,0,255]);
+	#Don't need to quit yet
+	my $quit = 0;
 
-       
-	$app->draw_gfx_text( [10,10], "FPS: $FPS", [255,0,255,255]);
+	#Start lazer on the left
+	my $lazer = 0;
 
-		
-	$app->update();
-    }
+	sub get_events {
 
-    while(!$quit)
-    {
+		my $event = SDL::Event->new();
 
-	
-	#Each update defines a frame
-	$frame++;
+	#Pump the event queue
+		SDL::Events::pump_events;
 
-	
-	if( $frame == 10 )
-	{
-		while( $FPS > 30 )
-		{
-			$FPS = $frame / (time - $time);
+		while ( SDL::Events::poll_event($event) ) {
+			$quit = 1 if $event->type == SDL_QUIT;
 		}
-		$time = time;
-		$frame = 0;
 	}
 
-         get_events();
-         calculate_next_positions();
-         render();
+	sub calculate_next_positions {
+		$lazer++;
+
+		$lazer = 0 if $lazer > $app->w;
+	}
+
+	sub render {
+
+	#Draw the background first
+		$app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 );
+
+	#Draw the lazer
+		$app->draw_rect( [ $lazer, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
+
+	#Draw our FPS on the screen so we can see
+		$app->draw_gfx_text( [ 10, 10 ], [ 255, 0, 255, 255 ], "FPS: $FPS" );
+
+		$app->update();
+	}
 
 
-    }
+	# Called at the end of each frame, wether we draw or not
+	sub calculate_fps_at_frame_end
+	{
+
+		# Ticks are microseconds since load time
+		$end = SDL::get_ticks();
+
+		# We will average our frame rate over 10 frames, to give less erratic rates
+		if ( $frames < 10 ) {
+			
+			#Count a frame
+			$frames++;
+			
+			#Calculate how long it took from the start 
+			$delta_time += $end - $start;
+		}
+		else {
+
+			# Our frame rate is our  Frames * 100 / Time Elapsed in us
+			$FPS        = int( ( $frames * 100 ) / $delta_time );
+
+			# Reset our metrics
+			$frames     = 0;
+			$delta_time = 0;
+		}
 
 
+
+	}
+
+	while ( !$quit ) {
+
+
+		# Get the time for the starting of the frame
+		$start = SDL::get_ticks();
+
+		get_events();
+
+		# If we are fixing the lower bounds of the frame rate
+		if( $ARGV[1] )
+		{
+
+			# And our delta time is going too slow for frame check
+			if ( $delta_time > $fps_check ) {
+
+				# Calculate our FPS from this 
+				calculate_fps_at_frame_end();
+
+				# Skip rendering and collision detections 
+				# The heavy functions in the game loop
+				next;		  
+
+			}
+
+		}
+
+
+		calculate_next_positions();
+		render();
+
+		# A normal frame with rendering actually performed
+		calculate_fps_at_frame_end();
+
+		# if we are fixing the upper bounds of the frame rate
+		if ( $ARGV[0] ) {
+			
+			# and our delta time is going too fast compared to the frame check
+			if ( $delta_time < $fps_check ) {
+
+				# delay for the difference
+				SDL::delay( $fps_check - $delta_time );
+			}
+		}
+
+
+	}
+
+
+First run the above script with no fps fixing:
+
+  perl game_fixed.pl
+
+You will see that the FPS is erratic, and the laser seems to speed up and slow down randomly.
+
+Next fix the upper bounds of the FPS
+
+  perl game_fixed.pl 1
+
+This will preven the laser from going too fast, in this case faster then 60 frames per second.
+
+Finally adding the fix the lower bouns of the FPS
+
+  perl game_fixed.pl 1 1
+
+At this point the FPS should be at a steady 60 frames per second. However if this is not the case
+read on to the problems below.
 
 =head2 Problems
 
-Nah ....
+Generally this method is sufficent for most computers out there. The animations will be consistent
+enough that we see the same thing on differing CPU, in terms of speed. However there are some serious
+problems with this method. First if a computer is too slow for 60 frames for second it will skip a
+lot of rendering, and the animation will look sparse and jittery. Maybe it would be better for 30 fps
+or lower for that machine, which is hard for the developer to predict. Secondly if a CPU is fast, a 
+lot of CPU cycles are wasted in the delay. 
 
-=head1 Variable FPS
+Finally this method does not fix the fundamental problem that the rendering is fixed to CPU clock speed.
 
-Lets try this one.
+=head2 Potential Fix: Variable FPS
 
-=head2 Problems
-
-Ugh ...
+One way to fix the problem of a computer being consistently faster or slower for the default Frame per 
+Second set, is to change the FPS accordingly. So far a slow CPU it will jump down to 30 FPS and so on. 
+In the author opinion, although a consistent FPS is achieved, it still presents the problem of differing
+animation speeds for different CPUs. 
 
 =head1 Integrating Physics
 
