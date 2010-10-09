@@ -82,7 +82,27 @@ generally the whole game will be really fast, and hard for the user to play.
 =head1 Fixed FPS
 
 One way to solve this problem is to fix the Frames Per Second your game runs at. The frame is defined by each new redraw of the screen.
-What we can do is keep track of the number of frames we are having and divide it by the time elasped from the last frame sample. 
+What we can do is keep track of the number of frames we are having and divide it by the time elapsed from the last frame sample. 
+
+=head2 Exercise 
+First run the below script with no fps fixing:
+
+    perl game_fixed.pl
+
+You will see that the FPS is erratic, and the laser seems to speed up and slow down randomly.
+
+Next fix the upper bounds of the FPS
+
+    perl game_fixed.pl 1
+
+This will prevent the laser from going too fast, in this case faster then 60 frames per second.
+
+Finally adding the fix the lower bounds of the FPS
+
+    perl game_fixed.pl 1 1
+
+At this point the FPS should be at a steady 60 frames per second. However if this is not the case
+read on to the problems below.
 
 
 	use strict;
@@ -225,29 +245,9 @@ What we can do is keep track of the number of frames we are having and divide it
 
 	}
 
-
-First run the above script with no fps fixing:
-
-  perl game_fixed.pl
-
-You will see that the FPS is erratic, and the laser seems to speed up and slow down randomly.
-
-Next fix the upper bounds of the FPS
-
-  perl game_fixed.pl 1
-
-This will preven the laser from going too fast, in this case faster then 60 frames per second.
-
-Finally adding the fix the lower bouns of the FPS
-
-  perl game_fixed.pl 1 1
-
-At this point the FPS should be at a steady 60 frames per second. However if this is not the case
-read on to the problems below.
-
 =head2 Problems
 
-Generally this method is sufficent for most computers out there. The animations will be consistent
+Generally this method is sufficient for most computers out there. The animations will be consistent
 enough that we see the same thing on differing CPU, in terms of speed. However there are some serious
 problems with this method. First if a computer is too slow for 60 frames for second it will skip a
 lot of rendering, and the animation will look sparse and jittery. Maybe it would be better for 30 fps
