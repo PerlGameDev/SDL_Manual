@@ -304,6 +304,7 @@ and will not be explored in this book. However the implementation is made availa
 
 
 =begin programlisting
+
 	use strict;
 	use warnings;
 	use SDL;
@@ -364,6 +365,7 @@ and will not be explored in this book. However the implementation is made availa
 	    $app->update();
 
 	}
+
 =end programlisting
 
 =head1 Learn More
