@@ -271,12 +271,37 @@ animation speeds for different CPUs.
 
 =head1 Integrating Physics
 
-Looks goods
+To solve the problem of the rendering being coupled with the CPU speed, we must derive our rendering and physics 
+for time. Objects moving according to real time will be consistent to all CPU, with proper interpolation. To be able 
+to perform interpolation we need 2 points that define the object. To achive these points we will use the real time 
+to get. 
 
-=head2 Problems
+Our laser can be defined as having a behaviour of 
 
-but ok.
+   X = Velocity * Change in Time, Y = 100
+
+Which will give us points like, from time 0 to 20 secs:
+
+   1,100
+   5,100
+   10,100
+   20,100
+
+Note that, at this point it doesn't matter at what CPU speed this equation is processed at the values are coupled to 
+real time. The only problem with this sort of solution is that for many objects and callbacks the implementation is non trivial,
+and will not be explored in this book. However the implementation is made available from the C<SDLx::Controller> module we used before. 
+
+=head2 Laser in Real Time
+
+
+   use strict;
+   use warnings;
+   use SDL;
+   use SDLx::App;
+
 
 =head1 Learn More
+
+To learn more about this topic please, see an excellent blog post by B<GafferOnGames.com>: L<http://gafferongames.com/game-physics/fix-your-timestep/>.
 
 =for vim: spell
