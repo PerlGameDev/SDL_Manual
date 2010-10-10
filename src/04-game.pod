@@ -181,7 +181,7 @@ read on to the problems below.
 	}
 
 
-	# Called at the end of each frame, wether we draw or not
+	# Called at the end of each frame, whether we draw or not
 	sub calculate_fps_at_frame_end
 	{
 
@@ -285,7 +285,7 @@ The problem caused by coupling rendering to the CPU speed has a convenient solut
 the passage of time.  Objects moving according to real world time will have consistent behavior at all CPU speeds, and smooth interpolation between frames. 
 SDLx::App provides just such features for our convenience through movement handlers and 'show' handlers.
 
-A simple physics model for our laser has a consistant horizontal velocity in pixels per time step at the window's mid-point:
+A simple physics model for our laser has a consistent horizontal velocity in pixels per time step at the window's mid-point:
 
     X = Velocity * time step,
     Y = 100
@@ -301,7 +301,7 @@ Assuming a velocity of say 10, we will get points like:
 
 Note that it no longer matters at what speed this equation is processed, instead the values are coupled to the passage of real time. 
 
-The biggest problem with this sort of solution the book keeping requried for many objects and callbacks.  The implementation of such complex models is non trivial,
+The biggest problem with this sort of solution the book keeping required for many objects and callbacks.  The implementation of such complex models is non trivial,
 and will not be explored in this book.  The topic is discussed at length in the C<SDLx::Controller> module. 
 
 =head2 Laser in Real Time
@@ -347,7 +347,7 @@ us.  It even implements the whole game loop for us.
 	    #Each event handler also returns you back the Controller call it
 	    my $controller = shift;
 
-	    #Stoping the controller for us will exit $app->run() for us
+	    #Stopping the controller for us will exit $app->run() for us
 	    $controller->stop if $event->type == SDL_QUIT;
 	}
 
