@@ -4,7 +4,7 @@
 =head1 Preview
 
 SDL provides several ways to draw graphical elements on the screen; these methods can be broken down into three general categories: Primitives, Images and Text. 
-methods in each of the three categories draw a single object on the Surface. The Surface is represented by C<SDLx::Surface>. Even our 
+Methods in each of the three categories draw a single object on the Surface. The Surface is represented by C<SDLx::Surface>. Even our 
 C<SDLx::App> is a C<SDLx::Surface>. This means that we can draw directly on the C<SDLx::App>, however there are 
 several advantages to drawing on multiple surfaces. In this chapter we will explore these methods of drawing, and 
 make a pretty picture.
