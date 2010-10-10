@@ -275,34 +275,41 @@ Finally this method does not fix the fundamental problem that the rendering is f
 
 One way to fix the problem of a computer being consistently faster or slower for the default Frame per 
 Second set, is to change the FPS accordingly. So far a slow CPU it will jump down to 30 FPS and so on. 
-In the author opinion, although a consistent FPS is achieved, it still presents the problem of differing
-animation speeds for different CPUs. 
+In our opinion, although a consistent FPS can be achieved this way, it still presents the problem of differing
+animation speeds for different CPUs and systems. 
+There are better solutions available.
 
 =head1 Integrating Physics
 
-To solve the problem of the rendering being coupled with the CPU speed, we must derive our rendering and physics 
-for time. Objects moving according to real time will be consistent to all CPU, with proper interpolation. To be able 
-to perform interpolation we need 2 points that define the object. To achieve these points we will use the real time 
-to get. 
+The problem caused by coupling rendering to the CPU speed has a convenient solution. We can derive our rendering from a physical model based on 
+the passage of time.  Objects moving according to real world time will have consistent behavior at all CPU speeds, and smooth interpolation between frames. 
+SDLx::App provides just such features for our convenience through movement handlers and 'show' handlers.
 
-Our laser can be defined as having a behavior of 
+A simple physics model for our laser has a consistant horizontal velocity in pixels per time step at the window's mid-point:
 
-    X = Velocity * Change in Time, Y = 100
+    X = Velocity * time step,
+    Y = 100
 
-Which will give us points like, from time 0 to 20 secs:
+Assuming a velocity of say 10, we will get points like:
 
-    1,100
-    5,100
+    0,100
     10,100
     20,100
+    30,100
+    ...
+    200,100
 
-Note that, at this point it doesn't matter at what CPU speed this equation is processed at the values are coupled to 
-real time. The only problem with this sort of solution is that for many objects and callbacks the implementation is non trivial,
-and will not be explored in this book. However the implementation is made available from the C<SDLx::Controller> module we used before. 
+Note that it no longer matters at what speed this equation is processed, instead the values are coupled to the passage of real time. 
+
+The biggest problem with this sort of solution the book keeping requried for many objects and callbacks.  The implementation of such complex models is non trivial,
+and will not be explored in this book.  The topic is discussed at length in the C<SDLx::Controller> module. 
 
 =head2 Laser in Real Time
 
-=begin programlisting
+This version of the laser example demonstrates the use of movement, and 'show'
+handlers and the simple physics model described above.  This example
+is also much simpler since SDLx::App is doing more of the book work for
+us.  It even implements the whole game loop for us.
 
 =begin programlisting
 
