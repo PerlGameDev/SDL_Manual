@@ -37,13 +37,12 @@ sub check_collision {
     $ball->v_x( $ball->v_x * -1 );
 
     # mess a bit with vertical speed
-    $ball->v_y( $ball->v_y + rand(1) - rand(1) );
+    $ball->v_y( $ball->v_y + $paddle->v_y );
 
     # collision came from the left!
     if ( $ball->x < $paddle->x ) {
         $ball->x( $paddle->x - $ball->w );
     }
-
     # collision came from the right
     else {
         $ball->x( $paddle->x + $paddle->w );
