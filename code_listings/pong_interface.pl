@@ -17,30 +17,38 @@ use Class::XSAccessor {
 sub check_collision {
     my ( $ball, $paddle ) = @_;
 
-    if (    $ball->x < ( $paddle->x + $paddle->w )
-        and $paddle->x < ( $ball->x + $ball->w )
-        and $ball->y <   ( $paddle->y + $paddle->h )
-        and $paddle->y < ( $ball->y + $ball->h ) )
-    {
+    my ( $left1, $left2, $right1, $right2, $top1, $top2, $bottom1, $bottom2 );
 
-        # reverse horizontal speed
-        $ball->v_x( $ball->v_x * -1 );
+    $left1   = $ball->x;
+    $left2   = $paddle->x;
+    $right1  = $left1 + $ball->w;
+    $right2  = $left2 + $paddle->w;
+    $top1    = $ball->y;
+    $top2    = $paddle->y;
+    $bottom1 = $top1 + $ball->h;
+    $bottom2 = $top2 + $paddle->h;
 
-        # mess a bit with vertical speed
-        $ball->v_y( $ball->v_y + rand(1) - rand(1) );
+    return if $bottom1 < $top2;
+    return if $top1 > $bottom2;
+    return if $right1 < $left2;
+    return if $left1 > $right2;
 
-        # collision came from the left!
-        if ( $ball->x < $paddle->x + $paddle->w / 2 ) {
-            $ball->x( $paddle->x - $ball->w );
-        }
+    # reverse horizontal speed
+    $ball->v_x( $ball->v_x * -1 );
 
-        # collision came from the right
-        else {
-            $ball->x( $paddle->x + $paddle->w );
-        }
-        return 1;
+    # mess a bit with vertical speed
+    $ball->v_y( $ball->v_y + rand(1) - rand(1) );
+
+    # collision came from the left!
+    if ( $ball->x < $paddle->x ) {
+        $ball->x( $paddle->x - $ball->w );
     }
-    return;
+
+    # collision came from the right
+    else {
+        $ball->x( $paddle->x + $paddle->w );
+    }
+    return 1;
 }
 
 package Paddle;
@@ -112,7 +120,7 @@ sub on_ball_move {
     elsif ( $x >= ( $app->w - $ball->w ) ) {
         $p1_score++;
         reset_game();
-	return;
+        return;
 
     }
 
@@ -120,7 +128,7 @@ sub on_ball_move {
     elsif ( $x <= 0 ) {
         $p2_score++;
         reset_game();
-	return;
+        return;
     }
     $ball->x($x);
     $ball->y($y);
