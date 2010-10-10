@@ -9,6 +9,12 @@ C<SDLx::App> is a C<SDLx::Surface>. This means that we can draw directly on the 
 several advantages to drawing on multiple surfaces. In this chapter we will explore these methods of drawing, and 
 make a pretty picture.
 
+=head1 Coordinates
+
+SDL surfaces coordinate system has x=0, y=0 in the upper left corner and work downward and to the right. The API always lists coordinates in x,y order.
+More discussion of these details can be found in the SDL library documentation:
+U<http://www.sdltutorials.com/sdl-coordinates-and-blitting/>
+
 =head1 Objective 
 
 Using SDL we will try to construct the following image. 
@@ -90,6 +96,9 @@ X<Color> in SDL is described by 4 numbers. The first three numbers define the Re
     my $color = [255, 255, 255, 255];
 
 The values of the numbers range from 0-255 for 32 bit depth in RGBA format.
+Alternately color can be described as a 4 byte hexadecimal value, each two digit byte encoding the same RGBA vaues as above:
+
+    my $goldenrod = 0xDAA520FF;
 
 =begin sidebar
 
