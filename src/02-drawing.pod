@@ -94,6 +94,10 @@ Some parameters are just a quick definition of the positions and dimensions. For
 X<Color> in SDL is described by 4 numbers. The first three numbers define the Red, Blue, Green intensity of the color. The final number defines the transparency of the Color.
 
     my $color = [255, 255, 255, 255];
+    
+Color can also be defined as hexadecimal values:
+
+    my $color = 0xFFFFFFFF;
 
 The values of the numbers range from 0-255 for 32 bit depth in RGBA format.
 Alternately color can be described as a 4 byte hexadecimal value, each two digit byte encoding the same RGBA vaues as above:
@@ -126,6 +130,8 @@ This is a hexadecimal number. Here are some examples:
     $red   = 0xFF0000FF;
     $blue  = 0x00FF00FF;
     $green = 0x0000FFFF;
+
+Pixels can also be defined as anonymous arrays as before C<[$red, $blue, $green, $alpha]>.
 
 =head2 Primitives
 
