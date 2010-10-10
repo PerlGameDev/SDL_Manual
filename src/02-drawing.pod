@@ -140,7 +140,7 @@ This will draw a yellow line from positions C< (200,20) > to C< (20,200) >.
 
 =head3 Rectangles
 
-Rectangles are a common building blocks for games. In SDL rectangles are the most cost effective of the primitives to draw.
+Rectangles are a common building blocks for games. In SDL, rectangles are the most cost effective of the primitives to draw.
 
     $app->draw_rect( [10,20, 40, 40 ], [255, 255, 255,255] );
 
