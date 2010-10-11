@@ -4,11 +4,12 @@ use warnings;
 use SDL;
 use SDL::Event;
 use SDL::Events;
-use SDL::Rect;
 use SDLx::App;
 use SDLx::Text;
 use SDLx::Rect;
 
+
+# create our main screen
 my $app = SDLx::App->new(
     w            => 500,
     h            => 500,
@@ -16,6 +17,10 @@ my $app = SDLx::App->new(
     dt           => 0.02,
     title        => 'SDLx Pong'
 );
+
+# create our game objects
+my $score = SDLx::Text->new( font => 'font.ttf', h_align => 'center' );
+my ( $p1_score, $p2_score ) = ( 0, 0 );
 
 my $paddle1 = {
     rect => SDLx::Rect->new( 10, $app->h / 2, 10, 40 ),
@@ -32,11 +37,9 @@ my $ball = {
     v_x  => 3,
     v_y  => 1.7,
 };
+
+# initialize positions
 reset_game();
-
-my $text = SDLx::Text->new( font => 'font.ttf', h_align => 'center' );
-
-my ( $p1_score, $p2_score ) = ( 0, 0 );
 
 
 sub check_collision {
@@ -78,7 +81,32 @@ sub reset_game {
     $paddle2->{rect}->y( $app->w / 2 );
 }
 
-sub on_ball_move {
+# handles keyboard events
+$app->add_event_handler(
+    sub {
+        my ( $event, $app ) = @_;
+
+        if ( $event->type == SDL_KEYDOWN ) {
+            if ( $event->key_sym == SDLK_UP ) {
+                $paddle1->{v_y} = -2;
+            }
+            elsif ( $event->key_sym == SDLK_DOWN ) {
+                $paddle1->{v_y} = 2;
+            }
+        }
+        elsif ( $event->type == SDL_KEYUP ) {
+            if (   $event->key_sym == SDLK_UP
+                or $event->key_sym == SDLK_DOWN )
+            {
+                $paddle1->{v_y} = 0;
+            }
+        }
+    }
+);
+
+
+# handles the ball movement and collisions
+$app->add_move_handler( sub {
     my ( $step, $app ) = @_;
 
     my $x = $ball->{rect}->x + ( $ball->{v_x} * $step );
@@ -116,41 +144,17 @@ sub on_ball_move {
     # collisions with players
     check_collision($ball, $paddle1)
         or check_collision($ball, $paddle2);
-}
+});
 
-$app->add_move_handler( \&on_ball_move );
-
-sub on_paddle1_move {
+# handles the player's paddle movement
+$app->add_move_handler( sub {
     my ( $step, $app ) = @_;
-
     $paddle1->{rect}->y( $paddle1->{rect}->y + ( $paddle1->{v_y} * $step ) );
-}
+});
 
-$app->add_move_handler( \&on_paddle1_move );
 
-$app->add_event_handler(
-    sub {
-        my ( $event, $app ) = @_;
-
-        if ( $event->type == SDL_KEYDOWN ) {
-            if ( $event->key_sym == SDLK_UP ) {
-                $paddle1->{v_y} = -2;
-            }
-            elsif ( $event->key_sym == SDLK_DOWN ) {
-                $paddle1->{v_y} = 2;
-            }
-        }
-        elsif ( $event->type == SDL_KEYUP ) {
-            if (   $event->key_sym == SDLK_UP
-                or $event->key_sym == SDLK_DOWN )
-            {
-                $paddle1->{v_y} = 0;
-            }
-        }
-    }
-);
-
-sub AI_move {
+# handles AI's paddle movement
+$app->add_move_handler( sub {
     my ( $step, $app ) = @_;
 
     if ( $ball->{rect}->y > $paddle2->{rect}->y ) {
@@ -164,16 +168,12 @@ sub AI_move {
     }
 
     $paddle2->{rect}->y( $paddle2->{rect}->y + ( $paddle2->{v_y} * $step ) );
-}
+});
 
-$app->add_move_handler( \&AI_move );
 
-# our 'view' of the game
-################################
-
+# renders game objects on the screen
 $app->add_show_handler(
     sub {
-
         # first, we clear the screen
         $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0x000000 );
 
@@ -185,12 +185,13 @@ $app->add_show_handler(
         $app->draw_rect( $paddle2->{rect}, 0xFF0000FF );
 
         # ... and each player's score!
-        $text->write_to( $app, "$p1_score x $p2_score" );
+        $score->write_to( $app, "$p1_score x $p2_score" );
 
         # finally, we update the screen
         $app->update;
     }
 );
 
+# all is set, run the app!
 $app->run();
 
