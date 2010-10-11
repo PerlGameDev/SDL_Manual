@@ -7,14 +7,7 @@ use SDL::Events;
 use SDL::Rect;
 use SDLx::App;
 use SDLx::Text;
-
-package Paddle;
-use Class::XSAccessor {
-    constructor => 'new',
-    accessors   => [qw( x y w h v_y )],
-};
-
-package main;
+use SDLx::Rect;
 
 my $app = SDLx::App->new(
     w            => 500,
@@ -24,12 +17,16 @@ my $app = SDLx::App->new(
     title        => 'SDLx Pong'
 );
 
-my $paddle1 =
-  Paddle->new( x => 10, y => $app->h / 2, w => 10, h => 40, v_y => 0 );
-my $paddle2 =
-  Paddle->new( x => $app->w - 20, y => $app->h / 2, w => 10, h => 40 );
+my $paddle1 = {
+    rect => SDLx::Rect->new( 10, $app->h / 2, 10, 40 ),
+    v_y  => 0,
+};
 
-use SDLx::Rect;
+my $paddle2 = {
+    rect => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40 ),
+    v_y  => 0,
+};
+
 my $ball = {
     rect => SDLx::Rect->new( 0, 0, 10, 10 ),
     v_x  => 3,
@@ -45,33 +42,27 @@ my ( $p1_score, $p2_score ) = ( 0, 0 );
 sub check_collision {
     my ( $ball, $paddle ) = @_;
 
-    my $ball_rect = $ball->{rect};
+    my $ball_rect   = $ball->{rect};
+    my $paddle_rect = $paddle->{rect};
 
-    my ( $left1, $left2, $right1, $right2, $top1, $top2, $bottom1, $bottom2 );
-
-    $left2   = $paddle->x;
-    $right2  = $left2 + $paddle->w;
-    $top2    = $paddle->y;
-    $bottom2 = $top2 + $paddle->h;
-
-    return if $ball_rect->bottom < $top2;
-    return if $ball_rect->top > $bottom2;
-    return if $ball_rect->right < $left2;
-    return if $ball_rect->left > $right2;
+    return if $ball_rect->bottom < $paddle_rect->top;
+    return if $ball_rect->top    > $paddle_rect->bottom;
+    return if $ball_rect->right  < $paddle_rect->left;
+    return if $ball_rect->left   > $paddle_rect->right;
 
     # reverse horizontal speed
     $ball->{v_x} *= -1;
 
     # mess a bit with vertical speed
-    $ball->{v_y} += $paddle->v_y * rand 1;
+    $ball->{v_y} += $paddle->{v_y} * rand 1;
 
     # collision came from the left!
-    if ( $ball_rect->x < $paddle->x ) {
-        $ball_rect->x( $paddle->x - $ball_rect->w );
+    if ( $ball_rect->x < $paddle_rect->x ) {
+        $ball_rect->x( $paddle_rect->x - $ball_rect->w );
     }
     # collision came from the right
     else {
-        $ball_rect->x( $paddle->x + $paddle->w );
+        $ball_rect->x( $paddle_rect->x + $paddle_rect->w );
     }
     return 1;
 }
@@ -83,8 +74,8 @@ sub reset_game {
     $ball->{v_x} = (2 + rand 1) * (rand 2 > 1 ? -1 : 1);
     $ball->{v_y} = (2 + rand 1) * (rand 2 > 1 ? -1 : 1);
 
-    $paddle1->y( $app->w / 2 );
-    $paddle2->y( $app->w / 2 );
+    $paddle1->{rect}->y( $app->w / 2 );
+    $paddle2->{rect}->y( $app->w / 2 );
 }
 
 sub on_ball_move {
@@ -132,7 +123,7 @@ $app->add_move_handler( \&on_ball_move );
 sub on_paddle1_move {
     my ( $step, $app ) = @_;
 
-    $paddle1->y( $paddle1->y + ( $paddle1->v_y * $step ) );
+    $paddle1->{rect}->y( $paddle1->{rect}->y + ( $paddle1->{v_y} * $step ) );
 }
 
 $app->add_move_handler( \&on_paddle1_move );
@@ -143,17 +134,17 @@ $app->add_event_handler(
 
         if ( $event->type == SDL_KEYDOWN ) {
             if ( $event->key_sym == SDLK_UP ) {
-                $paddle1->v_y(-2);
+                $paddle1->{v_y} = -2;
             }
             elsif ( $event->key_sym == SDLK_DOWN ) {
-                $paddle1->v_y(2);
+                $paddle1->{v_y} = 2;
             }
         }
         elsif ( $event->type == SDL_KEYUP ) {
             if (   $event->key_sym == SDLK_UP
                 or $event->key_sym == SDLK_DOWN )
             {
-                $paddle1->v_y(0);
+                $paddle1->{v_y} = 0;
             }
         }
     }
@@ -162,17 +153,17 @@ $app->add_event_handler(
 sub AI_move {
     my ( $step, $app ) = @_;
 
-    if ( $ball->{rect}->y > $paddle2->y ) {
-        $paddle2->v_y(2);
+    if ( $ball->{rect}->y > $paddle2->{rect}->y ) {
+        $paddle2->{v_y} = 2;
     }
-    elsif ( $ball->{rect}->y < $paddle2->y ) {
-        $paddle2->v_y(-2);
+    elsif ( $ball->{rect}->y < $paddle2->{rect}->y ) {
+        $paddle2->{v_y} = -2;
     }
     else {
-        $paddle2->v_y(0);
+        $paddle2->{v_y} = 0;
     }
 
-    $paddle2->y( $paddle2->y + ( $paddle2->v_y * $step ) );
+    $paddle2->{rect}->y( $paddle2->{rect}->y + ( $paddle2->{v_y} * $step ) );
 }
 
 $app->add_move_handler( \&AI_move );
@@ -190,10 +181,8 @@ $app->add_show_handler(
         $app->draw_rect( $ball->{rect}, 0xFF0000FF );
 
         # then we render each paddle
-        $app->draw_rect( [ $paddle1->x, $paddle1->y, $paddle1->w, $paddle1->h ],
-            0xFF0000FF );
-        $app->draw_rect( [ $paddle2->x, $paddle2->y, $paddle2->w, $paddle2->h ],
-            0xFF0000FF );
+        $app->draw_rect( $paddle1->{rect}, 0xFF0000FF );
+        $app->draw_rect( $paddle2->{rect}, 0xFF0000FF );
 
         # ... and each player's score!
         $text->write_to( $app, "$p1_score x $p2_score" );
