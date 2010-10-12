@@ -56,8 +56,6 @@ Don't worry about understanding the code at this moment. Just compare the two co
 
         sleep(5); # just to have time to see it
 
-        SDL::quit();
-
 =end programlisting
 
 While drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
