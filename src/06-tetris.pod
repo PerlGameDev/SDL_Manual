@@ -1,20 +1,51 @@
-=head0 The Basics
+=head0 Tetris 
 
-Making a screen:
+=head1 Data Structures
 
-=begin programlisting
+A design for data structures is very important to do before making a game.
 
-    use SDL;
-    use SDLx::App;
+=head2 Considerations
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+=head3 CPU
 
-This makes a screen as below:
+Will the data structure be access in the game loop
 
-WIP
+=head3 Memory
+
+Will it be loaded up a lot
+
+=head3 Programmer's Sanity
+
+Will it be gorkable to the programmer. 
+
+=head1 Game flow
+
+=head2 Considerations
+
+=head3 Refactor the first draft
+
+=head1 Collisions
+
+What is colliding to what?
+
+=head2 Considerations
+
+=head3 Dynamic 
+
+Are both colliders going to collide?
+
+=head3 Direction of Collisions
+
+Multiple directions of collisions?
+
+=head3 Game Events
+
+Should they trigger a game event? React?
+
+=head2 The Game
+
+
+
+
 
 =for vim: spell

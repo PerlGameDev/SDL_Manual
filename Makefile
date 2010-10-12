@@ -15,7 +15,8 @@ else
     src/02-drawing.pod \
     src/03-events.pod \
     src/04-game.pod \
-    src/05-pong.pod 
+    src/05-pong.pod \
+    src/06-tetris.pod
 endif
 
 default: prepare pdf clean
