@@ -142,7 +142,7 @@ You can probably use your distribution's packages.  On Ubuntu and Debian try:
 
 To compile from scratch a compiler, system header packages and some libraries are required.
 
-    sudo apt-get install build-essential xorg-dev libx11-dev \
+    sudo apt-get install build-essential xorg-dev libx11-dev libxv-dev \
     libpango1.0-dev libfreetype6-dev libvorbis-dev libpng12-dev \
     libogg-dev
 

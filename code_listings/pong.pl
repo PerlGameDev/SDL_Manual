@@ -10,7 +10,7 @@ use SDLx::Controller::Interface;
 
 my $app = SDLx::App->new( w => 500, h => 500, dt => 0.02 );
 my $ball =
-  SDLx::Controller::Interface->new( x => 10, h => 10, v_x => 150, v_y => 150 );
+  SDLx::Controller::Interface->new( x => 10, h => 10, v_x => 48, v_y => 48 );
 
 $app->add_event_handler( sub { $_[1]->stop() if $_[0]->type == SDL_QUIT;  }
 );
@@ -47,6 +47,7 @@ $ball->attach(
         $app->draw_rect(
             [ 0,0, $app->w, $app->h ], 0 );
         $app->draw_rect( [ $_[0]->x, $_[0]->y, 10, 10 ], 0xFF0000FF );
+	warn $_[1];
         $app->update();
     }
 );
