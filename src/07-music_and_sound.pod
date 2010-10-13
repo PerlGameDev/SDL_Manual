@@ -1,20 +1,41 @@
-=head0 The Basics
+=head0 Sound and Music
 
-Making a screen:
+=head1 Streaming Music
 
-=begin programlisting
+Games need background music to set the mood. 
 
-    use SDL;
-    use SDLx::App;
+=head2 Audio Specs
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+Defining how the music will run.
 
-This makes a screen as below:
+=head2 Example
 
-WIP
+Lets make some noise.
+
+=head1 Sound FX
+
+Well we want Sound events.
+
+=head2 Triggering 
+
+How to make the laser 'pew' in the right time.
+
+=head2 Example
+
+pew pew pew pew.
+
+=head1 Modules
+
+=head2 C<SDLx::Sound>
+
+Simple SDL Mixer initialization.
+
+=head2 C<SDL::Audio>
+
+Creating music on the fly.
+
+=head2 C<SDL::Mixer>
+
+Full fledge music support.
 
 =for vim: spell
