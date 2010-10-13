@@ -2,6 +2,55 @@
 
 =head1 The Game
 
+Pong is one of the first popular video games in the world. It was created
+by Allan Alcorn for Atari Inc. and released in 1972, being Atari's first
+game ever, and sparkling the beginning of the video game industry.
+
+Pong simulates a table tennis match ("ping pong"), where you try to defeat
+your opponent by earning a higher score. Each player controls a paddle
+moving it vertically on the screen, and use it to hit a bouncing ball
+back and forth. You earn a point if your opponent is unable to return
+the ball to your side of the screen.
+
+And now we're gonna learn how to create one ourselves in Perl and SDL.
+
+=head2 Getting our feet wet
+
+Let's start by creating a simple screen for our Pong clone. Open a file
+in your favourite text editor and type:
+
+  #!/usr/bin/perl
+  use strict;
+  use warnings;
+
+  use SDL;
+  use SDLx::App;
+
+  # create our main screen
+  my $app = SDLx::App->new(
+               width        => 500,
+               height       => 500,
+               title        => 'My Pong Clone!',
+               dt           => 0.02,
+               exit_on_quit => 1,
+  );
+
+  # let's roll!
+  $app->run;
+
+Save this file as C<"pong.pl"> and run it by typing on the command line:
+
+  perl pong.pl
+
+You should see a black window entitled I<"My Pong Clone!">. In our
+L<SDLx::App> construction we also specified the width and height
+values of our window to 500 pixels each, and set a time interval (dt) of
+0.02 for the game loop, as explained before. There is a new argument,
+though: C<exit_on_quit>. This is a shortcut provided by C<SDLx::App> to
+automatically finish up and exit the app should it receive a C<SDL_QUIT>
+event, like when the user closes the window with the mouse.
+
+
 =head2 Paddles and Balls
 
 =head3 Collisions
