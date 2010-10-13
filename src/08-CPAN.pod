@@ -1,20 +1,49 @@
-=head0 The Basics
+=head0 CPAN
 
-Making a screen:
+The rest of the Perl language.
 
-=begin programlisting
+=head1 Modules
 
-    use SDL;
-    use SDLx::App;
+It is good to reuse code. 
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+=head2 MVC Method
 
-This makes a screen as below:
+See where the module fits, Model, View or Controller
 
-WIP
+=head3 View
+
+SDL will do most but helper module (Clipboard) are cool to have.
+
+=head3 Model
+
+Storable for games that need to store stuff 
+
+=head3 Controller
+
+Game::Life, make some of the games in SDL!
+
+=head1 Picking Modules
+
+Some considerations on when to pick modules
+
+=head2 Dependencies
+
+What does it depend on? Hard to install?
+
+=head2 CPAN Testers Charts
+
+Check the CPAN tester charts, to see if it will work on your target machines.
+
+=head3 OS breakdowns
+
+Are the operating systems your are aiming for working?
+
+=head3 Bug Reports
+
+Make and See bug reports
+
+=head1 Conculsion
+
+CPAN use it!
 
 =for vim: spell

@@ -17,7 +17,9 @@ else
     src/04-game.pod \
     src/05-pong.pod \
     src/06-tetris.pod \
-    src/07-music_and_sound.pod 
+    src/07-music_and_sound.pod \
+    src/08-CPAN.pod
+ 
 endif
 
 default: prepare pdf clean
