@@ -1,20 +1,31 @@
-=head0 The Basics
+=head0 Profiling
 
-Making a screen:
 
-=begin programlisting
+=head1 Make some code first
 
-    use SDL;
-    use SDLx::App;
+Make a Perl draft first, go make it now. Why are you still here, go make it! Don't optimize anything, nothing at all.
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+=head1 Profile
 
-This makes a screen as below:
+Run NYTProf. 
 
-WIP
+=head2 Calls
+
+What is called often? Load time? Run time? In the game loop?
+
+=head1 Optimize
+
+=head2 Algorithms
+
+Are you doing something inefficent? Is there a well know algorithm to do this?
+
+=head2 Design Patterns
+
+Any design patterns that can do what you need? Maybe use modules that do this for you.
+
+=head2 XS
+
+Nothing else left? Move it to C. 
+
 
 =for vim: spell
