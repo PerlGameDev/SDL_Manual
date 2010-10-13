@@ -19,28 +19,28 @@ And now we're gonna learn how to create one ourselves in Perl and SDL.
 Let's start by creating a simple screen for our Pong clone. Open a file
 in your favourite text editor and type:
 
-  #!/usr/bin/perl
-  use strict;
-  use warnings;
+	#!/usr/bin/perl
+	use strict;
+	use warnings;
 
-  use SDL;
-  use SDLx::App;
+	use SDL;
+	use SDLx::App;
 
-  # create our main screen
-  my $app = SDLx::App->new(
-               width        => 500,
-               height       => 500,
-               title        => 'My Pong Clone!',
-               dt           => 0.02,
-               exit_on_quit => 1,
-  );
+	# create our main screen
+	my $app = SDLx::App->new(
+	       width        => 500,
+	       height       => 500,
+	       title        => 'My Pong Clone!',
+	       dt           => 0.02,
+	       exit_on_quit => 1,
+	);
 
-  # let's roll!
-  $app->run;
+	# let's roll!
+	$app->run;
 
 Save this file as C<"pong.pl"> and run it by typing on the command line:
 
-  perl pong.pl
+	perl pong.pl
 
 You should see a black window entitled I<"My Pong Clone!">. In our
 L<SDLx::App> construction we also specified the width and height
