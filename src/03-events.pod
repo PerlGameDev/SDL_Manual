@@ -92,7 +92,7 @@ Exiting when the C<SDL_QUIT> event is call is a common callback so C<SDLx::App> 
 =begin programlisting
 
     use strict;
-    use warnigs;
+    use warnings;
     use SDL;
     use SDLx::App;
 
