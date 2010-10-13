@@ -84,6 +84,31 @@ show how do the processing.
 
 =end sidebar
 
+
+=head2 Exit on Quit
+
+Exiting when the C<SDL_QUIT> event is call is a common callback so C<SDLx::App> provides it for you, as a constructor option.
+
+=begin programlisting
+
+    use strict;
+    use warnigs;
+    use SDL;
+    use SDLx::App;
+
+    my $app = SDLx::App->new( w => 200, h => 200, d => 32, 
+			      title => "Quit Events", 
+			     exit_on_quit => 1); 
+
+	#exit_on_quit option exits when SDL_QUIT is processed
+
+    #Then we will run the app
+    #which will start a loop for keeping the app alive
+    $app->run();
+  
+=end programlisting
+
+
 =head1 Small Paint: Input Devices
 
 SDL events also allow us to handle input from various devices. To demonstrate two of the common devices, lets make a simple paint program.
