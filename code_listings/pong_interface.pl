@@ -20,16 +20,17 @@ my $app = SDLx::App->new(
 
 # create our game objects
 my $score = SDLx::Text->new( font => 'font.ttf', h_align => 'center' );
-my ( $p1_score, $p2_score ) = ( 0, 0 );
 
-my $paddle1 = {
-    rect => SDLx::Rect->new( 10, $app->h / 2, 10, 40 ),
-    v_y  => 0,
+my $player1 = {
+    paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40 ),
+    v_y    => 0,
+    score  => 0,
 };
 
-my $paddle2 = {
-    rect => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40 ),
-    v_y  => 0,
+my $player2 = {
+    paddle => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40 ),
+    v_y    => 0,
+    score  => 0,
 };
 
 my $ball = {
@@ -43,29 +44,29 @@ reset_game();
 
 
 sub check_collision {
-    my ( $ball, $paddle ) = @_;
+    my ( $ball, $player) = @_;
 
-    my $ball_rect   = $ball->{rect};
-    my $paddle_rect = $paddle->{rect};
+    my $ball_rect = $ball->{rect};
+    my $paddle = $player->{paddle};
 
-    return if $ball_rect->bottom < $paddle_rect->top;
-    return if $ball_rect->top    > $paddle_rect->bottom;
-    return if $ball_rect->right  < $paddle_rect->left;
-    return if $ball_rect->left   > $paddle_rect->right;
+    return if $ball_rect->bottom < $paddle->top;
+    return if $ball_rect->top    > $paddle->bottom;
+    return if $ball_rect->right  < $paddle->left;
+    return if $ball_rect->left   > $paddle->right;
 
     # reverse horizontal speed
     $ball->{v_x} *= -1;
 
     # mess a bit with vertical speed
-    $ball->{v_y} += $paddle->{v_y} * rand 1;
+    $ball->{v_y} += $player->{v_y} * rand 1;
 
     # collision came from the left!
-    if ( $ball_rect->x < $paddle_rect->x ) {
-        $ball_rect->x( $paddle_rect->x - $ball_rect->w );
+    if ( $ball_rect->x < $paddle->x ) {
+        $ball_rect->x( $paddle->x - $ball_rect->w );
     }
     # collision came from the right
     else {
-        $ball_rect->x( $paddle_rect->x + $paddle_rect->w );
+        $ball_rect->x( $paddle->x + $paddle->w );
     }
     return 1;
 }
@@ -77,8 +78,8 @@ sub reset_game {
     $ball->{v_x} = (2 + rand 1) * (rand 2 > 1 ? -1 : 1);
     $ball->{v_y} = (2 + rand 1) * (rand 2 > 1 ? -1 : 1);
 
-    $paddle1->{rect}->y( $app->w / 2 );
-    $paddle2->{rect}->y( $app->w / 2 );
+    $player1->{paddle}->y( $app->w / 2 );
+    $player2->{paddle}->y( $app->w / 2 );
 }
 
 # handles keyboard events
@@ -88,17 +89,17 @@ $app->add_event_handler(
 
         if ( $event->type == SDL_KEYDOWN ) {
             if ( $event->key_sym == SDLK_UP ) {
-                $paddle1->{v_y} = -2;
+                $player1->{v_y} = -2;
             }
             elsif ( $event->key_sym == SDLK_DOWN ) {
-                $paddle1->{v_y} = 2;
+                $player1->{v_y} = 2;
             }
         }
         elsif ( $event->type == SDL_KEYUP ) {
             if (   $event->key_sym == SDLK_UP
                 or $event->key_sym == SDLK_DOWN )
             {
-                $paddle1->{v_y} = 0;
+                $player1->{v_y} = 0;
             }
         }
     }
@@ -126,7 +127,7 @@ $app->add_move_handler( sub {
 
     # collision to the right: player 1 score!
     elsif ( $x >= ( $app->w - $ball->{rect}->w ) ) {
-        $p1_score++;
+        $player1->{score}++;
         reset_game();
         return;
 
@@ -134,7 +135,7 @@ $app->add_move_handler( sub {
 
     # collision to the left: player 2 score!
     elsif ( $x <= 0 ) {
-        $p2_score++;
+        $player2->{score}++;
         reset_game();
         return;
     }
@@ -142,14 +143,17 @@ $app->add_move_handler( sub {
     $ball->{rect}->y($y);
 
     # collisions with players
-    check_collision($ball, $paddle1)
-        or check_collision($ball, $paddle2);
+    check_collision($ball, $player1)
+        or check_collision($ball, $player2);
 });
 
 # handles the player's paddle movement
 $app->add_move_handler( sub {
     my ( $step, $app ) = @_;
-    $paddle1->{rect}->y( $paddle1->{rect}->y + ( $paddle1->{v_y} * $step ) );
+    my $paddle = $player1->{paddle};
+    $player1->{paddle}->y( 
+       $player1->{paddle}->y + ( $player1->{v_y} * $step )
+    );
 });
 
 
@@ -157,17 +161,19 @@ $app->add_move_handler( sub {
 $app->add_move_handler( sub {
     my ( $step, $app ) = @_;
 
-    if ( $ball->{rect}->y > $paddle2->{rect}->y ) {
-        $paddle2->{v_y} = 2;
+    if ( $ball->{rect}->y > $player2->{paddle}->y ) {
+        $player2->{v_y} = 2;
     }
-    elsif ( $ball->{rect}->y < $paddle2->{rect}->y ) {
-        $paddle2->{v_y} = -2;
+    elsif ( $ball->{rect}->y < $player2->{paddle}->y ) {
+        $player2->{v_y} = -2;
     }
     else {
-        $paddle2->{v_y} = 0;
+        $player2->{v_y} = 0;
     }
 
-    $paddle2->{rect}->y( $paddle2->{rect}->y + ( $paddle2->{v_y} * $step ) );
+    $player2->{paddle}->y(
+        $player2->{paddle}->y + ( $player2->{v_y} * $step )
+    );
 });
 
 
@@ -181,11 +187,13 @@ $app->add_show_handler(
         $app->draw_rect( $ball->{rect}, 0xFF0000FF );
 
         # then we render each paddle
-        $app->draw_rect( $paddle1->{rect}, 0xFF0000FF );
-        $app->draw_rect( $paddle2->{rect}, 0xFF0000FF );
+        $app->draw_rect( $player1->{paddle}, 0xFF0000FF );
+        $app->draw_rect( $player2->{paddle}, 0xFF0000FF );
 
         # ... and each player's score!
-        $score->write_to( $app, "$p1_score x $p2_score" );
+        $score->write_to( $app,
+           $player1->{score} . ' x ' . $player2->{score}
+        );
 
         # finally, we update the screen
         $app->update;
