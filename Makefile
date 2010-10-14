@@ -19,7 +19,9 @@ else
     src/06-tetris.pod \
     src/07-music_and_sound.pod \
     src/08-CPAN.pod \
-    src/09-profiling.pod 
+    src/09-profiling.pod \
+    src/10-XS_effects.pod \
+    src/11-PDL_OpenGL.pod
  
 endif
 

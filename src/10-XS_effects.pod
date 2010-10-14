@@ -1,20 +1,15 @@
-=head0 The Basics
+=head0 Pixel Effects
 
-Making a screen:
+=head1 Ripple Effect
 
-=begin programlisting
+Lets try this from perl.
 
-    use SDL:
-    use SDLx::App;
+=head2 Color in Detail
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+Fiddling Bits.
 
-This makes a screen as below:
+=head1 Moving it to XS
 
-WIP
+Making it usable at least.
 
 =for vim: spell

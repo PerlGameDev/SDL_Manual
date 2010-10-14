@@ -1,20 +1,27 @@
-=head0 The Basics
+=head0 Additional Modules
 
-Making a screen:
+=head1 PDL
 
-=begin programlisting
+Fast calculations in Perl.
 
-    use SDL:
-    use SDLx::App;
+=head2 Using the Piddle
 
-    SDLx::App->new();
-  
-    sleep( 2 );
-    
-=end programlisting
+Some example here
 
-This makes a screen as below:
+=head2 Connecting to SDL
 
-WIP
+Connect the SDL here.
+
+=head1 OpenGL
+
+Perl OpenGL
+
+=head2 Texturing
+
+Using textures for OpenGL.
+
+=head3 SDL surfaces as textures
+
+Example.
 
 =for vim: spell
