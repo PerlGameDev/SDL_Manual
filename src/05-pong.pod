@@ -44,14 +44,56 @@ Save this file as C<"pong.pl"> and run it by typing on the command line:
 
 You should see a black window entitled I<"My Pong Clone!">. In our
 L<SDLx::App> construction we also specified the width and height
-values of our window to 500 pixels each, and set a time interval (dt) of
-0.02 for the game loop, as explained before. There is a new argument,
-though: C<exit_on_quit>. This is a shortcut provided by C<SDLx::App> to
-automatically finish up and exit the app should it receive a C<SDL_QUIT>
-event, like when the user closes the window with the mouse.
+values of our window to 500 pixels each, set a time interval (dt) of
+0.02 for the game loop, and let C<SDLx::App> handle SDL_QUIT events for us.
+If any of the arguments above came as a surprise to you, please refer
+to previous chapters for an in-depth explanation.
 
 
-=head2 Paddles and Balls
+=head2 Game Objects
+
+There are three main game objects in Pong: the player's paddle, the enemy's
+paddle, and a bouncing ball.
+
+Paddles are rectangles moving vertically on the screen, and can be easily
+represented with L<SDLx::Rect> objects. So let's add a simple hash reference
+on line 16 of the code above to store our player's paddle, right after C<$app>
+instantiation.
+
+We'll use a hash reference instead of just assigning a C<SDLx::Rect> to a
+variable because it will allow us to store more information later on. If you
+were building a more complex game, you should consider using actual objects.
+For now, a simple hash reference will suffice:
+
+  my $player1 = {
+       paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
+  };
+
+As we know, C<SDLx::Rect> objects receive four arguments: x, y, width and
+height, in this order. So in the code above we're creating a 10x40 paddle rect
+for player 1, on the left side of the screen (C<< x = 10 >>) and somewhat in the
+center (C<< h = $app->h / 2 >>).
+
+Let's do the same for player 2, adding the following code right after the one
+above:
+
+  my $player2 = {
+       paddle => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40),
+  };
+
+Player 2's paddle, also 10x40, needs to go to the right end of the screen. So
+we make its C<x> position as our screen's width minus 20. Since the paddle has
+a width of 10 itself and the C<x> position refers to the rect's top-left corner,
+it will leave a space of 10 pixels between its rightmost side and the end of
+the screen, just like we did for player 1.
+
+Finally, the bouncing ball, a 10x10 rect in the middle of the screen:
+
+  my $ball = {
+      rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 );
+  };
+
+
 
 =head3 Collisions
 
