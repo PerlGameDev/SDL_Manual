@@ -98,6 +98,41 @@ Finally, the bouncing ball, a 10x10 rect in the middle of the screen:
   +     rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 ),
   + };
 
+=head3 Show me what you got!
+
+Now that we created our game objects, let's add a 'show' handler to render
+them on the screen:
+
+  + $app->add_show_handler(
+  +     sub {
+  +         # first, we clear the screen
+  +         $app->draw_rect( [0, 0, $app->w, $app->h], 0x000000FF );
+  + 
+  +         # then we render the ball
+  +         $app->draw_rect( $ball->{rect}, 0xFF0000FF );
+  + 
+  +         # ... and each paddle
+  +         $app->draw_rect( $player1->{paddle}, 0xFF0000FF );
+  +         $app->draw_rect( $player2->{paddle}, 0xFF0000FF );
+  + 
+  +         # finally, we update the screen
+  +         $app->update;
+  +     }
+  + );
+
+Our approach is rather simple here, "clearing" the screen by paiting a
+black rectangle the size of the screen, then using C<< draw_rect() >> calls
+to paint opaque red (C<< 0xFF0000FF >>) rectangles in each object's position.
+
+
+The result can be seen on the screenshot below:
+
+=for figure
+       \includegraphics[width=0.5\textwidth]{../src/images/pong1.png}
+        \caption{First view of our Pong clone}
+         \label{fig:pong1}
+
+
 
 =head3 Collisions
 
