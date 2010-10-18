@@ -196,4 +196,8 @@ to positive and negative velocities for our paddle
 
 =head3 Mapping Keys 
 
+=head1 Author
+
+This chapter's content was provide graciously by Breno G. de Oliveira C<garu>. 
+
 =for vim: spell
