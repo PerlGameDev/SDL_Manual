@@ -16,7 +16,7 @@ And now we're gonna learn how to create one ourselves in Perl and SDL.
 
 =head2 Getting our feet wet
 
-Let's start by creating a simple screen for our Pong clone. Open a file
+Let's start by making a simple screen for our Pong clone. Open a file
 in your favourite text editor and type:
 
 	#!/usr/bin/perl
@@ -42,10 +42,9 @@ Save this file as C<"pong.pl"> and run it by typing on the command line:
 
 	perl pong.pl
 
-You should see a black window entitled I<"My Pong Clone!">. In our
-L<SDLx::App> construction we also specified the width and height
-values of our window to 500 pixels each, set a time interval (dt) of
-0.02 for the game loop, and let C<SDLx::App> handle SDL_QUIT events for us.
+You should see a 500x500 black window entitled I<"My Pong Clone!">. In our
+L<SDLx::App> construction we also set a time interval (dt) of
+0.02 for the game loop, and let it handle SDL_QUIT events for us.
 If any of the arguments above came as a surprise to you, please refer
 to previous chapters for an in-depth explanation.
 
