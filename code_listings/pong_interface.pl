@@ -151,9 +151,8 @@ $app->add_move_handler( sub {
 $app->add_move_handler( sub {
     my ( $step, $app ) = @_;
     my $paddle = $player1->{paddle};
-    $player1->{paddle}->y( 
-       $player1->{paddle}->y + ( $player1->{v_y} * $step )
-    );
+
+    $paddle->y( $paddle->y + ( $player1->{v_y} * $step ));
 });
 
 

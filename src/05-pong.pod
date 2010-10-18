@@ -19,24 +19,24 @@ And now we're gonna learn how to create one ourselves in Perl and SDL.
 Let's start by making a simple screen for our Pong clone. Open a file
 in your favourite text editor and type:
 
-  #!/usr/bin/perl
-  use strict;
-  use warnings;
-  
-  use SDL;
-  use SDLx::App;
-  
-  # create our main screen
-  my $app = SDLx::App->new(
-      width        => 500,
-      height       => 500,
-      title        => 'My Pong Clone!',
-      dt           => 0.02,
-      exit_on_quit => 1,
-  );
-  
-  # let's roll!
-  $app->run;
+  + #!/usr/bin/perl
+  + use strict;
+  + use warnings;
+  + 
+  + use SDL;
+  + use SDLx::App;
+  + 
+  + # create our main screen
+  + my $app = SDLx::App->new(
+  +     width        => 500,
+  +     height       => 500,
+  +     title        => 'My Pong Clone!',
+  +     dt           => 0.02,
+  +     exit_on_quit => 1,
+  + );
+  + 
+  + # let's roll!
+  + $app->run;
 
 Save this file as C<"pong.pl"> and run it by typing on the command line:
 
@@ -55,18 +55,24 @@ There are three main game objects in Pong: the player's paddle, the enemy's
 paddle, and a bouncing ball.
 
 Paddles are rectangles moving vertically on the screen, and can be easily
-represented with L<SDLx::Rect> objects. So let's add a simple hash reference
-on line 16 of the code above to store our player's paddle, right after
-C<$app>'s instantiation.
+represented with L<SDLx::Rect> objects. First, put C<SDLx::Rect> in your
+module's declarations:
+
+    use SDL;
+    use SDLx::App;
+  + use SDLx::Rect;
+
+Now let's add a simple hash reference in our code to store our player's
+paddle, between the call to C<< SDLx::App->new() >> and C<< $app->run >>.
 
 We'll use a hash reference instead of just assigning a C<SDLx::Rect> to a
 variable because it will allow us to store more information later on. If you
 were building a more complex game, you should consider using actual objects.
 For now, a simple hash reference will suffice:
 
-  my $player1 = {
-       paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
-  };
+  + my $player1 = {
+  +      paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
+  + };
 
 As we know, C<SDLx::Rect> objects receive four arguments: x, y, width and
 height, in this order. So in the code above we're creating a 10x40 paddle rect
@@ -76,9 +82,9 @@ center (C<< y = $app->h / 2 >>).
 Let's do the same for player 2, adding the following code right after the one
 above:
 
-  my $player2 = {
-       paddle => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40),
-  };
+  + my $player2 = {
+  +      paddle => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40),
+  + };
 
 Player 2's paddle, also 10x40, needs to go to the right end of the screen. So
 we make its C<x> position as our screen's width minus 20. Since the paddle has
@@ -88,9 +94,9 @@ the screen, just like we did for player 1.
 
 Finally, the bouncing ball, a 10x10 rect in the middle of the screen:
 
-  my $ball = {
-      rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 ),
-  };
+  + my $ball = {
+  +     rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 ),
+  + };
 
 
 =head3 Collisions
