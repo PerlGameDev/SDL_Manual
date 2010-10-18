@@ -133,6 +133,52 @@ The result can be seen on the screenshot below:
          \label{fig:pong1}
 
 
+=head3 Moving the Player's Paddle
+
+It's time to let the player move the left paddle! Take a few moments to
+recap what motion is all about: changing your object's position with
+respect to time. If it's some sort of magical teleportation repositioning,
+just change the (x,y) coordinates and be gone with it. If however, we're
+talking about real motion, we need to move at a certain speed. Our paddle
+will have constant speed, so we don't need to worry about acceleration.
+Also, since it will only move vertically, we just need to add the vertical
+(y) velocity. Let's add the v_y attribute in our paddle structure:
+
+    my $player1 = {
+         paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
+  +      v_y    => 0,
+    };
+
+Ok, now we have an attribute for vertical velocity (C<v_y>) in our paddle,
+so what? How will this update the C<y> position of the paddle? Well,
+velocity is how much displacement happens in a unit of time, like 20 km/h
+or 4 m/s. In our case, the unit of time is the app's C<dt>, so all we have
+to do is move the paddle C<v_y> pixels at every cycle. Here is where
+the motion handlers come in handy:
+
+  + # handles the player's paddle movement
+  + $app->add_move_handler( sub {
+  +     my ( $step, $app ) = @_;
+  +     my $paddle = $player1->{paddle};
+  +     my $v_y    = $player1->{v_y};
+  + 
+  +     $paddle->y( $paddle->y + ( $v_y * $step ) );
+  + });
+
+If you recall previous chapters, the code above should be pretty
+straightforward. When C<v_y> is 0 at any given cycle, the paddle won't
+change its C<y> position. If, however, there is a vertical velocity,
+we update the C<y> position based on how much of the expected cycle
+time (our app's "dt") has passed. A value of 1 in C<$step> indicates a
+full cycle went through, and makes C<< $v_y * $step >> the same as
+C<< $v_y * 1 >>, thus, plain C<< $v_y >>, which is the desired
+speed for our cycle. Should the handler be called in a shorter cycle,
+we'll move only the relative factor of that.
+
+We have preset C<v_y> to zero as the paddle's initial velocity, but
+we still need to know when the user wants to move it up or down the screen.
+In order to do that, we can bind the up and down arrow keys of the keyboard
+to positive and negative velocities for our paddle
 
 =head3 Collisions
 
