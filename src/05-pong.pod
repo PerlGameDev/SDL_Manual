@@ -56,8 +56,8 @@ paddle, and a bouncing ball.
 
 Paddles are rectangles moving vertically on the screen, and can be easily
 represented with L<SDLx::Rect> objects. So let's add a simple hash reference
-on line 16 of the code above to store our player's paddle, right after C<$app>
-instantiation.
+on line 16 of the code above to store our player's paddle, right after
+C<$app>'s instantiation.
 
 We'll use a hash reference instead of just assigning a C<SDLx::Rect> to a
 variable because it will allow us to store more information later on. If you
@@ -71,7 +71,7 @@ For now, a simple hash reference will suffice:
 As we know, C<SDLx::Rect> objects receive four arguments: x, y, width and
 height, in this order. So in the code above we're creating a 10x40 paddle rect
 for player 1, on the left side of the screen (C<< x = 10 >>) and somewhat in the
-center (C<< h = $app->h / 2 >>).
+center (C<< y = $app->h / 2 >>).
 
 Let's do the same for player 2, adding the following code right after the one
 above:
