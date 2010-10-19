@@ -142,7 +142,7 @@ just change the (x,y) coordinates and be gone with it. If however, we're
 talking about real motion, we need to move at a certain speed. Our paddle
 will have constant speed, so we don't need to worry about acceleration.
 Also, since it will only move vertically, we just need to add the vertical
-(y) velocity. Let's add the v_y attribute in our paddle structure:
+(y) velocity. Let's call it C<v_y> and add it to our paddle structure:
 
     +my $player1 = {
     +     paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
