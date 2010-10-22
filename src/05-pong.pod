@@ -19,24 +19,24 @@ And now we're gonna learn how to create one ourselves in Perl and SDL.
 Let's start by making a simple screen for our Pong clone. Open a file
 in your favourite text editor and type:
 
-     #!/usr/bin/perl
-     use strict;
-     use warnings;
-     
-     use SDL;
-     use SDLx::App;
-     
-     # create our main screen
-     my $app = SDLx::App->new(
-         width        => 500,
-         height       => 500,
-         title        => 'My Pong Clone!',
-         dt           => 0.02,
-         exit_on_quit => 1,
-     );
-     
-     # let's roll!
-     $app->run;
+    + #!/usr/bin/perl
+    + use strict;
+    + use warnings;
+    + 
+    + use SDL;
+    + use SDLx::App;
+    + 
+    + # create our main screen
+    + my $app = SDLx::App->new(
+    +     width        => 500,
+    +     height       => 500,
+    +     title        => 'My Pong Clone!',
+    +     dt           => 0.02,
+    +     exit_on_quit => 1,
+    + );
+    + 
+    + # let's roll!
+    + $app->run;
 
 Save this file as C<"pong.pl"> and run it by typing on the command line:
 
@@ -58,9 +58,9 @@ Paddles are rectangles moving vertically on the screen, and can be easily
 represented with L<SDLx::Rect> objects. First, put C<SDLx::Rect> in your
 module's declarations:
 
-    use SDL;
-    use SDLx::App;
-     use SDLx::Rect;
+    +use SDL;
+    +use SDLx::App;
+    + use SDLx::Rect;
 
 Now let's add a simple hash reference in our code to store our player's
 paddle, between the call to C<< SDLx::App->new() >> and C<< $app->run >>.
@@ -70,9 +70,9 @@ variable because it will allow us to store more information later on. If you
 were building a more complex game, you should consider using actual objects.
 For now, a simple hash reference will suffice:
 
-     my $player1 = {
-          paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
-     };
+    + my $player1 = {
+    +      paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
+    + };
 
 As we know, C<SDLx::Rect> objects receive four arguments: x, y, width and
 height, in this order. So in the code above we're creating a 10x40 paddle rect
@@ -82,9 +82,9 @@ center (C<< y = $app->h / 2 >>).
 Let's do the same for player 2, adding the following code right after the one
 above:
 
-     my $player2 = {
-          paddle => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40),
-     };
+    + my $player2 = {
+    +      paddle => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40),
+    + };
 
 Player 2's paddle, also 10x40, needs to go to the right end of the screen. So
 we make its C<x> position as our screen's width minus 20. Since the paddle has
@@ -94,31 +94,31 @@ the screen, just like we did for player 1.
 
 Finally, the bouncing ball, a 10x10 rect in the middle of the screen:
 
-     my $ball = {
-         rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 ),
-     };
+    + my $ball = {
+    +     rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 ),
+    + };
 
 =head3 Show me what you got!
 
 Now that we created our game objects, let's add a 'show' handler to render
 them on the screen:
 
-     $app->add_show_handler(
-         sub {
-             # first, we clear the screen
-             $app->draw_rect( [0, 0, $app->w, $app->h], 0x000000FF );
-     
-             # then we render the ball
-             $app->draw_rect( $ball->{rect}, 0xFF0000FF );
-     
-             # ... and each paddle
-             $app->draw_rect( $player1->{paddle}, 0xFF0000FF );
-             $app->draw_rect( $player2->{paddle}, 0xFF0000FF );
-     
-             # finally, we update the screen
-             $app->update;
-         }
-     );
+    + $app->add_show_handler(
+    +     sub {
+    +         # first, we clear the screen
+    +         $app->draw_rect( [0, 0, $app->w, $app->h], 0x000000FF );
+    + 
+    +         # then we render the ball
+    +         $app->draw_rect( $ball->{rect}, 0xFF0000FF );
+    + 
+    +         # ... and each paddle
+    +         $app->draw_rect( $player1->{paddle}, 0xFF0000FF );
+    +         $app->draw_rect( $player2->{paddle}, 0xFF0000FF );
+    + 
+    +         # finally, we update the screen
+    +         $app->update;
+    +     }
+    + );
 
 Our approach is rather simple here, "clearing" the screen by paiting a
 black rectangle the size of the screen, then using C<< draw_rect() >> calls
@@ -128,9 +128,9 @@ to paint opaque red (C<< 0xFF0000FF >>) rectangles in each object's position.
 The result can be seen on the screenshot below:
 
 =for figure
-       \includegraphics[width=0.5\textwidth]{../src/images/pong1.png}
-        \caption{First view of our Pong clone}
-         \label{fig:pong1}
+    +   \includegraphics[width=0.5\textwidth]{../src/images/pong1.png}
+    +    \caption{First view of our Pong clone}
+    +     \label{fig:pong1}
 
 
 =head3 Moving the Player's Paddle
@@ -144,10 +144,10 @@ will have constant speed, so we don't need to worry about acceleration.
 Also, since it will only move vertically, we just need to add the vertical
 (y) velocity. Let's add the v_y attribute in our paddle structure:
 
-    my $player1 = {
-         paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
-          v_y    => 0,
-    };
+    +my $player1 = {
+    +     paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
+    +      v_y    => 0,
+    +};
 
 Ok, now we have an attribute for vertical velocity (C<v_y>) in our paddle,
 so what? How will this update the C<y> position of the paddle? Well,
@@ -156,14 +156,14 @@ or 4 m/s. In our case, the unit of time is the app's C<dt>, so all we have
 to do is move the paddle C<v_y> pixels at every cycle. Here is where
 the motion handlers come in handy:
 
-     # handles the player's paddle movement
-     $app->add_move_handler( sub {
-         my ( $step, $app ) = @_;
-         my $paddle = $player1->{paddle};
-         my $v_y    = $player1->{v_y};
-     
-         $paddle->y( $paddle->y + ( $v_y * $step ) );
-     });
+    + # handles the player's paddle movement
+    + $app->add_move_handler( sub {
+    +     my ( $step, $app ) = @_;
+    +     my $paddle = $player1->{paddle};
+    +     my $v_y    = $player1->{v_y};
+    + 
+    +     $paddle->y( $paddle->y + ( $v_y * $step ) );
+    + });
 
 If you recall previous chapters, the code above should be pretty
 straightforward. When C<v_y> is 0 at any given cycle, the paddle won't
