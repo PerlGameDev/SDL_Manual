@@ -1,5 +1,9 @@
 =head0 Sound and Music
 
+Sound and Music in SDL is handled by the C<Audio> and C<SDL_Mixer> components. C<Audio> is provided with the Core SDL Library and only supports wav files. C<SDL_Mixer> supports more audio file formats and has additional features. 
+
+Similarly to video in SDL, there are several way for perl developers to access the Sound components of SDL. For the plain C<Audio> component the C<SDL::Audio> and related modules are available. C<SDL_Mixer> is supported with th C<SDL::Mixer> module. There is currently a C<SDLx::Sound> module in the work, but not completed at the time of writing this manual. For that reason this chapter will use C<SDL::Audio> and C<SDL::Mixer>.  
+
 =head1 Streaming Music
 
 Games need background music to set the mood. 
