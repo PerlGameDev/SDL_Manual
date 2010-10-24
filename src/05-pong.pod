@@ -175,10 +175,49 @@ C<< $v_y * 1 >>, thus, plain C<< $v_y >> - which is the desired
 speed for our cycle. Should the handler be called in a shorter cycle,
 we'll move only the relative factor of that.
 
-We have preset C<v_y> to zero as the paddle's initial velocity, but
-we still need to know when the user wants to move it up or down the screen.
-In order to do that, we can bind the up and down arrow keys of the keyboard
-to positive and negative velocities for our paddle
+We have preset C<v_y> to zero as the paddle's initial velocity, so our
+player's paddle won't go haywire when the game starts. But we still need
+to know when the user wants to move it up or down the screen. In order
+to do that, we can bind the up and down arrow keys of the keyboard to
+positive and negative velocities for our paddle, through an event hook:
+
+   + # handles keyboard events
+   + $app->add_event_handler(
+   +     sub {
+   +         my ( $event, $app ) = @_;
+   +
+   +         # user pressing a key
+   +         if ( $event->type == SDL_KEYDOWN ) {
+   +
+   +             # up arrow key means going up (negative vel)
+   +             if ( $event->key_sym == SDLK_UP ) {
+   +                 $player1->{v_y} = -2;
+   +             }
+   +             # down arrow key means going down (positive vel)
+   +             elsif ( $event->key_sym == SDLK_DOWN ) {
+   +                 $player1->{v_y} = 2;
+   +             }
+   +         }
+   +         # user releasing a key
+   +         elsif ( $event->type == SDL_KEYUP ) {
+   +
+   +             # up or down arrow keys released, stop the paddle
+   +             if (
+   +                     $event->key_sym == SDLK_UP
+   +                  or $event->key_sym == SDLK_DOWN
+   +              ) {
+   +                 $player1->{v_y} = 0;
+   +             }
+   +         }
+   +     }
+   + );
+
+Again, nothing new here. Whenever the user presses the up arrow key, we
+want the paddle to go up. Keep in mind our origin point (0,0) in SDL is
+the top-left corner, so a negative C<v_y> will decrease the paddle's C<y>
+and send us B<up> the screen. Alternatively, we add a positive value to
+C<v_y> whenever the user presses the down arrow key, so the paddle will
+move B<down>, away from the top of the screen.
 
 =head3 Collisions
 
