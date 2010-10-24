@@ -153,7 +153,7 @@ Ok, now we have an attribute for vertical velocity (C<v_y>) in our paddle,
 so what? How will this update the C<y> position of the paddle? Well,
 velocity is how much displacement happens in a unit of time, like 20 km/h
 or 4 m/s. In our case, the unit of time is the app's C<dt>, so all we have
-to do is move the paddle C<v_y> pixels at every cycle. Here is where
+to do is move the paddle C<v_y> pixels per C<dt>. Here is where
 the motion handlers come in handy:
 
     + # handles the player's paddle movement
@@ -166,12 +166,12 @@ the motion handlers come in handy:
     + });
 
 If you recall previous chapters, the code above should be pretty
-straightforward. When C<v_y> is 0 at any given cycle, the paddle won't
+straightforward. When C<v_y> is 0 at any given run cycle, the paddle won't
 change its C<y> position. If, however, there is a vertical velocity,
 we update the C<y> position based on how much of the expected cycle
 time (our app's "dt") has passed. A value of 1 in C<$step> indicates a
 full cycle went through, and makes C<< $v_y * $step >> the same as
-C<< $v_y * 1 >>, thus, plain C<< $v_y >>, which is the desired
+C<< $v_y * 1 >>, thus, plain C<< $v_y >> - which is the desired
 speed for our cycle. Should the handler be called in a shorter cycle,
 we'll move only the relative factor of that.
 
