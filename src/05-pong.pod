@@ -217,7 +217,8 @@ want the paddle to go up. Keep in mind our origin point (0,0) in SDL is
 the top-left corner, so a negative C<v_y> will decrease the paddle's C<y>
 and send us B<up> the screen. Alternatively, we add a positive value to
 C<v_y> whenever the user presses the down arrow key, so the paddle will
-move B<down>, away from the top of the screen.
+move B<down>, away from the top of the screen. When the user releases
+either the up or down arrow keys, we stop the paddle by setting C<v_y> to 0.
 
 =head3 Collisions
 
