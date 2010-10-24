@@ -133,7 +133,7 @@ The result can be seen on the screenshot below:
          \label{fig:pong1}
 
 
-=head3 Moving the Player's Paddle
+=head2 Moving the Player's Paddle
 
 It's time to let the player move the left paddle! Take a few moments to
 recap what motion is all about: changing your object's position with
@@ -219,6 +219,92 @@ and send us B<up> the screen. Alternatively, we add a positive value to
 C<v_y> whenever the user presses the down arrow key, so the paddle will
 move B<down>, away from the top of the screen. When the user releases
 either the up or down arrow keys, we stop the paddle by setting C<v_y> to 0.
+
+=head2 A Bouncing Ball
+
+How about we animate the game ball? The movement itself is pretty similar
+to our paddle's, except the ball will also have a horizontal velocity
+("C<v_x>") component, letting it move all over the screen.
+
+First, we add the velocity components to our ball structure:
+
+     my $ball = {
+         rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 ),
+   +     v_x  => 2.7,
+   +     v_y  => 1.8,
+     };
+
+The ball will have an initial velocity of 2.7 horizontally, and 1.8
+vertically. Next, we create a motion handler for the ball, updating the
+ball's C<x> and C<y> position according to its speed:
+
+   + # handles the ball movement
+   + $app->add_move_handler( sub {
+   +     my ( $step, $app ) = @_;
+   +
+   +     my $x = $ball->{rect}->x + ( $ball->{v_x} * $step );
+   +     my $y = $ball->{rect}->y + ( $ball->{v_y} * $step );
+   +
+   +     $ball->{rect}->x( $x );
+   +     $ball->{rect}->y( $y );
+   +
+   + });
+
+This is just like our paddle's motion handler: we update the ball's C<x>
+and C<y> positioning on the screen according to the current velocity. If
+you are paying attention, however, you probably realized the code above is
+missing a very important piece of logic. Need a clue? Try running the game
+as it is. You'll see the ball going, going, and... gone!
+
+We need to make sure the ball is bound to the screen. That is, it needs to
+collide and bounce back whenever it reaches the top and bottom edges of the
+screen. So let's change our ball's motion handler a bit, adding this
+functionality:
+
+     # handles the ball movement
+     $app->add_move_handler( sub {
+         my ( $step, $app ) = @_;
+    
+         my $x = $ball->{rect}->x + ( $ball->{v_x} * $step );
+         my $y = $ball->{rect}->y + ( $ball->{v_y} * $step );
+ 
+   +     # collision to the bottom of the screen
+   +     if ( ($y + $ball->{rect}->h) > $app->h ) {
+   +         $y = $app->h - $ball->{rect}->h;
+   +         $ball->{v_y} *= -1;
+   +     }
+   +
+   +     # collision to the top of the screen
+   +     elsif ( $y <= 0 ) {
+   +         $y = 0;
+   +         $ball->{v_y} *= -1;
+   +     }
+  
+        $ball->{rect}->x( $x );
+        $ball->{rect}->y( $y );
+   
+    });
+
+The first thing we do in our motion handler is grab the C<x> and C<y>
+(top left) values that will be given to the ball at that cycle, as C<$x>
+and C<$y> respectively. If one of these values would take the ball totally
+or partially off the screen, we replace it with the farthest position
+possible (making it "touch" that edge of the screen) and reverse C<v_y>,
+so it will go the opposite way on the next cycle, bouncing back into the
+screen.
+
+For the top of the screen, we just need to check if C<$y> is lower or equal
+to 0. But to check if the ball hit the bottom of the screen, we must
+figure out where the ball's bottom will be. Since this can be calculated as
+ball's top (C<$y>) + ball's height, we see if that value doesn't go
+beyond the screen's height itself. If it does, we fix C<$y> so that the
+ball touches the very edge of the screen, which is its height minus the
+ball's own height.
+
+So far, so good. But what should happen when the ball hits the left or
+right sides of the screen?
+
+
 
 =head3 Collisions
 
