@@ -205,7 +205,7 @@ positive and negative velocities for our paddle, through an event hook:
    +             if (
    +                     $event->key_sym == SDLK_UP
    +                  or $event->key_sym == SDLK_DOWN
-   +              ) {
+   +             ) {
    +                 $player1->{v_y} = 0;
    +             }
    +         }
