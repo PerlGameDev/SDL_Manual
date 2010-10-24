@@ -254,13 +254,15 @@ First, we add the velocity components to our ball structure:
 
      my $ball = {
          rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 ),
-   +     v_x  => 2.7,
+   +     v_x  => -2.7,
    +     v_y  => 1.8,
      };
 
-The ball will have an initial velocity of 2.7 horizontally, and 1.8
-vertically. Next, we create a motion handler for the ball, updating the
-ball's C<x> and C<y> position according to its speed:
+The ball will have an initial velocity of -2.7 horizontally (just as a
+negative vertical velocity moves the object up, a negative horizontal
+velocity will move it towards the left side of the screen), and 1.8
+vertically. Next, we create a motion handler for the ball, updating
+the ball's C<x> and C<y> position according to its speed:
 
    + # handles the ball movement
    + $app->add_move_handler( sub {
