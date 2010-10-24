@@ -58,8 +58,8 @@ Paddles are rectangles moving vertically on the screen, and can be easily
 represented with L<SDLx::Rect> objects. First, put C<SDLx::Rect> in your
 module's declarations:
 
-    +use SDL;
-    +use SDLx::App;
+    use SDL;
+    use SDLx::App;
     + use SDLx::Rect;
 
 Now let's add a simple hash reference in our code to store our player's
@@ -128,9 +128,9 @@ to paint opaque red (C<< 0xFF0000FF >>) rectangles in each object's position.
 The result can be seen on the screenshot below:
 
 =for figure
-    +   \includegraphics[width=0.5\textwidth]{../src/images/pong1.png}
-    +    \caption{First view of our Pong clone}
-    +     \label{fig:pong1}
+       \includegraphics[width=0.5\textwidth]{../src/images/pong1.png}
+        \caption{First view of our Pong clone}
+         \label{fig:pong1}
 
 
 =head3 Moving the Player's Paddle
@@ -144,10 +144,10 @@ will have constant speed, so we don't need to worry about acceleration.
 Also, since it will only move vertically, we just need to add the vertical
 (y) velocity. Let's call it C<v_y> and add it to our paddle structure:
 
-    +my $player1 = {
-    +     paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
+      my $player1 = {
+           paddle => SDLx::Rect->new( 10, $app->h / 2, 10, 40),
     +      v_y    => 0,
-    +};
+      };
 
 Ok, now we have an attribute for vertical velocity (C<v_y>) in our paddle,
 so what? How will this update the C<y> position of the paddle? Well,
