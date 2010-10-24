@@ -160,7 +160,7 @@ the motion handlers come in handy:
     + $app->add_move_handler( sub {
     +     my ( $step, $app ) = @_;
     +     my $paddle = $player1->{paddle};
-    +     my $v_y    = $player1->{v_y};
+    +     my $v_y = $player1->{v_y};
     + 
     +     $paddle->y( $paddle->y + ( $v_y * $step ) );
     + });
@@ -174,6 +174,30 @@ full cycle went through, and makes C<< $v_y * $step >> the same as
 C<< $v_y * 1 >>, thus, plain C<< $v_y >> - which is the desired
 speed for our cycle. Should the handler be called in a shorter cycle,
 we'll move only the relative factor of that.
+
+=head3 Player 2? Rinse and repeat
+
+We're not going to worry at this point about moving your nemesis' paddle,
+but since it uses the same motion mechanics of our player's, it won't
+hurt to prepare it:
+
+      my $player2 = {
+           paddle => SDLx::Rect->new( $app->w - 20, $app->h / 2, 10, 40),
+    +      v_y    => 0,
+      };
+
+And add a simple motion handler, just like our player's:
+
+    + # handles AI's paddle movement
+    + $app->add_move_handler( sub {
+    +     my ( $step, $app ) = @_;
+    +     my $paddle = $player2->{paddle};
+    +     my $v_y = $player2->{v_y};
+    +
+    +     $paddle->y( $paddle->y + ( $v_y * $step ) );
+    + });
+
+=head3 Back to our Player: Move that Paddle!
 
 We have preset C<v_y> to zero as the paddle's initial velocity, so our
 player's paddle won't go haywire when the game starts. But we still need
@@ -300,9 +324,6 @@ ball's top (C<$y>) + ball's height, we see if that value doesn't go
 beyond the screen's height itself. If it does, we fix C<$y> so that the
 ball touches the very edge of the screen, which is its height minus the
 ball's own height.
-
-So far, so good. But what should happen when the ball hits the left or
-right sides of the screen?
 
 
 
