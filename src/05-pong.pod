@@ -498,8 +498,46 @@ paddle's right so they don't overlap. Then we do the exact same thing
 for the other player's paddle, except this time we set the ball's right
 to the paddle's left - since the ball is coming from the other side.
 
+=head2 Artificial Stupidity
 
-=head3 Score 
+Our Pong game is almost done now. We record the score, the ball bounces
+around, we keep track of each player's score, and we can move the left
+paddle with the up and down arrow keys. But this will be a very dull
+game unless our nemesis moves too!
+
+There are several complex algorithms to model artificial intelligence,
+but we don't have to go that far for a simple game like this. What we're
+going to do is make player2's paddle follow the ball wherever it goes,
+by adding the following to its motion handler:
+
+      # handles AI's paddle movement
+      $app->add_move_handler( sub {
+          my ( $step, $app ) = @_;
+          my $paddle = $player2->{paddle};
+          my $v_y = $player2->{v_y};
+
+    +     if ( $ball->{rect}->y > $paddle->y ) {
+    +         $player2->{v_y} = 2;
+    +     }
+    +     elsif ( $ball->{rect}->y < $paddle->y ) {
+    +         $player2->{v_y} = -2;
+    +     }
+    +     else {
+    +         $player2->{v_y} = 0;
+    +     }
+
+          $paddle->y( $paddle->y + ( $v_y * $step ) );
+      });
+
+If the ball's "C<y>" value (its top) is greater than the nemesis' paddle,
+it means the ball is below it, so we give the paddle a positive velocity,
+making it go downwards. On the other hand, if the ball has a lower "C<y>"
+value, we set the nemesis' C<v_y> to a negative value, making it go up.
+Finally, if the ball is somewhere in between those two values, we keep
+the paddle still.
+
+
+=head2 Score 
 
 =head1 Animations
 
