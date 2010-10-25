@@ -413,7 +413,7 @@ To put it in more general terms, if we have 2 rects, A and B, we can
 establish the following conditions, illustrated by the figure below:
 
 =for figure
-       \includegraphics[width=0.5\textwidth]{../src/images/collision.png}
+       \includegraphics[width=0.9\textwidth]{../src/images/collision.png}
         \caption{if B is completely to the left, right, top or bottom of A, they do NOT intersect}
          \label{fig:pong1}
 
