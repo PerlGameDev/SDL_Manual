@@ -662,7 +662,7 @@ We'll also hold the index for the current colour for each player:
     +      colour => 0,
       };
 
-Next we make it update the C<colour_id> every time the ball hits the paddle:
+Next we make it update the C<colour> every time the ball hits the paddle:
 
      # handles the ball movement
      $app->add_move_handler( sub {
@@ -714,7 +714,7 @@ Next we make it update the C<colour_id> every time the ball hits the paddle:
      });
 
 Finally, we change our 'show' handler to use the current colour referenced by
-C<colour_id>, instead of the previously hardcoded red (0xFF0000FF):
+C<colour>, instead of the previously hardcoded red (0xFF0000FF):
 
       $app->add_show_handler(
           sub {
