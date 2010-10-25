@@ -35,51 +35,28 @@ my $player2 = {
 
 my $ball = {
     rect => SDLx::Rect->new( 0, 0, 10, 10 ),
-    v_x  => 3,
-    v_y  => 1.7,
+    v_x  => -2.7,
+    v_y  => 1.8,
 };
 
 # initialize positions
 reset_game();
 
-
 sub check_collision {
-    my ( $ball, $player) = @_;
+    my ($A, $B) = @_;
 
-    my $ball_rect = $ball->{rect};
-    my $paddle = $player->{paddle};
+    return if $A->bottom < $B->top;
+    return if $A->top    > $B->bottom;
+    return if $A->right  < $B->left;
+    return if $A->left   > $B->right;
 
-    return if $ball_rect->bottom < $paddle->top;
-    return if $ball_rect->top    > $paddle->bottom;
-    return if $ball_rect->right  < $paddle->left;
-    return if $ball_rect->left   > $paddle->right;
-
-    # reverse horizontal speed
-    $ball->{v_x} *= -1;
-
-    # mess a bit with vertical speed
-    $ball->{v_y} += $player->{v_y} * rand 1;
-
-    # collision came from the left!
-    if ( $ball_rect->x < $paddle->x ) {
-        $ball_rect->x( $paddle->x - $ball_rect->w );
-    }
-    # collision came from the right
-    else {
-        $ball_rect->x( $paddle->x + $paddle->w );
-    }
+    # if we got here, we have a collision!
     return 1;
 }
 
 sub reset_game {
     $ball->{rect}->x( $app->w / 2 );
     $ball->{rect}->y( $app->h / 2 );
-
-    $ball->{v_x} = (2 + rand 1) * (rand 2 > 1 ? -1 : 1);
-    $ball->{v_y} = (2 + rand 1) * (rand 2 > 1 ? -1 : 1);
-
-    $player1->{paddle}->y( $app->w / 2 );
-    $player2->{paddle}->y( $app->w / 2 );
 }
 
 # handles keyboard events
@@ -109,42 +86,48 @@ $app->add_event_handler(
 # handles the ball movement and collisions
 $app->add_move_handler( sub {
     my ( $step, $app ) = @_;
+    my $ball_rect = $ball->{rect};
 
-    my $x = $ball->{rect}->x + ( $ball->{v_x} * $step );
-    my $y = $ball->{rect}->y + ( $ball->{v_y} * $step );
+    $ball_rect->x( $ball_rect->x + ($ball->{v_x} * $step) );
+    $ball_rect->y( $ball_rect->y + ($ball->{v_y} * $step) );
 
     # collision to the bottom of the screen
-    if ( $y >= ( $app->h - $ball->{rect}->h ) ) {
-        $y = $app->h - $ball->{rect}->h;
+    if ( $ball_rect->bottom >= $app->h ) {
+        $ball_rect->bottom( $app->h );
         $ball->{v_y} *= -1;
     }
 
     # collision to the top of the screen
-    elsif ( $y <= 0 ) {
-        $y = 0;
+    elsif ( $ball_rect->top <= 0 ) {
+        $ball_rect->top( 0 );
         $ball->{v_y} *= -1;
     }
 
     # collision to the right: player 1 score!
-    elsif ( $x >= ( $app->w - $ball->{rect}->w ) ) {
+    elsif ( $ball_rect->right >= $app->w ) {
         $player1->{score}++;
         reset_game();
         return;
-
     }
 
     # collision to the left: player 2 score!
-    elsif ( $x <= 0 ) {
+    elsif ( $ball_rect->left <= 0 ) {
         $player2->{score}++;
         reset_game();
         return;
     }
-    $ball->{rect}->x($x);
-    $ball->{rect}->y($y);
 
-    # collisions with players
-    check_collision($ball, $player1)
-        or check_collision($ball, $player2);
+    # collision with player1's paddle
+    elsif ( check_collision( $ball_rect, $player1->{paddle} )) {
+        $ball_rect->left( $player1->{paddle}->right );
+        $ball->{v_x} *= -1;
+    }
+
+    # collision with player2's paddle
+    elsif ( check_collision( $ball_rect, $player2->{paddle} )) {
+        $ball->{v_x} *= -1;
+        $ball_rect->right( $player2->{paddle}->left );
+    }
 });
 
 # handles the player's paddle movement
@@ -159,20 +142,20 @@ $app->add_move_handler( sub {
 # handles AI's paddle movement
 $app->add_move_handler( sub {
     my ( $step, $app ) = @_;
+    my $paddle = $player2->{paddle};
+    my $v_y = $player2->{v_y};
 
-    if ( $ball->{rect}->y > $player2->{paddle}->y ) {
+    if ( $ball->{rect}->y > $paddle->y ) {
         $player2->{v_y} = 2;
     }
-    elsif ( $ball->{rect}->y < $player2->{paddle}->y ) {
+    elsif ( $ball->{rect}->y < $paddle->y ) {
         $player2->{v_y} = -2;
     }
     else {
         $player2->{v_y} = 0;
     }
 
-    $player2->{paddle}->y(
-        $player2->{paddle}->y + ( $player2->{v_y} * $step )
-    );
+    $paddle->y( $paddle->y + ( $v_y * $step ) );
 });
 
 
