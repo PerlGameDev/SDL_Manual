@@ -98,6 +98,8 @@ Finally, the bouncing ball, a 10x10 rect in the middle of the screen:
     +     rect => SDLx::Rect->new( $app->w / 2, $app->h / 2, 10, 10 ),
     + };
 
+Yes, it's a "square ball", just like the original :)
+
 =head3 Show me what you got!
 
 Now that we created our game objects, let's add a 'show' handler to render
@@ -267,12 +269,10 @@ the ball's C<x> and C<y> position according to its speed:
    + # handles the ball movement
    + $app->add_move_handler( sub {
    +     my ( $step, $app ) = @_;
+   +     my $ball_rect = $ball->{rect};
    +
-   +     my $x = $ball->{rect}->x + ( $ball->{v_x} * $step );
-   +     my $y = $ball->{rect}->y + ( $ball->{v_y} * $step );
-   +
-   +     $ball->{rect}->x( $x );
-   +     $ball->{rect}->y( $y );
+   +     $ball_rect->x( $ball_rect->x + ($ball->{v_x} * $step) );
+   +     $ball_rect->y( $ball_rect->y + ($ball->{v_y} * $step) );
    + });
 
 This is just like our paddle's motion handler: we update the ball's C<x>
@@ -289,41 +289,29 @@ functionality:
      # handles the ball movement
      $app->add_move_handler( sub {
          my ( $step, $app ) = @_;
+         my $ball_rect = $ball->{rect};
     
-         my $x = $ball->{rect}->x + ( $ball->{v_x} * $step );
-         my $y = $ball->{rect}->y + ( $ball->{v_y} * $step );
+         $ball_rect->x( $ball_rect->x + ($ball->{v_x} * $step) );
+         $ball_rect->y( $ball_rect->y + ($ball->{v_y} * $step) );
  
    +     # collision to the bottom of the screen
-   +     if ( ($y + $ball->{rect}->h) > $app->h ) {
-   +         $y = $app->h - $ball->{rect}->h;
+   +     if ( $ball_rect->bottom >= $app->h ) {
+   +         $ball_rect->bottom( $app->h );
    +         $ball->{v_y} *= -1;
    +     }
    +
    +     # collision to the top of the screen
-   +     elsif ( $y <= 0 ) {
-   +         $y = 0;
+   +     elsif ( $ball_rect->top <= 0 ) {
+   +         $ball_rect->top( 0 );
    +         $ball->{v_y} *= -1;
    +     }
-  
-         $ball->{rect}->x( $x );
-         $ball->{rect}->y( $y );
-    });
+     });
 
-The first thing we do in our motion handler is grab the C<x> and C<y>
-(top left) values that will be given to the ball at that cycle, as C<$x>
-and C<$y> respectively. If one of these values would take the ball totally
-or partially off the screen, we replace it with the farthest position
-possible (making it "touch" that edge of the screen) and reverse C<v_y>,
-so it will go the opposite way on the next cycle, bouncing back into the
-screen.
-
-For the top of the screen, we just need to check if C<$y> is lower or equal
-to 0. But to check if the ball hit the bottom of the screen, we must
-figure out where the ball's bottom will be. Since this can be calculated as
-ball's top (C<$y>) + ball's height, we see if that value doesn't go
-beyond the screen's height itself. If it does, we fix C<$y> so that the
-ball touches the very edge of the screen, which is its height minus the
-ball's own height.
+If the new x (C<"left">) and y (C<"top">) values would take the ball
+totally or partially off the screen, we replace it with the farthest
+position possible (making it "touch" that edge of the screen) and
+reverse C<v_y>, so it will go the opposite way on the next cycle,
+bouncing back into the screen.
 
 =head3 He shoots... and scores!!
 
@@ -351,47 +339,45 @@ the left and right corners:
      # handles the ball movement
      $app->add_move_handler( sub {
          my ( $step, $app ) = @_;
+         my $ball_rect = $ball->{rect};
     
-         my $x = $ball->{rect}->x + ( $ball->{v_x} * $step );
-         my $y = $ball->{rect}->y + ( $ball->{v_y} * $step );
+         $ball_rect->x( $ball_rect->x + ($ball->{v_x} * $step) );
+         $ball_rect->y( $ball_rect->y + ($ball->{v_y} * $step) );
  
          # collision to the bottom of the screen
-         if ( ($y + $ball->{rect}->h) > $app->h ) {
-             $y = $app->h - $ball->{rect}->h;
+         if ( $ball_rect->bottom >= $app->h ) {
+             $ball_rect->bottom( $app->h );
+             $ball->{v_y} *= -1;
+         }
+    
+         # collision to the top of the screen
+         elsif ( $ball_rect->top <= 0 ) {
+             $ball_rect->top( 0 );
              $ball->{v_y} *= -1;
          }
    
-         # collision to the top of the screen
-         elsif ( $y <= 0 ) {
-             $y = 0;
-             $ball->{v_y} *= -1;
-         }
-
    +     # collision to the right: player 1 score!
-   +     elsif ( ($x + $ball->{rect}->w) >= $app->w ) {
+   +     elsif ( $ball_rect->right >= $app->w ) {
    +         $player1->{score}++;
    +         reset_game();
    +         return;
    +     }
    +
    +     # collision to the left: player 2 score!
-   +     elsif ( $x <= 0 ) {
+   +     elsif ( $ball_rect->left <= 0 ) {
    +         $player2->{score}++;
    +         reset_game();
    +         return;
    +     }
-  
-         $ball->{rect}->x( $x );
-         $ball->{rect}->y( $y );
-    });
+     });
 
-If the ball's right (its left (C<$x>) plus its width) hits the right end
-of the screen (the app's width), we increase player 1's score, call
-C<reset_game()> and return without updating the ball's position. If the
-ball's left hits the left end of the screen, we do the same for player 2.
+If the ball's right hits the right end of the screen (the app's width),
+we increase player 1's score, call C<reset_game()> and return without
+updating the ball's position. If the ball's left hits the left end of
+the screen, we do the same for player 2.
 
-We want the C<reset_game()> function to set the ball back on the center
-of the screen, so let's make it happen:
+We want the C<reset_game()> function called above to set the ball
+back on the center of the screen, so let's make it happen:
 
    + sub reset_game {
    +     $ball->{rect}->x( $app->w / 2 );
@@ -399,9 +385,6 @@ of the screen, so let's make it happen:
    + }
 
 
-=head3 Collisions
-
-=head2 Player
 
 =head3 Score 
 
