@@ -385,6 +385,119 @@ back on the center of the screen, so let's make it happen:
    + }
 
 
+=head2 Collision Detection: The Ball and The Paddle
+
+We already learned how to do some simple collision detection, namely
+between the ball and the edges of the screen. Now it's time to take it
+one step further and figure out how to check whether the ball and the
+paddles are overlapping one another (colliding, or rather, intersecting).
+This is done via the Separating Axis Theorem, which roughly states that
+two convex shapes in a 2D plane are B<not> intersecting if and only if we
+can place a line separating them. Since our rect objects (the ball and
+paddles) are both axis-aligned, we can simply pick one, and there will be
+only 4 possible lines to test: its left, right, top and bottom. If the
+other object is completely to the other side of any of those lines, then
+there is B<no> collision. But if all four conditions are false,
+they are intersecting.
+
+To put it in more general terms, if we have 2 rects, A and B, we can
+establish the following conditions, illustrated by the figure below:
+
+=for figure
+       \includegraphics[width=0.5\textwidth]{../src/images/collision.png}
+        \caption{if B is completely to the left, right, top or bottom of A, they do NOT intersect}
+         \label{fig:pong1}
+
+
+=over 4
+
+=item * if A's bottom side is above B's top side, then A is completely
+above B (fig. 1.1).
+
+=item * if A's top side is below B's bottom side, then A is completely
+below B (fig. 1.2).
+
+=item * if A's right side is to the left of B's left side, then A is
+completely to the left of B (fig. 1.3).
+
+=item * if A's left side is to the right of B's right side, then A is
+completely to the right of B (fig 1.4).
+
+=back
+
+Keeping in mind that our origin point (0,0) in SDL is the top-left corner,
+we can translate the rules above to the following generic
+C<check_collision()> function, receiving two rect objects and returning
+true if they collide:
+
+   + sub check_collision {
+   +     my ($A, $B) = @_;
+   +
+   +     return if $A->bottom < $B->top;
+   +     return if $A->top    > $B->bottom;
+   +     return if $A->right  < $B->left;
+   +     return if $A->left   > $B->right;
+   +
+   +     # if we got here, we have a collision!
+   +     return 1;
+   + }
+
+We can now use it in the ball's motion handler to see if it hit any
+of the paddles:
+
+     # handles the ball movement
+     $app->add_move_handler( sub {
+         my ( $step, $app ) = @_;
+         my $ball_rect = $ball->{rect};
+    
+         $ball_rect->x( $ball_rect->x + ($ball->{v_x} * $step) );
+         $ball_rect->y( $ball_rect->y + ($ball->{v_y} * $step) );
+ 
+         # collision to the bottom of the screen
+         if ( $ball_rect->bottom >= $app->h ) {
+             $ball_rect->bottom( $app->h );
+             $ball->{v_y} *= -1;
+         }
+    
+         # collision to the top of the screen
+         elsif ( $ball_rect->top <= 0 ) {
+             $ball_rect->top( 0 );
+             $ball->{v_y} *= -1;
+         }
+   
+         # collision to the right: player 1 score!
+         elsif ( $ball_rect->right >= $app->w ) {
+             $player1->{score}++;
+             reset_game();
+             return;
+         }
+    
+         # collision to the left: player 2 score!
+         elsif ( $ball_rect->left <= 0 ) {
+             $player2->{score}++;
+             reset_game();
+             return;
+         }
+
+   +     # collision with player1's paddle
+   +     elsif ( check_collision( $ball_rect, $player1->{paddle} )) {
+   +         $ball_rect->left( $player1->{paddle}->right );
+   +         $ball->{v_x} *= -1;
+   +     }
+   +
+   +     # collision with player2's paddle
+   +     elsif ( check_collision( $ball_rect, $player2->{paddle} )) {
+   +         $ball->{v_x} *= -1;
+   +         $ball_rect->right( $player2->{paddle}->left );
+   +     }
+     });
+
+That's it! If the ball hits player1's paddle, we reverse its horizontal
+velocity (C<v_x>) to make it bounce back, and set its left edge to the
+paddle's right so they don't overlap. Then we do the exact same thing
+for the other player's paddle, except this time we set the ball's right
+to the paddle's left - since the ball is coming from the other side.
+
 
 =head3 Score 
 
