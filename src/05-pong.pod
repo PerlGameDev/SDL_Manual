@@ -546,8 +546,71 @@ Finally, if the ball is somewhere in between those two values, we keep
 the paddle still.
 
 
+=head2 Cosmetics: Displaying the Score
+
+How about we display the score so the player can see who's winning?
+To render a text string in SDL, we're going to use the L<SDLx::Text>
+module, so let's add it to the beginning of our code:
+
+     use SDL;
+     use SDL::Events;
+     use SDLx::App;
+     use SDLx::Rect;
+   + use SDLx::Text;
+
+Now we need to create the score object:
+
+   + my $score = SDLx::Text->new( font => 'font.ttf', h_align => 'center' );
+
+The C<font> parameter specifies the path to a TrueType Font. Here we are
+loading the 'I<font.ttf>' file, so feel free to change this to whatever
+font you have in your system. The C<h_align> parameter lets us choose
+a horizontal alignment for the text we put in the object. It defaults to
+'I<left>', so we make it 'I<center>' instead.
+
+All that's left is using this object to write the score on the screen,
+so we update our 'show' handler:
+
+      $app->add_show_handler(
+          sub {
+              # first, we clear the screen
+              $app->draw_rect( [0, 0, $app->w, $app->h], 0x000000FF );
+      
+              # then we render the ball
+              $app->draw_rect( $ball->{rect}, 0xFF0000FF );
+      
+              # ... and each paddle
+              $app->draw_rect( $player1->{paddle}, 0xFF0000FF );
+              $app->draw_rect( $player2->{paddle}, 0xFF0000FF );
+      
+    +         # ... and each player's score!
+    +         $score->write_to(
+    +             $app,
+    +             $player1->{score} . ' x ' . $player2->{score}
+    +         );
+
+              # finally, we update the screen
+              $app->update;
+          }
+      );
+
+The C<write_to()> call will write to any surface passed as the first
+argument - in our case, the app itself. The second argument, as you
+probably figured, is the string to be rendered. Note that the string's
+position is relative to the surface it writes to, and defaults to
+(0,0). Since we told it to center horizontally, it will write our text
+to the top/center, instead of top/left.
+
+The result, and our finished game, can be seen on the figure below:
+
+=for figure
+       \includegraphics[width=0.5\textwidth]{../src/images/pong2.png}
+        \caption{our finished Pong clone, in all its glory}
+         \label{fig:pong2}
+
+
 =head1 Author
 
-This chapter's content graciously provided by Breno G. de Oliveira (C<garu>). 
+This chapter's content graciously provided by Breno G. de Oliveira (C<garu>).
 
 =for vim: spell
