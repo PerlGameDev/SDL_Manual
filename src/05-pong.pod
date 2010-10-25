@@ -632,7 +632,7 @@ do things, so the ones below are not the only possible answers.
 
 1. To make the ball restart at a random direction, we can improve our
 C<reset_game()> function to set the ball's C<v_x> and C<v_y> to a random
-value between 1.5 and 2.5, or -1.5 and -2.5:
+value between, say, 1.5 and 2.5, or -1.5 and -2.5:
 
      sub reset_game {
          $ball->{rect}->x( $app->w / 2 );
