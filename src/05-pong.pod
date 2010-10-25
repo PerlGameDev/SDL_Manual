@@ -58,8 +58,8 @@ Paddles are rectangles moving vertically on the screen, and can be easily
 represented with L<SDLx::Rect> objects. First, put C<SDLx::Rect> in your
 module's declarations:
 
-    use SDL;
-    use SDLx::App;
+      use SDL;
+      use SDLx::App;
     + use SDLx::Rect;
 
 Now let's add a simple hash reference in our code to store our player's
@@ -122,7 +122,7 @@ them on the screen:
     +     }
     + );
 
-Our approach is rather simple here, "clearing" the screen by paiting a
+Our approach is rather simple here, "clearing" the screen by painting a
 black rectangle the size of the screen, then using C<< draw_rect() >> calls
 to paint opaque red (C<< 0xFF0000FF >>) rectangles in each object's position.
 
