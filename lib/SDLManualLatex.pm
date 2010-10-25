@@ -84,9 +84,9 @@ sub start_Verbatim {
         my $verb_options = 'label=' . $self->{labels}{screen};
         $self->{scratch} .= "\\begin{Verbatim}[$verb_options]\n";
     }
-   # elsif ( $target eq 'programlisting' ) {
-   #     $self->{scratch} .= "\\begin{perlcode}\n";
-   # }
+    elsif ( $target eq 'noprogramlisting' ) {
+        $self->{scratch} .= "\\begin{Verbatim}\n";
+    }
     else {
         $self->{scratch} .= "\\begin{Verbatim}[numbers=left]\n";
     }
