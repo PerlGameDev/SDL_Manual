@@ -205,7 +205,16 @@ We have preset C<v_y> to zero as the paddle's initial velocity, so our
 player's paddle won't go haywire when the game starts. But we still need
 to know when the user wants to move it up or down the screen. In order
 to do that, we can bind the up and down arrow keys of the keyboard to
-positive and negative velocities for our paddle, through an event hook:
+positive and negative velocities for our paddle, through an event hook.
+Since we're going to use some event constants like C<SDLK_DOWN>, we need
+to load the L<SDL::Events> module:
+
+     use SDL;
+   + use SDL::Events;
+     use SDLx::App;
+     use SDLx::Rect;
+
+Then we can proceed to create our event hook:
 
    + # handles keyboard events
    + $app->add_event_handler(
@@ -517,10 +526,10 @@ by adding the following to its motion handler:
           my $v_y = $player2->{v_y};
 
     +     if ( $ball->{rect}->y > $paddle->y ) {
-    +         $player2->{v_y} = 2;
+    +         $player2->{v_y} = 1.5;
     +     }
     +     elsif ( $ball->{rect}->y < $paddle->y ) {
-    +         $player2->{v_y} = -2;
+    +         $player2->{v_y} = -1.5;
     +     }
     +     else {
     +         $player2->{v_y} = 0;
@@ -537,20 +546,8 @@ Finally, if the ball is somewhere in between those two values, we keep
 the paddle still.
 
 
-=head2 Score 
-
-=head1 Animations
-
-=head2 Ball
-
-=head3 Kinematics
-
-=head2 Paddle
-
-=head3 Mapping Keys 
-
 =head1 Author
 
-This chapter's content was provide graciously by Breno G. de Oliveira C<garu>. 
+This chapter's content graciously provided by Breno G. de Oliveira (C<garu>). 
 
 =for vim: spell
