@@ -451,7 +451,7 @@ true if they collide:
    +     return 1;
    + }
 
-We can now use it in the ball's motion handler to see if it hit any
+We can now use it in the ball's motion handler to see if it hits any
 of the paddles:
 
      # handles the ball movement
