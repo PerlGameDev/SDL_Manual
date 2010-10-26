@@ -1,6 +1,6 @@
 =head0 CPAN
 
-The rest of the Perl language.
+The Comprehensive Perl Archive Network (CPAN) is the other part of the Perl language. By now most Perl developers should be aware of how to search and get modules from CPAN. This chapter will focus on why to use CPAN for games. Next we will take a look in what domain (Model, View or Controller) does a module solve a problem for. Moreover we would want to look at what is criteria to pick one module from another, using the many tools provided by CPAN.
 
 =head1 Modules
 
@@ -42,7 +42,7 @@ Are the operating systems your are aiming for working?
 
 Make and See bug reports
 
-=head1 Conculsion
+=head1 Conclusion
 
 CPAN use it!
 
