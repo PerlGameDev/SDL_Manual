@@ -2,7 +2,26 @@
 
 =head1 PDL
 
-Fast calculations in Perl.
+The Perl Data Language (PDL) is a tool aimed at a more scientifc crowd.
+Accuracy is paramount and speed is the name of the game. PDL brings to
+Perl fast matrix and numerical calculations. For games in most cases a
+accuracy is not critical, but speed and effiency is a great concern. For
+this reason we will breifly explore how to share SDL texture data between
+PDL and OpenGL. 
+
+    + use strict;
+    + use warnings;
+    + use SDLx::App;
+    +
+    + use PDL;
+    +
+    + my $app = SDLx::App->new(
+    +                           title => 'PDL and SDL application',
+    +                           width => 640, height => 480, depth => 32,
+    +                           eoq => 1);
+
+
+
 
 =head2 Using the Piddle
 
