@@ -7,6 +7,10 @@ We are now ready to write another complete game. Instead of listing the code and
 
 Puzz is a simple rearrangment puzzle. A random image from the folder Puzz is in is chosen and broken into a 4x4 grid. The top left corner piece is then taken away, and every other piece is then moved to a random position, scrambling the image up. The goal is then to move pieces which are in the 4 squares adjacent to the empty square on to the empty square, and eventually restore the image.
 
+=for figure 
+       \includegraphics[width=0.5\textwidth]{../src/images/puzz1.png}      
+        \caption{Hmm ... the white blocks might be difficult}               
+         \label{fig:puzz}   
 
 =head1 The Window
 
