@@ -208,7 +208,7 @@ Now we put a call to C<new_grid> to replace the grid initialisation we had befor
 
 Here is the finished code:
 
-=for programlisting 
+=begin programlisting 
 
     use strict;
     use warnings;
