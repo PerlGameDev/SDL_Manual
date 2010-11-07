@@ -17,11 +17,12 @@ else
     src/04-game.pod \
     src/05-pong.pod \
     src/06-tetris.pod \
-    src/07-music_and_sound.pod \
-    src/08-CPAN.pod \
-    src/09-profiling.pod \
-    src/10-XS_effects.pod \
-    src/11-PDL_OpenGL.pod
+    src/07-puzz.pod \
+    src/08-music_and_sound.pod \
+    src/09-CPAN.pod \
+    src/10-profiling.pod \
+    src/11-XS_effects.pod \
+    src/12-PDL_OpenGL.pod
  
 endif
 
