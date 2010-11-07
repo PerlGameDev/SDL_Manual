@@ -11,6 +11,8 @@ PDL and OpenGL.
 
     + use strict;
     + use warnings;
+    + use SDL;
+    + use SDL::Video;
     + use SDLx::App;
     +
     + use PDL;
@@ -21,15 +23,123 @@ PDL and OpenGL.
     +                           eoq => 1);
 
 
+=head2 Attaching the Piddle
+
+PDL core object is something called a piddle. To be able to perform PDL calculations and show them on SDL surfaces, we need to share the memory between them. SDL Surface memory is stored in a C<void *> block called C<pixels>. C<void *> memory has the property that allows Surfaces to have varying depth, and pixel formats. This also means that we can have PDL's memory as our C<pixels> for our surface. 
 
 
-=head2 Using the Piddle
+    + sub make_surface_piddle {
+    + my ( $bytes_per_pixel, $width, $height) = @_;
+    + my $piddle = zeros( byte, $bytes_per_pixel, $width, $height );
+    + my $pointer = $piddle->get_dataref();
 
-Some example here
+At this point we have a pointer to the C<$piddle>'s memory with the given specifications. Next we have our surface use that memory.
 
-=head2 Connecting to SDL
+    + my $s = SDL::Surface->new_form( 
+    +                                       $pointer, $width, $height, 32, 
+    +                                       $width * $bytes_per_pixel 
+    +                                      );
+    +
+    + #Wrap it into a SDLx::Surface for ease of use
+    + my $surface = SDLx::Surface->new( surface => $s );
+    +
+    + return ( $piddle, $surface );
+    + } 
 
-Connect the SDL here.
+Lets make some global variables to hold our C<$piddle> and C<$surface>.
+
+    + my ( $piddle, $surface ) = make_surface_piddle( 4, 400, 200 ); 
+
+=head2 Drawing and Updating
+
+C<make_surface_piddle()> will return to use an anonymous array with a C<$piddle> and C<$surface> which we can use with PDL and SDL. PDL will be used to operate on the C<$piddle>. SDL will be used to update the C<$surface> and render it to the C<SDLx::App>. 
+
+    + $app->add_move_handler( sub {
+    +
+    +   SDL::Video::lock_surface($surface);
+    + 
+    +   $piddle->mslice( 'X',
+    +   [ rand(400), rand(400), 1 ],
+    +   [ rand(200), rand(200), 1 ] 
+    +   ) .= pdl( rand(225), rand(225), rand(225), 255 );
+    +
+    +   SDL::Video::unlock_surface($surface);
+    + } );
+
+C<SDL::Video::lock_surface> prevents SDL from doing any operations on the C<$surface> until C<SDL::Video::unlock_surface> is called. Next we will blit this surface onto the C<$app>.
+
+In this case we use PDL to draw random rectangles of random color.
+
+=head2 Running the App
+
+Finally we blit the C<$surface> and update the C<$app>.
+
+       
+    + $app->add_show_handler( sub {
+    +
+    +    $surface->blit( $app, [0,0,$surface->w,$surface->h], [10,10,0,0] );
+    +    $app->update();
+    +
+    + });
+
+    + $app->run();
+
+=head2 Complete Program
+
+=begin programlisting
+
+    use strict;
+    use warnings;
+    use SDLx::App;
+
+    use PDL;
+
+    my $app = SDLx::App->new(
+            title => "PDL and SDL aplication",
+            width => 640, height => 480, eoq => 1 );
+
+
+    sub make_surface_piddle {
+        my ( $bytes_per_pixel, $width, $height) = @_;
+        my $piddle = zeros( byte, $bytes_per_pixel, $width, $height );
+        my $pointer = $piddle->get_dataref();
+        my $s = SDL::Surface->new_from(
+            $pointer, $width, $height, 32,
+            $width * $bytes_per_pixel
+        );
+
+        my $surface = SDLx::Surface->new( surface => $s );
+
+        return ( $piddle, $surface );
+    } 
+
+
+    my ( $piddle, $surface ) = make_surface_piddle( 4, 400, 200 );
+
+    $app->add_move_handler( sub {
+
+            SDL::Video::lock_surface($surface);
+
+            $piddle->mslice( 'X',
+                [ rand(400), rand(400), 1 ],
+                [ rand(200), rand(200), 1 ] 
+                ) .= pdl( rand(225), rand(225), rand(225), 255 );
+
+            SDL::Video::unlock_surface($surface);
+            } );
+
+
+    $app->add_show_handler( sub {
+
+        $surface->blit( $app, [0,0,$surface->w,$surface->h], [10,10,0,0] );
+        $app->update();
+
+    });
+
+    $app->run();
+
+
+=end programlisting 
 
 =head1 OpenGL
 

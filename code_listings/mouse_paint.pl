@@ -5,7 +5,7 @@ use Cwd;
 use SDL::Event;
 use SDLx::App;
 
-my $app = SDLx::App->new( w => 200, h => 200, d => 32, title => "Simple Paint");
+my $app = SDLx::App->new( w => 600, h => 480, d => 32, title => "Simple Paint");
 sub quit_event {
 
     my $event = shift;
