@@ -51,6 +51,10 @@ To load the images, we would normally use C<SDLx::Surface>, but we're going to d
             $i = SDL::GFX::Rotozoom::surface_xy($i, 0, 400 / $i->w, 400 / $i->h, SMOOTHING_ON);
             push @Img, $i;
         }
+        else
+        {   
+            warn "Cannot Load $_: " . SDL::get_error() if $_ =~ /jpg|png|bmp/;
+        }
     }
     $CurrentImg = $Img[rand @Img];
     
@@ -146,7 +150,7 @@ Once the offset is 100 or more, the grid place that the piece is moving to is se
 Now that we have all the functionality we need it's finally time to see the game.
 
     sub on_show {
-        $App->draw_rect;
+        $App->draw_rect( [0,0,$App->w,$App->h], 0 );
         for my $y (0..3) {
             for my $x (0..3) {
                 ...
@@ -234,6 +238,11 @@ Here is the finished code:
             $i = SDL::GFX::Rotozoom::surface_xy($i, 0, 400 / $i->w, 400 / $i->h, SMOOTHING_ON);
             push @Img, $i;
         }
+        else
+        {   
+            warn "Cannot Load $_: " . SDL::get_error() if $_ =~ /jpg|png|bmp/;
+        }
+
     }
     
     die "Please place images in the Current Folder" if $#Img < 0;    
@@ -279,7 +288,7 @@ Here is the finished code:
     }
 
     sub on_show {
-        $App->draw_rect;
+        $App->draw_rect( [0,0,$App->w,$App->h], 0 );
         for my $y (0..3) {
             for my $x (0..3) {
                 next if not my $val = $Grid[$y][$x] and !won();
