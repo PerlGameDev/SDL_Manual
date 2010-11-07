@@ -9,7 +9,7 @@ Puzz is a simple rearrangment puzzle. A random image from the folder Puzz is in 
 
 =for figure 
        \includegraphics[width=0.5\textwidth]{../src/images/puzz1.png}      
-        \caption{Hmm ... the white blocks might be difficult. Credits to sebastian riedel (kraih.com) for the Perl6 logo used in the application.}               
+        \caption{Credits to Sebastian Riedel (kraih.com) for the Perl6 logo used with permission in the application.}               
          \label{fig:puzz}   
 
 =head1 The Window
