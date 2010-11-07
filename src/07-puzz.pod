@@ -53,6 +53,8 @@ To load the images, we would normally use C<SDLx::Surface>, but we're going to d
         }
     }
     $CurrentImg = $Img[rand @Img];
+    
+    die "Please place images in the Current Folder" if $#Img < 0;
 
 We just go through every file in the current directory, and try to load it as an image. C<SDL::Image::load> will return false if there was an error, so we want to discard it when that happens. If we used C<SDLx::Surface> to load the images, we would get a warning every time a file fails to load as an image, which we don't want. The C<my $i = SDL::Image::load($_)> is just an idiom for setting a var and checking it for truth at the same time.
 
@@ -233,6 +235,8 @@ Here is the finished code:
             push @Img, $i;
         }
     }
+    
+    die "Please place images in the Current Folder" if $#Img < 0;    
 
     new_grid();
 
