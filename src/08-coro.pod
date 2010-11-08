@@ -1,0 +1,5 @@
+=head0 Almost multi-threaded Games
+
+=head1 Author
+
+This chapter's content has been graciously provided by C<Eilara>.
