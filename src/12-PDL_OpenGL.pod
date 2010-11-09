@@ -9,6 +9,18 @@ accuracy is not critical, but speed and effiency is a great concern. For
 this reason we will breifly explore how to share SDL texture data between
 PDL and OpenGL. 
 
+This example will do the following:
+
+=for figure 
+       \includegraphics[width=0.5\textwidth]{../src/images/pdl.png}      
+        \caption{Not terribly interesting, but the speed is phenomenal}               
+         \label{fig:pdl}   
+
+
+=head2 Make the application
+
+Let's start an application to use with PDL. Make sure you do C<use PDL>.
+    
     + use strict;
     + use warnings;
     + use SDL;
