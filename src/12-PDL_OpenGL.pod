@@ -2,11 +2,11 @@
 
 =head1 PDL
 
-The Perl Data Language (PDL) is a tool aimed at a more scientifc crowd.
+The Perl Data Language (PDL) is a tool aimed at a more scientific crowd.
 Accuracy is paramount and speed is the name of the game. PDL brings to
 Perl fast matrix and numerical calculations. For games in most cases a
-accuracy is not critical, but speed and effiency is a great concern. For
-this reason we will breifly explore how to share SDL texture data between
+accuracy is not critical, but speed and efficiency is a great concern. For
+this reason we will briefly explore how to share SDL texture data between
 PDL and OpenGL. 
 
 This example will do the following:
@@ -189,7 +189,7 @@ Enabling C<OpenGL> mode is as simple as adding the C<gl> flag to the C<SDLx::App
 
 =head2 OpenGL Setup
 
-Next we will make a C<OpenGL> prespective with the C<$app>'s dimensions:
+Next we will make a C<OpenGL> perspective with the C<$app>'s dimensions:
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -226,7 +226,7 @@ Now we are prepared to put something on the screen.
 	);
 
 
-At this point there should be a light blue teapot on the screen. The only special thing to notice here is that we need to call the C<sync()> medthod on C<$app>. This will flush the buffers and update the SDL application for us. 
+At this point there should be a light blue teapot on the screen. The only special thing to notice here is that we need to call the C<sync()> method on C<$app>. This will flush the buffers and update the SDL application for us. 
 
 =head2 Event handling
 
