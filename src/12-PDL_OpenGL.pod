@@ -153,16 +153,204 @@ Finally we blit the C<$surface> and update the C<$app>.
 
 =end programlisting 
 
-=head1 OpenGL
+=head1 OpenGL and SDL
 
-Perl OpenGL
+OpenGL is a cross platform library for interactive 2D and 3D graphics applications. However OpenGL specifies only the graphics pipeline and doesn't handle inputs and events. SDL can hand over the graphics component of an application over to OpenGL and take control over the event handling, sound, and textures. In the first example we will see how to set up Perl's C<OpenGL> module with C<SDLx::App>.
 
-=head2 Texturing
 
-Using textures for OpenGL.
+=for figure 
+       \includegraphics[width=0.5\textwidth]{../src/images/opengl-1.png}      
+        \caption{The lovely blue teapot}               
+         \label{fig:opengl-1}   
 
-=head3 SDL surfaces as textures
 
-Example.
+=head2 SDL Setup
+
+	use strict;
+	use warnings;
+	use SDL;
+	use SDLx::App;
+
+	use OpenGL qw/:all/;
+
+	my $app = SDLx::App->new( 
+		title  => "OpenGL App",
+		width  => 600,
+		height => 600,
+		gl     => 1,
+		eoq    => 1
+	   );
+
+
+	$app->run();
+
+
+Enabling C<OpenGL> mode is as simple as adding the C<gl> flag to the C<SDLx::App> constructor.
+
+=head2 OpenGL Setup
+
+Next we will make a C<OpenGL> prespective with the C<$app>'s dimensions:
+
+
+	glEnable(GL_DEPTH_TEST);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity;
+	gluPerspective(60, $app->w/$app->h, 1, 1000 );
+	glTranslatef( 0,0,-20);
+
+Additionally we will be initializing C<glut>, but just to draw something quick.
+	
+	#Using glut to draw something interesting really quick
+	glutInit();
+
+=head2 The Render Callback
+
+Now we are prepared to put something on the screen.
+
+
+	$app->add_show_handler( 
+		sub{
+			my $dt = shift;
+		
+			#clear the screen
+			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+			glColor3d(0,1,1);
+
+			glutSolidTeapot(2); 
+
+			#sync the SDL application with the OpenGL buffer data
+			$app->sync;
+
+
+		}
+	);
+
+
+At this point there should be a light blue teapot on the screen. The only special thing to notice here is that we need to call the C<sync()> medthod on C<$app>. This will flush the buffers and update the SDL application for us. 
+
+=head2 Event handling
+
+Event handling is the same as any other C<SDLx::App>. We will use the mouse motion changes to rotate the teapot.
+
+
+First add a global variable to hold your rotate values. And then use those values to rotate our teapot.
+
+      glutInit();
+
+    + my $rotate = [0,0];
+     
+      $app->add_show_handler( 
+        sub{
+        my $dt = shift;
+    
+        #clear the screen
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        glColor3d(0,1,1);
+
+    +	glPushMatrix();
+
+	+	glRotatef($rotate->[0], 1,0,0);
+    +	glRotatef($rotate->[1], 0,1,0);
+
+        glutSolidTeapot(2); 
+
+        #sync the SDL application with the OpenGL buffer data
+        $app->sync;
+
+   +	glPopMatrix();
+        }
+    );
+
+
+Next we will add an event handler to the app to update the rotate values for us.
+
+
+    $app->add_event_handler(
+
+        sub {
+            my ($e ) = shift;
+
+            if( $e->type == SDL_MOUSEMOTION )
+                {
+                    $rotate = 	[$e->motion_x,  $e->motion_y];
+                }
+
+        }
+
+    );
+
+Finally we run the application.
+
+    $app->run();
+
+=head2 Complete Code
+
+=begin programlisting
+
+    use strict;
+    use warnings;
+    use SDL;
+    use SDLx::App;
+    use SDL::Event;
+
+    use OpenGL qw/:all/;
+
+    my $app = SDLx::App->new( 
+            title  => "OpenGL App",
+            width  => 600,
+            height => 600,
+            gl     => 1,
+            eoq    => 1
+            );
+
+    glEnable(GL_DEPTH_TEST);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity;
+    gluPerspective(60, $app->w/$app->h, 1, 1000 );
+    glTranslatef( 0,0,-20);
+    glutInit();
+
+    my $rotate = [0,0];
+
+    $app->add_show_handler( 
+            sub{
+            my $dt = shift;
+
+    #clear the screen
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+            glColor3d(0,1,1);
+
+            glPushMatrix();
+
+            glRotatef($rotate->[0], 1,0,0);
+            glRotatef($rotate->[1], 0,1,0);
+
+            glutSolidTeapot(2); 
+
+    #sync the SDL application with the OpenGL buffer data
+            $app->sync;
+
+            glPopMatrix();
+            }
+            );
+
+    $app->add_event_handler(
+
+            sub {
+            my ($e ) = shift;
+
+            if( $e->type == SDL_MOUSEMOTION )
+            {
+            $rotate = 	[$e->motion_x,  $e->motion_y];
+            }
+
+            }
+
+            );
+
+    $app->run();
+
+
+=end programlisting
 
 =for vim: spell
