@@ -1,23 +1,85 @@
 =head0 Tetris 
 
+=head1 The Game Window
+
+First we will make our window with a fixed size so we can place our art work
+in a fixed format.
+
+	use strict;
+	use warnings;
+
+	use SDL;
+	use SDL::Event;
+	use SDL::Events;
+	use SDLx::App;
+
+	# create our main screen
+	my $app = SDLx::App->new(
+		w            => 400,
+		h            => 512,
+		exit_on_quit => 1,
+		dt           => 0.2,
+		title        => 'SDLx Tetris'
+	);
+
+=head1 Loading Artwork 
+
+We can load our artwork simply by storing an array of C<SDLx::Surface>s.
+
+	use SDL;
+	+use SDLx::Surface;
+	
+	...
+
+	+my $back  = SDLx::Surface->load( 'data/tetris_back.png' );
+	+my @piece = (undef);
+	+push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
+
+The background is held in the C<$back> surface, and the pieces are held in the 
+C<@piece> array. Later on we will blit these onto our main screen as we need.
+
+
 =head1 Data Structures
 
-A design for data structures is very important to do before making a game.
+In Tetris the blocks are critical pieces of data that must be represented in code 
+such that it is easy to access, and quick to perform calculations on. A hash will 
+allow us to quickly access our pieces, based on their keys. 
 
-=head2 Considerations
 
-=head3 CPU
+	my %pieces = (
+		I => [0,5,0,0,
+			  0,5,0,0,
+			  0,5,0,0,
+			  0,5,0,0],
+		J => [0,0,0,0,
+			  0,0,6,0,
+			  0,0,6,0,
+			  0,6,6,0],
+		L => [0,0,0,0,
+			  0,2,0,0,
+			  0,2,0,0,
+			  0,2,2,0],
+		O => [0,0,0,0,
+			  0,3,3,0,
+			  0,3,3,0,
+			  0,0,0,0],
+		S => [0,0,0,0,
+			  0,4,4,0,
+			  4,4,0,0,
+			  0,0,0,0],
+		T => [0,0,0,0,
+			  0,7,0,0,
+			  7,7,7,0,
+			  0,0,0,0],
+		Z => [0,0,0,0,
+			  1,1,0,0,
+			  0,1,1,0,
+			  0,0,0,0],
+	);
 
-Will the data structure be access in the game loop
+Further more we have a 1-dimensional array for each peice that represents a grid of the piece.
 
-=head3 Memory
-
-Will it be loaded up a lot
-
-=head3 Programmer's Sanity
-
-Will it be gorkable to the programmer. 
-
+TODO: Explaing the numbers, 1,2,3,4 ... 
 =head1 Game flow
 
 =head2 Considerations

@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 
-use Data::Dumper;
 use List::Util qw(shuffle min max);
 
 use SDL;
