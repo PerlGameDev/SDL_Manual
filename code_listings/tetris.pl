@@ -20,7 +20,9 @@ my $app = SDLx::App->new(
 );
 
 # create our game objects
-my $score = SDLx::Text->new( font => 'font.ttf', h_align => 'center' );
+my $score_text = SDLx::Text->new( font => 'font.ttf', h_align => 'center', color => [255,255,255,255] );
+my $score = 0;
+
 my $back  = SDLx::Surface->load( 'data/tetris_back.png' );
 my @piece = (undef);
 push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
@@ -205,6 +207,7 @@ $app->add_move_handler( sub {
         # deleting lines
         foreach(@to_delete) {
             splice(@{$store}, $_*10, 10);
+			$score++;
         }
         
         # adding blank rows to the top
@@ -249,6 +252,9 @@ $app->add_show_handler(
                 }
             }
         }
+
+		$score_text->write_xy( $app, 248,20, "Next Piece");
+		$score_text->write_xy( $app, 248,240, "Score: ".$score);
         # finally, we update the screen
         $app->update;
     }
