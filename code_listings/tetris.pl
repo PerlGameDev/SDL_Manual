@@ -61,9 +61,9 @@ my %pieces = (
           0,0,0,0],
 );
 my $next_tile         =  shuffle(keys %pieces);
-my $curr_tile         = [undef, 4, 0];          # this is shared between client&server!! bad!
+my $curr_tile         = [undef, 4, 0];          
    @{$curr_tile->[0]} = @{$pieces{$next_tile}};
-   $next_tile         =  shuffle(keys %pieces); # this is shared between client&server!! bad!
+   $next_tile         =  shuffle(keys %pieces); 
 
 sub rotate_piece {
     my $_piece   = shift;
@@ -133,57 +133,30 @@ sub store_piece {
     }
 }
 
-sub client_event_handler {
+sub trigger_move_event_handler {
     my ( $event, $app ) = @_;
 
     if ( $event->type == SDL_KEYDOWN ) {
+
+		my $key = $event->key_sym;
         if ( $event->key_sym & (SDLK_LEFT|SDLK_RIGHT|SDLK_UP|SDLK_DOWN) ) {
-            my $new_event = SDL::Event->new();
-            $new_event->type(SDL_USEREVENT);
-            $new_event->user_data1($event->key_sym);
-            SDL::Events::push_event($new_event);
-        }
-    }
-    elsif ( $event->type == SDL_KEYUP ) {
-        if (   $event->key_sym == SDLK_UP
-            or $event->key_sym == SDLK_DOWN )
-        {
-            #warn 'up/down released';
-        }
-    }
-    elsif ( $event->type == SDL_USEREVENT+1 ) {
-        if($event->user_code(1)) {
-            $grid  = $event->user_data1;
-            $store = $event->user_data2;
-        }
-    }
-}
-
-sub server_event_handler {
-    my ( $event, $app ) = @_;
-
-    if ( $event->type == SDL_USEREVENT ) {
-        if(defined $curr_tile) {
-            if($event->user_data1 == SDLK_LEFT && can_move_piece('left')) {
+            if($key == SDLK_LEFT && can_move_piece('left')) {
                 move_piece('left');
             }
-            elsif($event->user_data1 == SDLK_RIGHT && can_move_piece('right')) {
+            elsif($key == SDLK_RIGHT && can_move_piece('right')) {
                 move_piece('right');
             }
-            elsif($event->user_data1 == SDLK_DOWN && can_move_piece('down')) {
+            elsif($key == SDLK_DOWN && can_move_piece('down')) {
                 move_piece('down')
             }
-            elsif($event->user_data1 == SDLK_UP) {
+            elsif($key == SDLK_UP) {
                 $curr_tile->[0] = rotate_piece($curr_tile->[0]);
             }
         }
-
     }
-    $event = undef; # should we do this?
 }
 
-$app->add_event_handler( \&client_event_handler );
-$app->add_event_handler( \&server_event_handler );
+$app->add_event_handler( \&trigger_move_event_handler );
 
 $app->add_move_handler( sub {
     my ( $step, $app ) = @_;
