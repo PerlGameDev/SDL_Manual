@@ -10,9 +10,6 @@ use SDLx::App;
 use SDLx::Text;
 use SDLx::Rect;
 use SDLx::Surface;
-
-sub TO_SERVER { SDL_USEREVENT };
-sub TO_CLIENT { SDL_USEREVENT + 1 };
 # create our main screen
 my $app = SDLx::App->new(
     w            => 400,
@@ -28,14 +25,8 @@ my $back  = SDLx::Surface->load( 'data/tetris_back.png' );
 my @piece = (undef);
 push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
 
-my $client = {
-    grid   => [],
-    store  => [],
-};
-my $server = {
-    grid   => [],
-    store  => [],
-};
+my $grid = [];
+my $store = [];
 
 my %pieces = (
     I => [0,5,0,0,
@@ -94,9 +85,9 @@ sub can_move_piece {
                 return if $direction eq 'right' && $x + $amount + $curr_tile->[1]  > 9;
                 return if $direction eq 'down'  && int($y + $amount + $curr_tile->[2]) > 22;
                 
-                return if $direction eq 'right' && $server->{store}->[ $x + $amount + $curr_tile->[1] + 10 * int($y           + $curr_tile->[2]) ];
-                return if $direction eq 'left'  && $server->{store}->[ $x - $amount + $curr_tile->[1] + 10 * int($y           + $curr_tile->[2]) ];
-                return if $direction eq 'down'  && $server->{store}->[ $x           + $curr_tile->[1] + 10 * int($y + $amount + $curr_tile->[2]) ];
+                return if $direction eq 'right' && $store->[ $x + $amount + $curr_tile->[1] + 10 * int($y           + $curr_tile->[2]) ];
+                return if $direction eq 'left'  && $store->[ $x - $amount + $curr_tile->[1] + 10 * int($y           + $curr_tile->[2]) ];
+                return if $direction eq 'down'  && $store->[ $x           + $curr_tile->[1] + 10 * int($y + $amount + $curr_tile->[2]) ];
             }
         }
     }
@@ -118,11 +109,11 @@ sub move_piece {
         $curr_tile->[2] += $amount;
     }
     
-    @{$server->{grid}} = ();
+    @{$grid} = ();
     for my $y (0..3) {
         for my $x (0..3) {
             if($curr_tile->[0]->[$x + 4 * $y]) {
-                $server->{grid}->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] = $curr_tile->[0]->[$x + 4 * $y];
+                $grid->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] = $curr_tile->[0]->[$x + 4 * $y];
             }
         }
     }
@@ -134,7 +125,7 @@ sub store_piece {
     for my $y (0..3) {
         for my $x (0..3) {
             if($curr_tile->[0]->[$x + 4 * $y]) {
-                $server->{store}->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] = $curr_tile->[0]->[$x + 4 * $y];
+                $store->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] = $curr_tile->[0]->[$x + 4 * $y];
             }
         }
     }
@@ -146,7 +137,7 @@ sub client_event_handler {
     if ( $event->type == SDL_KEYDOWN ) {
         if ( $event->key_sym & (SDLK_LEFT|SDLK_RIGHT|SDLK_UP|SDLK_DOWN) ) {
             my $new_event = SDL::Event->new();
-            $new_event->type(TO_SERVER);
+            $new_event->type(SDL_USEREVENT);
             $new_event->user_data1($event->key_sym);
             SDL::Events::push_event($new_event);
         }
@@ -158,10 +149,10 @@ sub client_event_handler {
             #warn 'up/down released';
         }
     }
-    elsif ( $event->type == TO_CLIENT ) {
+    elsif ( $event->type == SDL_USEREVENT+1 ) {
         if($event->user_code(1)) {
-            $client->{grid}  = $event->user_data1;
-            $client->{store} = $event->user_data2;
+            $grid  = $event->user_data1;
+            $store = $event->user_data2;
         }
     }
 }
@@ -169,7 +160,7 @@ sub client_event_handler {
 sub server_event_handler {
     my ( $event, $app ) = @_;
 
-    if ( $event->type == TO_SERVER ) {
+    if ( $event->type == SDL_USEREVENT ) {
         if(defined $curr_tile) {
             if($event->user_data1 == SDLK_LEFT && can_move_piece('left')) {
                 move_piece('left');
@@ -184,12 +175,7 @@ sub server_event_handler {
                 $curr_tile->[0] = rotate_piece($curr_tile->[0]);
             }
         }
-        my $new_event = SDL::Event->new();
-        $new_event->type(TO_CLIENT);
-        $new_event->user_code(1);
-        $new_event->user_data1($server->{grid});
-        $new_event->user_data2($server->{store});
-        SDL::Events::push_event($new_event);
+
     }
     $event = undef; # should we do this?
 }
@@ -211,19 +197,19 @@ $app->add_move_handler( sub {
         my @to_delete = ();
         for($y = 22; $y >= 0; $y--) {
             # there is no space if min of this row is true (greater than zero)
-            if(min(@{$server->{store}}[($y*10)..((($y+1)*10)-1)])) {
+            if(min(@{$store}[($y*10)..((($y+1)*10)-1)])) {
                 push(@to_delete, $y);
             }
         }
 
         # deleting lines
         foreach(@to_delete) {
-            splice(@{$server->{store}}, $_*10, 10);
+            splice(@{$store}, $_*10, 10);
         }
         
         # adding blank rows to the top
         foreach(@to_delete) {
-            splice(@{$server->{store}}, 0, 0, (0,0,0,0,0,0,0,0,0,0));
+            splice(@{$store}, 0, 0, (0,0,0,0,0,0,0,0,0,0));
         }
         
         # launching new tile
@@ -243,14 +229,14 @@ $app->add_show_handler(
 
         my $x = 0;
         my $y = 0;
-        foreach(@{$client->{store}}) {
+        foreach(@{$store}) {
             $piece[$_]->blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
             $x++;
             $y++ unless $x % 10;
         }
         $x = 0;
         $y = 0;
-        foreach(@{$client->{grid}}) {
+        foreach(@{$grid}) {
             $piece[$_]->blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
             $x++;
             $y++ unless $x % 10;

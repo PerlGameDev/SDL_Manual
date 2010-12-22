@@ -79,7 +79,9 @@ allow us to quickly access our pieces, based on their keys.
 
 Further more we have a 1-dimensional array for each peice that represents a grid of the piece.
 
-TODO: Explaing the numbers, 1,2,3,4 ... 
+The grid of each piece is filled with empty spaces and a number from 1 to 7. When this grid is 
+imposed on the game grid, we can use the non zero number to draw the write piece block on to it.
+
 =head1 Game flow
 
 =head2 Considerations
