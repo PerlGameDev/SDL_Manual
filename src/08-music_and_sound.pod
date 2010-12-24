@@ -8,20 +8,20 @@ Similarly to video in SDL, there are several way for perl developers to access t
 
 To begin using sound we must enable and open an audiospec:
 
-	use strict;
-	use warnings;
-	use SDL;
-	use Carp;
-	use SDL::Audio;
-	use SDL::Mixer;
-	
-	SDL::init(SDL_INIT_AUDIO);
-	
-	unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
-	{
-		Carp::croak "Cannot open audio: ".SDL::get_error(); 
-	}
-	
+   use strict;
+   use warnings;
+   use SDL;
+   use Carp;
+   use SDL::Audio;
+   use SDL::Mixer;
+   
+   SDL::init(SDL_INIT_AUDIO);
+   
+   unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
+   {
+      Carp::croak "Cannot open audio: ".SDL::get_error(); 
+   }
+   
 
 C<open_audio> will open an audio device with frequency at 44100 Mhz, audio format AUDIO_S16SYS (Note: This is currently the most portable format, however there are others), 2 channels and a chunk size of 4096. Fiddle with these values if you are comfortable with sound terminology and techniques. 
 
@@ -31,75 +31,75 @@ Next we will load sound samples that generally used for sound effects and the li
 
 Samples run on one of the 2 channels that we opened up, while our background music will run on the other channels. To load samples we will be doing the following:
 
-	+use SDL::Mixer::Samples;
+   +use SDL::Mixer::Samples;
 
-	+#Brillant Lazer Sound from U<http://www.freesound.org/samplesViewSingle.php?id=30935>
-	+my $sample = SDL::Mixer::Samples::load_WAV('data/sample.wav');
+   +#Brillant Lazer Sound from U<http://www.freesound.org/samplesViewSingle.php?id=30935>
+   +my $sample = SDL::Mixer::Samples::load_WAV('data/sample.wav');
 
-	+unless($sample)
-	+{
-	+	Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error();	
-	+}
+   +unless($sample)
+   +{
+   +   Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error();   
+   +}
 
 =head2 Playing the sample and closing audio
 
 Now we can play that sample on any open channel looping forever:
 
-	 use SDL::Mixer::Samples;
-	+use SDL::Mixer::Channels;
-	
-	my $sample =  SDL::Mixer::Samples::load_WAV('data/sample.wav');
-	unless( $sample)
-	{
-		Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error(); 
-	}
+    use SDL::Mixer::Samples;
+   +use SDL::Mixer::Channels;
+   
+   my $sample =  SDL::Mixer::Samples::load_WAV('data/sample.wav');
+   unless( $sample)
+   {
+      Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error(); 
+   }
 
-	+my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
+   +my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
 
 C<play_channel> allows us to assign a sample to the channel C<-1> which indicates any open channel. C<0> indicates we want to play the sample only once.
 
 Note that since the sound will be playing in an external process we will need to keep the perl script running. In a game this is no problem but for a single script like this we can just use a simple C<sleep> function. Once we are done we can go ahead and close the audio device.
 
-	+sleep(1);
-	+SDL::Mixer::close_audio();
+   +sleep(1);
+   +SDL::Mixer::close_audio();
 
 =head2 Streaming Music
 
 Next we will use C<SDL::Mixer::Music> to add a background music to our script here. 
 
-	 use SDL::Mixer::Channels;
+    use SDL::Mixer::Channels;
     +use SDL::Mixer::Music;
 
-	+#Load our awesome music from U<http://8bitcollective.com>
-	+my $background_music = SDL::Mixer::Music::load_MUS('data/music/01-PC-Speaker-Sorrow.ogg');
+   +#Load our awesome music from U<http://8bitcollective.com>
+   +my $background_music = SDL::Mixer::Music::load_MUS('data/music/01-PC-Speaker-Sorrow.ogg');
 
 
-	+unless( $background_music )
-	+{
-	+	Carp::croak "Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: ".SDL::get_error() ;
-	+}
+   +unless( $background_music )
+   +{
+   +   Carp::croak "Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: ".SDL::get_error() ;
+   +}
 
 Music types in C<SDL::Mixer> run in a seperate channel from our samples which allows us to have sound effects (like jump, or lasers etc) to play at the same time. 
 
-	+SDL::Mixer::Music::play_music($background_music,0); 
+   +SDL::Mixer::Music::play_music($background_music,0); 
 
 C<play_music> also takes a parameter for how many loops you would like to play the song for, where 0 is 1. 
 
 To stop the music we can call C<halt_music>.
 
-	 sleep(2);
-	+SDL::Mixer::Music::halt_music();
-	 SDL::Mixer::close_audio();
+    sleep(2);
+   +SDL::Mixer::Music::halt_music();
+    SDL::Mixer::close_audio();
 
 =begin sidebar
 
 Controlling Volume can be as simple as:
-	
-	#All channels indicated by the -1
-	SDL::Mixer::Channels::volume(-1,10); 
+   
+   #All channels indicated by the -1
+   SDL::Mixer::Channels::volume(-1,10); 
 
-	#Specifically for the Music
-	SDL::Mixer::Music::volume_music( 10 );
+   #Specifically for the Music
+   SDL::Mixer::Music::volume_music( 10 );
 
 Volumes can be set at anytime and range from C<1-100>. 
 
@@ -109,46 +109,46 @@ Volumes can be set at anytime and range from C<1-100>.
 
 =begin programlisting
 
-	use strict;
-	use warnings;
-	use SDL;
-	use Carp;
-	use SDL::Audio;
-	use SDL::Mixer;
-	use SDL::Mixer::Samples;
-	use SDL::Mixer::Channels;
-	use SDL::Mixer::Music;
-	SDL::init(SDL_INIT_AUDIO);
+   use strict;
+   use warnings;
+   use SDL;
+   use Carp;
+   use SDL::Audio;
+   use SDL::Mixer;
+   use SDL::Mixer::Samples;
+   use SDL::Mixer::Channels;
+   use SDL::Mixer::Music;
+   SDL::init(SDL_INIT_AUDIO);
 
-	unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
-	{
-		Carp::croak "Cannot open audio: ".SDL::get_error(); 
-	}
+   unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
+   {
+      Carp::croak "Cannot open audio: ".SDL::get_error(); 
+   }
 
 
-	my $sample = SDL::Mixer::Samples::load_WAV('data/sample.wav');
+   my $sample = SDL::Mixer::Samples::load_WAV('data/sample.wav');
 
-	unless( $sample)
-	{
-		Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error(); 
-	}
+   unless( $sample)
+   {
+      Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error(); 
+   }
 
-	my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
+   my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
 
-	#Load our awesome music from U<http://8bitcollective.com>
-	my $background_music = SDL::Mixer::Music::load_MUS('data/music/01-PC-Speaker-Sorrow.ogg');
+   #Load our awesome music from U<http://8bitcollective.com>
+   my $background_music = SDL::Mixer::Music::load_MUS('data/music/01-PC-Speaker-Sorrow.ogg');
 
-	unless( $background_music )
-	{
-		Carp::croak "Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: ".SDL::get_error() ;
-	}
+   unless( $background_music )
+   {
+      Carp::croak "Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: ".SDL::get_error() ;
+   }
 
-	SDL::Mixer::Music::play_music( $background_music,0 );
+   SDL::Mixer::Music::play_music( $background_music,0 );
 
-	sleep(2);
+   sleep(2);
 
-	SDL::Mixer::Music::halt_music();
-	SDL::Mixer::close_audio;
+   SDL::Mixer::Music::halt_music();
+   SDL::Mixer::close_audio;
 
 =end programlisting
 
