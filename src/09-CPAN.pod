@@ -24,26 +24,173 @@ Game::Life, make some of the games in SDL!
 
 =head1 Picking Modules
 
-Some considerations on when to pick modules
+So, you thought of a nice game, identified your needs, typed some
+keywords in L<http://seach.cpan.org>, and got tons of results. What now?
+How to avoid vaporware and find the perfect solution for your needs?
+
+=head2 Documentation
+
+Once you find a potential module for your application, make sure you
+will know how to use it. Take a look at the SYNOPSIS section of the
+module, it should contain some code snippets showing you how to use
+the module's main features. Are you comfortable with the usage syntax?
+Does it seem to do what you expect it to? Will it fit nicely to whatever
+it is you're coding?
+
+Next, skim through the rest of the documentation. Is it solid enough
+for you? Does it look complete enough for your needs, or is it
+easily extendable?
+
+=head2 License
+
+It's useless to find a module you can't legally use. Most (if not all)
+modules in L<CPAN|http://search.cpan.org> are free and open source
+software, but even so each needs a license telling developers what
+they can and cannot do with it. A lot of CPAN modules are released
+I<"under the same terms as Perl itself">, and this means you can
+pick between the Artistic License or the GPL (version 1).
+
+Below is a short and incomplete list of some popular license choices
+by CPAN developers:
+
+=over 4
+
+=item * Artistic License - L<http://dev.perl.org/licenses/artistic.html>
+
+=item * GPL (all versions and variations) - L<http://www.gnu.org/licenses> 
+
+=item * MIT License - L<http://www.opensource.org/licenses/mit-license.php>
+
+=back
+
+See L<http://www.opensource.org/licenses/alphabetical> for a
+comprehensive list with each license's full documentation.
+
+You should be able to find the module's license by going to a
+"LICENSE AND COPYRIGHT" section, usually available at the bottom of the
+documentation, or by looking for a license file inside that distribution.
+
+B<Note:> Some modules might even be released into CPAN as
+I<< public domain >>, meaning they are not covered by intellectual
+property rights at all, and you are free to use them as you see fit.
+Even so, it's usually considered polite to mention authors as a courtesy,
+you know, giving credit where credit is due.
+
+
+=head2 Ratings
+
+The CPAN Ratings is a service where developers rate modules they
+used for their own projects, and is a great way to have some actual
+feedback on how it was to use the code on a real application. The
+ratings are compiled into a 1 to 5 grade, and displayed below the
+module name on CPAN. You can click on the I<< "Reviews" >> link right
+next to the rating stars to see any additional comments by the
+reviewers, praising, criticizing or giving some additional comments
+or the distribution and/or its competition.
+
 
 =head2 Dependencies
 
-What does it depend on? Hard to install?
+Modules exist so you don't have to reinvent the wheel, and for that same
+reason each usually depends on one or more modules itself. Don't worry
+if a module depends on several others - code reusability is a good
+thing.
+
+You may, however, be interested in B<which> modules it depends on,
+or, more practically, in the likelihood of a clean installation by your
+users. For that, you can browse to L<http://deps.cpantesters.org> and
+input the module's name on the search box.
+
+The CPAN Testers is a collaborative matrix designed to help developers
+test their modules in several different platforms, with over a hundred
+testers each month making more than 3 million reports of CPAN modules.
+This particular CPAN Testers service  will show you a list of
+dependencies and test results for each of them, calculating the average
+chance of all tests passing (for any platform).
+
+While seeing all the dependencies and test results of a couple of modules
+that do the same thing might help you make your pick, it's important to
+realize that the I<< "chance of all tests passing" >> information at
+the bottom of the results means very little. This is because test
+failures can rarely be considered independent events, and are usually
+tied to not running on a specific type of operating system, to the perl
+version, or even due to the tester running out of memory for reasons
+that may not even concern the module being evaluated. If you don't care
+about your application running on AIX or on perl 5.6.0, why would you
+dismiss a module that only fails on those conditions?
+
 
 =head2 CPAN Testers Charts
 
-Check the CPAN tester charts, to see if it will work on your target machines.
+So, how do you know the actual test results for a module on the CPAN? How
+can you tell if that module will run in your target machine according to
+architecture, operating system and perl version?
 
-=head3 OS breakdowns
+The CPAN Testers website at L<http://www.cpantesters.org> offers a direct
+search for distributions by name or author. To see the results for the
+SDL module, for instance, you can go to
+L<http://www.cpantesters.org/distro/S/SDL.html>. You can also find a
+test report summary directly on CPAN, by selecting the distribution
+and looking at the I<< "CPAN Testers" >> line. If you click on the 
+I<< "View Reports" >> link, you'll be redirected to the proper CPAN
+Testers page, like the one shown above.
 
-Are the operating systems your are aiming for working?
+The first chart is a PASS summary, containing information about the most
+recent version of that module with at least one I<PASS> report submitted,
+separated by platform and perl version.
+
+Second is a list of selected reports, detailing all the submitted test
+results for the latest version of the given module. If you see a
+I<FAIL> or I<UNKNOWN> result that might concern you - usually at a
+platform you expect your application to run - you can click on it to
+see a verbose output of all the tests, to see why it failed.
+
+Another interesting information displayed is the report summary on the
+left sidebar, showing a small colored graph of PASS-UNKNOWN-FAIL
+results for the latest versions of the chosen module. If you see a
+released version with lots of FAIL results, it might be interesting to
+dig deeper or simply require a greater version of that module in your
+application.
+
 
 =head3 Bug Reports
 
-Make and See bug reports
+When picking a module to use, it is very important to check out its
+bug reports. You can do that by either clicking on the
+I<< "View/Report Bugs" >> link on the module's page on CPAN, or
+on the I<< "CPAN RT" >> (for Request Tracker) box on the right side of
+the documentation page.
+
+Look for open bugs and their description - i.e. if it's a bug or a
+whislist - and see if it concerns your planned usage for that module.
+Some bug reports are simple notices about a typo on the documentation
+or a very specific issue, so make sure you look around the ticket
+description to see if it's something that blocks your usage, or if 
+you can live with it, at least until the author delivers an update.
+
+It may also interest you to see how long the open bugs have been there.
+Distributions with bugs dating for more than two years might indicate
+that the author abandoned the module to pursue other projects, so you'll
+likely be on your own if you find any bumps. Of course, being free
+software, that doesn't mean you can't fix things yourself, and maybe even
+ask the author for maintainance privileges so you can update your fixes
+for other people to use.
+
+
+=head2 Release Date
+
+A old distribution might mean a solid and stable distribution, but it
+can also mean that the author doesn't care much about it anymore. If
+you find a module whose latest version is over 5 years old, make sure
+to double check test results and bug reports, as explained above.
 
 =head1 Conclusion
 
-CPAN use it!
+CPAN is an amazing repository filled with nice modules ready for you to
+use in your games. More than often you'll find that 90% of your
+application is already done on CPAN, and all you have to do to get that
+awesome idea implemented is glue them together, worrying only about your
+application's own logic instead of boring sidework. This means faster
+development, and more fun!
 
 =for vim: spell
