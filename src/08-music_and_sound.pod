@@ -29,7 +29,7 @@ C<open_audio> will open an audio device with frequency at 44100 Mhz, audio forma
 
 Next we will load sound samples that generally used for sound effects and the like. Currently C<SDL_Mixer> reserves samples for C<.WAV>, C<.AIFF>, C<.RIFF>  C<.OGG>, and C<.VOC> formats. 
 
-Samples run on one of the 2 channels that we opened up, while our background music will run on the other channels. To load samples we will be doing the following:
+Samples run on one of the 2 channels that we opened up, while the other channel will be reserved for multiple plays of the sample. To load samples we will be doing the following:
 
    +use SDL::Mixer::Samples;
 

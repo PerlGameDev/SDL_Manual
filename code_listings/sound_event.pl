@@ -20,7 +20,7 @@ my $app = SDLx::App->new(
 );
 
 # Initialize the Audio
-unless ( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 ) {
+unless ( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 1, 4096 ) == 0 ) {
     Carp::croak "Cannot open audio: " . SDL::get_error();
 }
 
