@@ -8,6 +8,25 @@ Similarly to video in SDL, there are several way for perl developers to access t
 
 To begin using sound we must enable and open an audiospec:
 
+	use strict;
+	use warnings;
+	use SDL;
+	use Carp;
+	use SDL::Audio;
+	use SDL::Mixer;
+	
+	SDL::init(SDL_INIT_AUDIO);
+	
+	unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
+	{
+		Carp::croak "Cannot open audio: ".SDL::get_error(); 
+	}
+	
+
+C<open_audio> will open an audio device with frequency at 44100 Mhz, audio format AUDIO_S16SYS (Note: This is currently the most portable format, however there are others), 2 channels and a chunk size of 4096. Fiddle with these values if you are comfortable with sound terminology and techniques. 
+
+ 
+
 =head1 Loading Samples
 
 =head1 Defining Channels
