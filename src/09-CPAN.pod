@@ -2,26 +2,6 @@
 
 The Comprehensive Perl Archive Network (CPAN) is the other part of the Perl language. By now most Perl developers should be aware of how to search and get modules from CPAN. This chapter will focus on why to use CPAN for games. Next we will take a look in what domain (Model, View or Controller) does a module solve a problem for. Moreover we would want to look at what is criteria to pick one module from another, using the many tools provided by CPAN.
 
-=head1 Modules
-
-It is good to reuse code. 
-
-=head2 MVC Method
-
-See where the module fits, Model, View or Controller
-
-=head3 View
-
-SDL will do most but helper module (Clipboard) are cool to have.
-
-=head3 Model
-
-Storable for games that need to store stuff 
-
-=head3 Controller
-
-Game::Life, make some of the games in SDL!
-
 =head1 Picking Modules
 
 So, you thought of a nice game, identified your needs, typed some
