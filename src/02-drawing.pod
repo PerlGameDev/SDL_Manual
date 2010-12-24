@@ -222,7 +222,7 @@ Using our knowledge of Primitives in SDL, lets draw our field, sky and a simple 
     $flower->draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
     $flower->draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
-    $flower->blit( [ 0, 0, 50, 100 ], $app );
+    $flower->blit( $app, [ 0, 0, 50, 100 ] );
 
     $app->update();
 
