@@ -54,9 +54,9 @@ Now we can play that sample on any open channel looping forever:
 		Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error(); 
 	}
 
-	+my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 1 );
+	+my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
 
-C<play_channel> allows us to assign a sample to the channel C<-1> which indicates any open channel. C<1> indicates we want to play the sample only once.
+C<play_channel> allows us to assign a sample to the channel C<-1> which indicates any open channel. C<0> indicates we want to play the sample only once.
 
 Note that since the sound will be playing in an external process we will need to keep the perl script running. In a game this is no problem but for a single script like this we can just use a simple C<sleep> function. Once we are done we can go ahead and close the audio device.
 
@@ -83,6 +83,8 @@ Music types in C<SDL::Mixer> run in a seperate channel from our samples which al
 
 	+SDL::Mixer::Music::play_music($background_music,0); 
 
+C<play_music> also takes a parameter for how many loops you would like to play the song for, where 0 is 1. 
+
 To stop the music we can call C<halt_music>.
 
 	 sleep(2);
@@ -90,6 +92,16 @@ To stop the music we can call C<halt_music>.
 	 SDL::Mixer::close_audio();
 
 =head1 Volume Control
+
+Controlling Volume can be as simple as:
+	
+	#All channels indicated by the -1
+	SDL::Mixer::Channels::volume(-1,10); 
+
+	#Specifically for the Music
+	SDL::Mixer::Music::volume_music( 10 );
+
+Volumes can be set at anytime and range from C<1-100>. 
 
 =head1 Mixer Effects
 
