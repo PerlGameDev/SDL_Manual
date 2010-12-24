@@ -4,7 +4,7 @@ Sound and Music in SDL is handled by the C<Audio> and C<SDL_Mixer> components. E
 
 Similarly to video in SDL, there are several way for perl developers to access the Sound components of SDL. For the plain C<Audio> component the C<SDL::Audio> and related modules are available. C<SDL_Mixer> is supported with th C<SDL::Mixer> module. There is currently a C<SDLx::Sound> module in the work, but not completed at the time of writing this manual. For that reason this chapter will use C<SDL::Audio> and C<SDL::Mixer>.  
 
-=head1 Setting Up the Audio Devices
+=head1 Simple Sound Script
 
 To begin using sound we must enable and open an audiospec:
 
@@ -25,7 +25,7 @@ To begin using sound we must enable and open an audiospec:
 
 C<open_audio> will open an audio device with frequency at 44100 Mhz, audio format AUDIO_S16SYS (Note: This is currently the most portable format, however there are others), 2 channels and a chunk size of 4096. Fiddle with these values if you are comfortable with sound terminology and techniques. 
 
-=head1 Loading Samples
+=head2 Loading Samples
 
 Next we will load sound samples that generally used for sound effects and the like. Currently C<SDL_Mixer> reserves samples for C<.WAV>, C<.AIFF>, C<.RIFF>  C<.OGG>, and C<.VOC> formats. 
 
@@ -41,7 +41,7 @@ Samples run on one of the 2 channels that we opened up, while our background mus
 	+	Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error();	
 	+}
 
-=head1 Playing the sample and closing audio
+=head2 Playing the sample and closing audio
 
 Now we can play that sample on any open channel looping forever:
 
@@ -63,7 +63,7 @@ Note that since the sound will be playing in an external process we will need to
 	+sleep(1);
 	+SDL::Mixer::close_audio();
 
-=head1 Streaming Music
+=head2 Streaming Music
 
 Next we will use C<SDL::Mixer::Music> to add a background music to our script here. 
 
@@ -91,7 +91,7 @@ To stop the music we can call C<halt_music>.
 	+SDL::Mixer::Music::halt_music();
 	 SDL::Mixer::close_audio();
 
-=head1 Volume Control
+=begin sidebar
 
 Controlling Volume can be as simple as:
 	
@@ -102,6 +102,20 @@ Controlling Volume can be as simple as:
 	SDL::Mixer::Music::volume_music( 10 );
 
 Volumes can be set at anytime and range from C<1-100>. 
+
+=end sidebar 
+
+=head2 Code so far
+
+=begin programlisting
+
+
+=end programlisting
+
+
+=head1 Sound Applications
+
+Now that we know how to prepare and play simple sounds we will apply it to an C<SDLx::App>.
 
 =head1 Mixer Effects
 
