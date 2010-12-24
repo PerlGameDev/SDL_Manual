@@ -52,10 +52,7 @@ my @songs = glob 'data/music/*.ogg';
 
 my $music_is_playing :shared = 0;
 sub callback{
-
     $music_is_playing = 0;
-
-    warn "Going to next song \n"
 };
 
 
@@ -70,16 +67,17 @@ my $stream_update : shared = 0;
 my $stream : shared;
 my $quit_processing : shared = 0;
 
+    my $effect_id =
+      SDL::Mixer::Effects::register( MIX_CHANNEL_POST, "main::spiffy",
+        "main::spiffydone", 0 );
+
+
 foreach (@songs) {
     warn 'Playing ' . $_;
 
     my $song = SDL::Mixer::Music::load_MUS($_);
     SDL::Mixer::Music::hook_music_finished('main::callback');
     SDL::Mixer::Music::play_music( $song, 0 );
-    my $effect_id =
-      SDL::Mixer::Effects::register( MIX_CHANNEL_POST, "main::spiffy",
-        "main::spiffydone", 0 );
-
     $music_is_playing = 1;
 
     while ($music_is_playing) {
@@ -108,9 +106,9 @@ foreach (@songs) {
 
     }
 
-    SDL::Mixer::Effects::unregister( MIX_CHANNEL_POST, $effect_id );
 
 }
+    SDL::Mixer::Effects::unregister( MIX_CHANNEL_POST, $effect_id );
 
 SDL::Mixer::Music::hook_music_finished();
 join_threads();
@@ -146,7 +144,6 @@ sub process_stream {
             $stream = '';
             my @left;
             my @right;
-           # warn ' stream is '.$#stream_cut;
             my $cut =  $#stream_cut/$lines;
             my @x;
             my @left_bezier;
@@ -165,8 +162,6 @@ sub process_stream {
                 my $point_x   = ( $i / $#stream_cut ) * 800;
                 
 
-                # print int($point_y) .'|'. int($point_x)."\n";
-
                 push @x, $point_x;
                 push @left_bezier, $point_y;
 
@@ -175,8 +170,7 @@ sub process_stream {
 
             }
             
-            #SDL::GFX::Primitives::bezier_color($app, \@x, \@left_bezier, $#left_bezier, 30, 0xFF0000FF);
-            $stream_update = 0;
+              $stream_update = 0;
             SDL::Video::flip($app);
         }
         else {
