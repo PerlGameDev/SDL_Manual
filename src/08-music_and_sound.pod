@@ -1,34 +1,22 @@
 =head0 Sound and Music
 
-Sound and Music in SDL is handled by the C<Audio> and C<SDL_Mixer> components. C<Audio> is provided with the Core SDL Library and only supports wav files. C<SDL_Mixer> supports more audio file formats and has additional features. 
+Sound and Music in SDL is handled by the C<Audio> and C<SDL_Mixer> components. Enabling C<Audio> devices is provided with the Core SDL Library and only supports wav files. C<SDL_Mixer> supports more audio file formats and has additional features that we need for sound in Game Development. 
 
 Similarly to video in SDL, there are several way for perl developers to access the Sound components of SDL. For the plain C<Audio> component the C<SDL::Audio> and related modules are available. C<SDL_Mixer> is supported with th C<SDL::Mixer> module. There is currently a C<SDLx::Sound> module in the work, but not completed at the time of writing this manual. For that reason this chapter will use C<SDL::Audio> and C<SDL::Mixer>.  
 
 =head1 Setting Up the Audio Devices
 
+To begin using sound we must enable and open an audiospec:
+
+=head1 Loading Samples
+
+=head1 Defining Channels
+
+=head1 Play Samples
+
 =head1 Streaming Music
 
 Games need background music to set the mood. 
-
-=head2 Audio Specs
-
-Defining how the music will run.
-
-=head2 Example
-
-Lets make some noise.
-
-=head1 Sound FX
-
-Well we want Sound events.
-
-=head2 Triggering 
-
-How to make the laser 'pew' in the right time.
-
-=head2 Example
-
-pew pew pew pew.
 
 =head1 Mixer Effects
 
