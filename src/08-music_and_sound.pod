@@ -25,13 +25,42 @@ To begin using sound we must enable and open an audiospec:
 
 C<open_audio> will open an audio device with frequency at 44100 Mhz, audio format AUDIO_S16SYS (Note: This is currently the most portable format, however there are others), 2 channels and a chunk size of 4096. Fiddle with these values if you are comfortable with sound terminology and techniques. 
 
- 
-
 =head1 Loading Samples
 
-=head1 Defining Channels
+Next we will load sound samples that generally used for sound effects and the like. Currently C<SDL_Mixer> reserves samples for C<.WAV>, C<.AIFF>, C<.RIFF>  C<.OGG>, and C<.VOC> formats. 
 
-=head1 Play Samples
+Samples run on one of the 2 channels that we opened up, while our background music will run on the other channels. To load samples we will be doing the following:
+
+	+use SDL::Mixer::Samples;
+
+	+my $sample = SDL::Mixer::Samples::load_WAV('data/sample.wav');
+
+	+unless($sample)
+	+{
+	+	Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error();	
+	+}
+
+=head1 Playing the sample and closing audio
+
+Now we can play that sample on any open channel looping forever:
+
+	 use SDL::Mixer::Samples;
+	+use SDL::Mixer::Channels;
+	
+	my $sample =  SDL::Mixer::Samples::load_WAV('data/sample.wav');
+	unless( $sample)
+	{
+		Carp::croak "Cannot load file data/sample.wav: ".SDL::get_error(); 
+	}
+
+	+my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 1 );
+
+C<play_channel> allows us to assign a sample to the channel C<-1> which indicates any open channel. C<1> indicates we want to play the sample only once.
+
+Note that since the sound will be playing in an external process we will need to keep the perl script running. In a game this is no problem but for a single script like this we can just use a simple C<sleep> function. Once we are done we can go ahead and close the audio device.
+
+	+sleep(1);
+	+SDL::Mixer::close_audio();
 
 =head1 Streaming Music
 
