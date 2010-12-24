@@ -14,7 +14,6 @@ unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
 	Carp::croak "Cannot open audio: ".SDL::get_error(); 
 }
 
-
 my $sample = SDL::Mixer::Samples::load_WAV('data/sample.wav');
 
 unless( $sample)

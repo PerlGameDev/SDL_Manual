@@ -70,14 +70,15 @@ Next we will use C<SDL::Mixer::Music> to add a background music to our script he
     use SDL::Mixer::Channels;
     +use SDL::Mixer::Music;
 
-   +#Load our awesome music from U<http://8bitcollective.com>
-   +my $background_music = SDL::Mixer::Music::load_MUS('data/music/01-PC-Speaker-Sorrow.ogg');
+    +#Load our awesome music from U<http://8bitcollective.com>
+    +my $background_music = 
+	+         SDL::Mixer::Music::load_MUS('data/music/01-PC-Speaker-Sorrow.ogg');
 
 
-   +unless( $background_music )
-   +{
-   +   Carp::croak "Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: ".SDL::get_error() ;
-   +}
+    +unless( $background_music )
+    +{
+    +   Carp::croak "Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: ".SDL::get_error() ;
+    +}
 
 Music types in C<SDL::Mixer> run in a seperate channel from our samples which allows us to have sound effects (like jump, or lasers etc) to play at the same time. 
 
@@ -140,7 +141,7 @@ Volumes can be set at anytime and range from C<1-100>.
 
    unless( $background_music )
    {
-      Carp::croak "Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: ".SDL::get_error() ;
+      Carp::croak "Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg:".SDL::get_error();
    }
 
    SDL::Mixer::Music::play_music( $background_music,0 );
