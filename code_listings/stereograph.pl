@@ -31,7 +31,8 @@ my $app = SDLx::App->new(
 	height => 600,
 	depth  => 32,
     title  => "Sound Event Demo",
-    eoq    => 1
+    eoq    => 1,
+	dt     => 0.2,
 );
 
 # Initialize the Audio
@@ -50,7 +51,7 @@ sub music_data {
 	my $position = shift;
 	my @stream = @_;
 
-	if( $stream_lock == 1 )	
+	if( $stream_lock != 0 )	
 	{
 		$stream_data = join ',', @stream;
 		$stream_lock = 0;
@@ -65,9 +66,10 @@ my $current_song = 0;
 my $current_music_callback = sub { 
 	my( $delta, $app ) = @_;
 
+	
 	if( $stream_lock == 0  ){
 
-	$app->draw_rect([ 0, $app->h()/2, $app->w(), $app->h()/2], 0x000000FF );
+	$app->draw_rect([ 0, 0, $app->w(), $app->h()], 0x000000FF );
 
             my @stream = split( ',', $stream_data );
             $stream_data = '';
@@ -84,8 +86,8 @@ my $current_music_callback = sub {
                 my $left  = $stream[$i];
                 my $right = $stream[ $i + 1 ];
 
-                my $point_y   = ( ( ($left) ) * 150 / 32000 ) + ($app->h/2);
-                my $point_y_r = ( ( ($right) ) * 150 / 32000 )+ ($app->h/2);
+                my $point_y   = ( ( ($left) ) * $app->h()/4 / 32000 ) + ($app->h/2);
+                my $point_y_r = ( ( ($right) ) * $app->h()/4 / 32000 )+ ($app->h/2);
                 my $point_x   = ( $i / $#stream ) * $app->w;
                 
            
@@ -97,7 +99,7 @@ my $current_music_callback = sub {
 	
 		$stream_lock = 1;
 	}
-	$app->update();
+	$app->flip();
 };
 
 my $cms_move_callback;
