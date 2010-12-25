@@ -2,6 +2,63 @@
 
 The Comprehensive Perl Archive Network (CPAN) is the other part of the Perl language. By now most Perl developers should be aware of how to search and get modules from CPAN. This chapter will focus on why to use CPAN for games. Next we will take a look in what domain (Model, View or Controller) does a module solve a problem for. Moreover we would want to look at what is criteria to pick one module from another, using the many tools provided by CPAN.
 
+=head1 Modules
+
+It is good to reuse code. 
+
+=head2 MVC Method
+
+See where the module fits, Model, View or Controller
+
+=head3 View
+
+SDL will do most but helper module (Clipboard) are cool to have.
+
+The I<SDLx::Widget> bundle comes separately, but is meant to provide
+you with several common game elements such as menu, dialog boxes
+and buttons, all seamlessly integrated with SDL.
+
+
+=head3 Model
+
+The logic and modelling behind most popular games is already on
+CPAN, so you can easily plug them in to create a new game of
+Chess, Checkers, Go, Life, Minesweeping, Cards, etc. There are
+even classes for platform games (like I<Games::Nintendo::Mario>),
+creating and solving mazes, generating random dungeon maps, you
+name it.
+
+If your game needs to store data, like objects and status for saved
+games or checkpoints, you can use I<Storable> or any of the many
+data serializers available.
+
+In fact, speaking of data structures, it is common to keep game
+data in standard formats such as JSON, YAML or XML, to make you
+able to import/export them directly from third-party tools like
+visual map makers or 3D modeling software. Perl provides very nice
+modules to handle the most popular formats - and some pretty
+unusual ones. Parsers vary in speed, size and thoroughness,
+so make sure to check the possible candidates and use the one
+that fits your needs for speed, size and accuracy.
+
+
+
+=head3 Controller
+
+
+If you need to roll a dice, you can use I<Games::Dice>, that even
+lets you receive an array of rolled dice, and use RPG-like syntax
+(e.g. "2d6+1" for 2 rolls of a 6-side die, adding 1 to the result).
+
+You can also use I<Sub::Frequency> if you need to do something or
+trigger a particular action or event only sometimes, or at a given
+probability.
+
+Your game may need you to mix words, find substrings or manipulate
+word permutations in any way (like when playing scrabble), in which
+case you might find the I<Games::Word> module useful.
+
+
 =head1 Picking Modules
 
 So, you thought of a nice game, identified your needs, typed some
