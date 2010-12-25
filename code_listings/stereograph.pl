@@ -65,9 +65,9 @@ my $current_song = 0;
 my $current_music_callback = sub { 
 	my( $delta, $app ) = @_;
 
-	$app->draw_rect([ 0, 0, $app->w(), $app->h()], 0x000000FF );
-
 	if( $stream_lock == 0  ){
+
+	$app->draw_rect([ 0, $app->h()/2, $app->w(), $app->h()/2], 0x000000FF );
 
             my @stream = split( ',', $stream_data );
             $stream_data = '';
