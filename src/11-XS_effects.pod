@@ -1,6 +1,13 @@
 =head0 Pixel Effects
 
-=head1 Ripple Effect
+=head1 Inline Effects 
+
+=for figure
+       \includegraphics[width=0.5\textwidth]{../src/images/xs_effects.png}
+        \caption{Sol's Chapter 01 Ripple Effect}
+         \label{fig:pong1}
+
+=head2 Ripple Effect
 
 Lets try this from perl.
 

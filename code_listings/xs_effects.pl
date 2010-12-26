@@ -12,34 +12,34 @@ my $code =
 
 void render( SDL_Surface *screen )
 {   
-  // Lock surface if needed
-  if (SDL_MUSTLOCK(screen)) 
-    if (SDL_LockSurface(screen) < 0) 
-      return;
+	// Lock surface if needed
+	if (SDL_MUSTLOCK(screen)) 
+		if (SDL_LockSurface(screen) < 0) 
+			return;
 
-  // Ask SDL for the time in milliseconds
-  int tick = SDL_GetTicks();
+	// Ask SDL for the time in milliseconds
+	int tick = SDL_GetTicks();
 
-  // Declare a couple of variables
-  int i, j, yofs, ofs;
+	// Declare a couple of variables
+	int i, j, yofs, ofs;
 
-  // Draw to screen
-  yofs = 0;
-  for (i = 0; i < 480; i++)
-  {
-    for (j = 0, ofs = yofs; j < 640; j++, ofs++)
-    {
-      ((unsigned int*)screen->pixels)[ofs] = i * i + j * j + tick;
-    }
-    yofs += screen->pitch / 4;
-  }
+	// Draw to screen
+	yofs = 0;
+	for (i = 0; i < 480; i++)
+	{
+		for (j = 0, ofs = yofs; j < 640; j++, ofs++)
+		{
+			((unsigned int*)screen->pixels)[ofs] = i * i + j * j + tick;
+		}
+		yofs += screen->pitch / 4;
+	}
 
-  // Unlock if needed
-  if (SDL_MUSTLOCK(screen)) 
-    SDL_UnlockSurface(screen);
+	// Unlock if needed
+	if (SDL_MUSTLOCK(screen)) 
+		SDL_UnlockSurface(screen);
 
-  // Tell SDL to update the whole screen
-  SDL_UpdateRect(screen, 0, 0, 640, 480);    
+	// Tell SDL to update the whole screen
+	SDL_UpdateRect(screen, 0, 0, 640, 480);    
 }
 
 
