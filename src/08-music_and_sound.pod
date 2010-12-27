@@ -435,7 +435,7 @@ Making a dynamic spectrograph.
 
 =for figure 
        \includegraphics[width=0.5\textwidth]{../src/images/spectro-1.png}      
-        \caption{A Spectrogrpah of an awesome song}               
+        \caption{A Spectrograph of an awesome song}               
          \label{fig:spectro}   
 
 

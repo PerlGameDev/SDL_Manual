@@ -1,5 +1,14 @@
 =head0 Pixel Effects
 
+In this chapter we will look at how to use pixel effects in Perl. Pixel effects are operations that are done directly on the bacnk of a C<SDL_Surface>'s pixel. These effects are used to do visual effects in games and applications, most notably by C<Frozen Bubble>.
+
+=for figure
+       \includegraphics[width=0.5\textwidth]{../src/images/effects.png}
+        \caption{Snow Effect covering Frozen Bubble's Logo }
+         \label{fig:pong1}
+
+These effects can be done in purely in Perl, for 1 passes and non real time applications. Effects that need to be done real time will have to be done in C via XS. This chapter will show two methods of doing this.
+
 =head1 Inline Effects 
 
 =for figure
