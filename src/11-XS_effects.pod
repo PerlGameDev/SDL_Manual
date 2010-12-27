@@ -58,7 +58,10 @@ pixel effect is just a time dependent (using C<SDL::get_ticks> for time) render 
     }
 
 
-    my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Grovvy XS Effects" );
+    my $app = SDLx::App->new( width => 640,
+                              height => 480, 
+                              eoq => 1, 
+                              title => "Grovvy XS Effects" );
 
     $app->add_show_handler( sub{ render( $app ) } );
 
@@ -84,7 +87,10 @@ The C<render> callback is now moved to C<C> code, using C<Inline C>. When the pr
     use SDLx::App;
 
 
-    my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Grovvy XS Effects" );
+    my $app = SDLx::App->new( width => 640, 
+                              height => 480, 
+                              eoq => 1, 
+                              title => "Grovvy XS Effects" );
 
     $app->add_show_handler( sub{ render( $app ) } );
 
