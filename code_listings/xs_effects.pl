@@ -1,14 +1,17 @@
-use Alien::SDL;
+use strict;
+use warnings;
+use Inline with => 'SDL';
 use SDL;
 use SDLx::App;
-use Cwd;
-use File::Spec qw/catfile/;
-use Inline;
-my $libs = Alien::SDL->config('libs');
-my $cflags = Alien::SDL->config('cflags');
-my $typemap = File::Spec->catfile( cwd(), 'typemap');
-my $code = 
-'#include <SDL.h>
+
+
+my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Grovvy XS Effects" );
+
+$app->add_show_handler( sub{ render( $app ) } );
+
+$app->run();
+
+use Inline C => <<'END';
 
 void render( SDL_Surface *screen )
 {   
@@ -42,14 +45,6 @@ void render( SDL_Surface *screen )
 	SDL_UpdateRect(screen, 0, 0, 640, 480);    
 }
 
+END
 
-';
-
-Inline->bind( C => $code => LIBS => $libs => CCFLAGS => $cflags => TYPEMAPS => $typemap  );
-
-my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Grovvy XS Effects" );
-
-$app->add_show_handler( sub{ render( $app ) } );
-
-$app->run();
 
