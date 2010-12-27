@@ -5,26 +5,128 @@ In this chapter we will look at how to use pixel effects in Perl. Pixel effects 
 =for figure
        \includegraphics[width=0.5\textwidth]{../src/images/effects.png}
         \caption{Snow Effect covering Frozen Bubble's Logo }
-         \label{fig:pong1}
+         \label{fig:frozen_bubble}
 
 These effects can be done in purely in Perl, for 1 passes and non real time applications. Effects that need to be done real time will have to be done in C via XS. This chapter will show two methods of doing this.
 
-=head1 Inline Effects 
+=head1 Sol's Ripple Effect
+
+For our first pixel effect we will be doing is a ripple effect from a well known SDL resource, U<http://sol.gfxile.net/gp/ch02.html>. This effects uses C<SDL::get_ticks> to animate a ripple effect across the surface as seen at \fig{fig:ripple}.   
 
 =for figure
        \includegraphics[width=0.5\textwidth]{../src/images/xs_effects.png}
         \caption{Sol's Chapter 01 Ripple Effect}
-         \label{fig:pong1}
+         \label{fig:ripple}
 
-=head2 Ripple Effect
+=head2 Pure Perl
 
-Lets try this from perl.
+First lets make the effect in pure perl.
 
-=head2 Color in Detail
+=begin codelisting
 
-Fiddling Bits.
+    use strict;
+    use warnings;
 
-=head1 Moving it to XS
+    use SDL;
+    use SDLx::App;
+
+
+    sub render {
+        my $screen = shift;
+        if ( SDL::Video::MUSTLOCK($screen) ) {
+            return if ( SDL::Video::lock_surface($screen) < 0 );
+        }
+
+        my $ticks = SDL::get_ticks();
+        my ( $i, $y, $yofs, $ofs ) = ( 0, 0, 0, 0 );
+        for ( $i = 0; $i < 480; $i++ ) {
+            for ( my $j = 0, $ofs = $yofs; $j < 640; $j++, $ofs++ ) {
+                $screen->set_pixels( $ofs, ( $i * $i + $j * $j + $ticks ) );
+            }
+            $yofs += $screen->pitch / 4;
+        }
+
+
+        SDL::Video::unlock_surface($screen) if ( SDL::Video::MUSTLOCK($screen) );
+
+        SDL::Video::update_rect( $screen, 0, 0, 640, 480 );
+
+        return 0;
+    }
+
+
+    my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Grovvy XS Effects" );
+
+    $app->add_show_handler( sub{ render( $app ) } );
+
+    $app->run();
+
+=end codelisting  
+
+=head2 Inline XS
+
+Running the previous code you will find that the pixel by pixel operations are too costly to do in perl so it would be better to move the pixel operations themselves to C.
+
+=begin codelisting
+
+    use Alien::SDL;
+    use SDL;
+    use SDLx::App;
+    use Cwd;
+    use File::Spec qw/catfile/;
+    use Inline;
+    my $libs = Alien::SDL->config('libs');
+    my $cflags = Alien::SDL->config('cflags');
+    my $typemap = File::Spec->catfile( cwd(), 'typemap');
+    my $code = 
+    '#include <SDL.h>
+
+    void render( SDL_Surface *screen )
+    {   
+        // Lock surface if needed
+        if (SDL_MUSTLOCK(screen)) 
+            if (SDL_LockSurface(screen) < 0) 
+                return;
+
+        // Ask SDL for the time in milliseconds
+        int tick = SDL_GetTicks();
+
+        // Declare a couple of variables
+        int i, j, yofs, ofs;
+
+        // Draw to screen
+        yofs = 0;
+        for (i = 0; i < 480; i++)
+        {
+            for (j = 0, ofs = yofs; j < 640; j++, ofs++)
+            {
+                ((unsigned int*)screen->pixels)[ofs] = i * i + j * j + tick;
+            }
+            yofs += screen->pitch / 4;
+        }
+
+        // Unlock if needed
+        if (SDL_MUSTLOCK(screen)) 
+            SDL_UnlockSurface(screen);
+
+        // Tell SDL to update the whole screen
+        SDL_UpdateRect(screen, 0, 0, 640, 480);    
+    }
+
+
+    ';
+
+    Inline->bind( C => $code => LIBS => $libs => CCFLAGS => $cflags => TYPEMAPS => $typemap  );
+
+    my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Grovvy XS Effects" );
+
+    $app->add_show_handler( sub{ render( $app ) } );
+
+    $app->run();
+
+=end codelisting
+
+=head1 Modules
 
 Making it usable at least.
 
