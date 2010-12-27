@@ -3,7 +3,7 @@
 In this chapter we will look at how to use pixel effects in Perl. Pixel effects are operations that are done directly on the bacnk of a C<SDL_Surface>'s pixel. These effects are used to do visual effects in games and applications, most notably by C<Frozen Bubble>.
 
 =for figure
-       \includegraphics[width=0.5\textwidth]{../src/images/effects.png}
+       \includegraphics[h!][width=0.5\textwidth]{../src/images/effects.png}
         \caption{Snow Effect covering Frozen Bubble's Logo }
          \label{fig:frozen_bubble}
 
@@ -22,7 +22,7 @@ For our first pixel effect we will be doing is a ripple effect from a well known
 
 First lets make the effect in pure perl.
 
-=begin codelisting
+=begin programlisting
 
     use strict;
     use warnings;
@@ -61,13 +61,13 @@ First lets make the effect in pure perl.
 
     $app->run();
 
-=end codelisting  
+=end programlisting  
 
 =head2 Inline XS
 
 Running the previous code you will find that the pixel by pixel operations are too costly to do in perl so it would be better to move the pixel operations themselves to C.
 
-=begin codelisting
+=begin programlisting
 
     use Alien::SDL;
     use SDL;
@@ -124,7 +124,7 @@ Running the previous code you will find that the pixel by pixel operations are t
 
     $app->run();
 
-=end codelisting
+=end programlisting
 
 =head1 Modules
 
