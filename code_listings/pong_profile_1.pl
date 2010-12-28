@@ -8,6 +8,8 @@ use SDLx::App;
 use SDLx::Text;
 use SDLx::Rect;
 
+# profiling counter
+my $profile_counter = 0;
 
 # create our main screen
 my $app = SDLx::App->new(
@@ -181,6 +183,10 @@ $app->add_show_handler(
         $app->update;
     }
 );
+
+# exit after a count of 100
+$app->add_move_handler( sub{ $app->stop() if $profile_counter++ > 100 } );
+
 
 # all is set, run the app!
 $app->run();
