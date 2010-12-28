@@ -16,7 +16,7 @@ my $app = SDLx::App->new(
     w            => 500,
     h            => 500,
     exit_on_quit => 1,
-    dt           => 0.02,
+    dt           => 0.01,
     title        => 'SDLx Pong'
 );
 

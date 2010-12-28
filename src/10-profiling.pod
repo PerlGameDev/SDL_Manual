@@ -26,8 +26,37 @@ calls.
      # all is set, run the app!
      $app->run();
 
-Run our profile prepared 
+Run this code which is provided in C<code_listings/pong_profile_1.pl>, and it will close sortly
+after a rendering the first 100 frames.
 
+	perl code_listings/pong_profile_1.pl 
+
+=begin sidebar
+
+Note that we selected the 1st 100 frames of this games just for illustration purposes. Usually for 
+more complex games, scripts for various events and situtations in the Game would be converted to a 
+script that can be profiled.   
+
+=end sidebar
+
+
+=head1 Profiling with NYTProf
+
+First incase you don't have the profiler go ahead and get the module from cpan.
+
+	cpan Devel::NYTProf 
+
+Next run the profiler on our prepared sample of the game.
+
+	perl -d:NYTProf code_listings/pong_profile_1.pl 
+
+Once that has finished running we will generate HTML reports.
+
+	nytprofhtml
+
+Once the HTML reports are done we will go ahead an open them in a broswer.
+
+	firefox nytprof/index.html 
 
 =head2 Calls
 
