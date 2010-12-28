@@ -10,6 +10,7 @@ use SDLx::App;
 use SDLx::Text;
 use SDLx::Rect;
 use SDLx::Surface;
+
 # create our main screen
 my $app = SDLx::App->new(
     w            => 400,
@@ -21,14 +22,14 @@ my $app = SDLx::App->new(
 
 # create our game objects
 my $score_text = SDLx::Text->new( font => 'font.ttf', h_align => 'center', color => [255,255,255,255] );
-my $score = 0;
-
-my $back  = SDLx::Surface->load( 'data/tetris_back.png' );
-my @piece = (undef);
+my $score      = 0;
+my $back       = SDLx::Surface->load( 'data/tetris_back.png' );
+my @piece      = (undef);
 push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
 
-my $grid = [];
-my $store = [];
+# to check for collisions we compare the position of the moving piece with the non-movin pieces
+my $grid  = []; # moving piece
+my $store = []; # non-moving pieces
 
 my %pieces = (
     I => [0,5,0,0,
@@ -60,10 +61,11 @@ my %pieces = (
           0,1,1,0,
           0,0,0,0],
 );
-my $next_tile         =  shuffle(keys %pieces);
-my $curr_tile         = [undef, 4, 0];          
+
+my $next_tile         = shuffle(keys %pieces);
+my $curr_tile         = [undef, 4, 0];
    @{$curr_tile->[0]} = @{$pieces{$next_tile}};
-   $next_tile         =  shuffle(keys %pieces); 
+   $next_tile         = shuffle(keys %pieces); 
 
 sub rotate_piece {
     my $_piece   = shift;
@@ -119,8 +121,6 @@ sub move_piece {
             }
         }
     }
-
-    return 1;
 }
 
 sub store_piece {
@@ -136,10 +136,9 @@ sub store_piece {
 sub trigger_move_event_handler {
     my ( $event, $app ) = @_;
 
-    if ( $event->type == SDL_KEYDOWN ) {
-
-		my $key = $event->key_sym;
-        if ( $event->key_sym & (SDLK_LEFT|SDLK_RIGHT|SDLK_UP|SDLK_DOWN) ) {
+    if( $event->type == SDL_KEYDOWN ) {
+        my $key = $event->key_sym;
+        if( $event->key_sym & (SDLK_LEFT|SDLK_RIGHT|SDLK_UP|SDLK_DOWN) ) {
             if($key == SDLK_LEFT && can_move_piece('left')) {
                 move_piece('left');
             }
@@ -180,7 +179,7 @@ $app->add_move_handler( sub {
         # deleting lines
         foreach(@to_delete) {
             splice(@{$store}, $_*10, 10);
-			$score++;
+            $score++;
         }
         
         # adding blank rows to the top
@@ -201,10 +200,12 @@ $app->add_show_handler(
     sub {
         # first, we clear the screen
         $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0x000000 );
+        # and draw the background image
         $back->blit( $app );
 
         my $x = 0;
         my $y = 0;
+        # draw the not moving tiles
         foreach(@{$store}) {
             $piece[$_]->blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
             $x++;
@@ -212,11 +213,13 @@ $app->add_show_handler(
         }
         $x = 0;
         $y = 0;
+        # draw the moving tile
         foreach(@{$grid}) {
             $piece[$_]->blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
             $x++;
             $y++ unless $x % 10;
         }
+        # the next tile will be...
         my $next_tile_index = max(@{$pieces{$next_tile}});
         for $y (0..3) {
             for $x (0..3) {
@@ -226,8 +229,8 @@ $app->add_show_handler(
             }
         }
 
-		$score_text->write_xy( $app, 248,20, "Next Piece");
-		$score_text->write_xy( $app, 248,240, "Score: ".$score);
+        $score_text->write_xy( $app, 248,  20, "Next Piece" );
+        $score_text->write_xy( $app, 248, 240, "Score: $score" );
         # finally, we update the screen
         $app->update;
     }
