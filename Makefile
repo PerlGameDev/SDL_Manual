@@ -41,8 +41,13 @@ pdf: tex lib/Makefile
 tex: prepare $(CHAPTERS) lib/SDLManualLatex.pm lib/book.sty bin/book-to-latex
 	$(PERL) -Ilib bin/book-to-latex --paper $(PAPER) $(CHAPTERS) > $(BOOK).tex
 
-release: pdf
-	cp $(BOOK).pdf build/book-$$(date +"%Y-%m").$(PAPER).pdf
+rel_pdf: pdf
+	cp $(BOOK).pdf dist/SDL_Manual.pdf
+
+rel_html: html
+	cp $(BOOK).html dist/SDL_Manual.html
+
+bump: rel_pdf rel_html 
 
 clean: 
 	rm -rf build/

@@ -1,0 +1,3875 @@
+<h1>Preface</h1>
+
+<h2>Background</h2>
+
+<p><i>Simple DirectMedia Layer</i> (a.k.a <i>libsdl</i>) is a
+cross-platform C library that provides access to several input and output
+devices. Most popularly it is used for its access to the 2D video
+framebuffer and inputs for games.</p>
+
+<p>In addition to the core library there are several other libraries that
+provide useful features such as <i>Text</i>, <i>Mixers</i>, <i>Images</i>
+and <i>GFX</i>.</p>
+
+<p>SDL Perl binds several of these libraries together int the
+<code>SDL::*</code> namespace. Moreover, SDL Perl provides several high
+level libraries in the <code>SDLx::*</code> namespace that encapsulate
+valuable game writing abstractions.</p>
+
+<h3>The <code>SDLx::</code> layer</h3>
+
+<p>The main purpose of the <code>SDLx::*</code> layer is to smooth out the
+drudgery of using the <code>SDL::*</code> layer directly. For example
+drawing a rectangle involves the following work.</p>
+
+<blockquote>
+
+<h5>NOTE:</h5>
+
+<p>Don't worry about understanding the code at this moment. Just compare
+the two code listings below.</p>
+
+</blockquote>
+
+<pre><code>        use SDL;
+        use SDL::Video;
+        use SDL::Surface;
+        use SDL::Rect;
+
+        # the size of the window box or the screen resolution if fullscreen
+        my $screen_width   = 800;
+        my $screen_height  = 600;
+
+        SDL::init(SDL_INIT_VIDEO);
+
+        # setting video mode
+        my $screen_surface = SDL::Video::set_video_mode($screen_width, 
+                                                        $screen_height, 
+                                                        32, 
+                                                        SDL_ANYFORMAT);
+
+        # drawing a rectangle with the blue color
+        my $mapped_color   = SDL::Video::map_RGB($screen_surface-&gt;format(), 0, 0, 255);
+        SDL::Video::fill_rect($screen_surface,
+                              SDL::Rect-&gt;new($screen_width / 4, $screen_height / 4,
+                                             $screen_width / 2, $screen_height / 2), 
+                              $mapped_color);
+
+        # update an area on the screen so its visible
+        SDL::Video::update_rect($screen_surface, 0, 0, $screen_width, $screen_height);
+
+        sleep(5); # just to have time to see it</code></pre>
+
+<p>While drawing a blue rectangle in the <code>SDLx::*</code> layer is as
+simple as:</p>
+
+<pre><code>       use strict;
+       use warnings;
+       
+       use SDL;
+       use SDLx::App;
+
+       my $app = SDLx::App-&gt;new( width=&gt; 800, height =&gt; 600 );
+       
+       $app-&gt;draw_rect([ $app-&gt;width/4, $app-&gt;height / 4, $app-&gt;width /2, $app-&gt;height / 2 ], [0,0,255,255] );
+
+       $app-&gt;update();
+
+       sleep(5);</code></pre>
+
+<p>A secondary purpose of the <code>SDLx::*</code> modules are to manage
+additional features for users, such as Layers, Game Loop handling and
+more.</p>
+
+<h2>Audience</h2>
+
+<p>This book is written for new users of SDL Perl who have some experience
+with Perl, but not much experience with SDL. It is not necessary for the
+audience to be aware of SDL internals, as this book covers most areas as it
+goes.</p>
+
+<h2>Format of this book</h2>
+
+<p>This book will be formated into chapters that progressively increase in
+complexity. However each chapter can be treated as a separate tutorial to
+jump to and learn.</p>
+
+<p>Each chapter will have a specific goal (e.g. <i>Making Pong</i>), which
+we will work towards. The source code for each chapter will be broken up
+and explained in some detail. Sources and data files are all provided on
+http://sdl.perl.org.</p>
+
+<p>Finally the chapters will end with an exercise the reader can try
+out.</p>
+
+<h2>Purpose of this book</h2>
+
+<p>This book is intended to introduce game development to Perl programmers
+and at the same time introduce Modern Perl concepts through game
+development. The book provides a progression of simple to intermediate
+examples and provide suggestions for more advanced endeavors.</p>
+
+<h2>Installing SDL Perl</h2>
+
+<p>We assume that a recent perl language and supporting packages have been
+installed on your system. Depending on your platform you may need some
+dependencies. Then we can do a final CPAN install.</p>
+
+<h3>Windows</h3>
+
+<p><code>Alien::SDL</code> will install binaries for 32bit and 64bit so
+there is no need to compile anything.</p>
+
+<h3>MacOSX</h3>
+
+<h4>Packages</h4>
+
+<p>Fink has packages for SDL Perl available. However Pango is not currently
+supported.</p>
+
+<h4>Or Compiling Dependencies</h4>
+
+<p><code>Alien::SDL</code> will compile SDL dependencies from scratch with
+no problems as long some prerequisites are installed.
+<code>libfreetype6</code>, <code>libX11</code>, <code>libvorbis</code>,
+<code>libogg</code> and <code>libpng</code> headers will suffice for most
+examples in this book.</p>
+
+<h3>Linux</h3>
+
+<p>Most current linux distributions include all the parts needed for this
+tutorial in the default install and in their package management system. It
+is also always possible to install on linux using the available open source
+code from their repositories. The Alien::SDL perl module automates much of
+downloading, compiling and installing the needed libraries.</p>
+
+<h4>Packages</h4>
+
+<p>You can probably use your distribution's packages. On Ubuntu and Debian
+try:</p>
+
+<pre><code>    sudo apt-get install libsdl-net1.2-dev libsdl-mixer1.2-dev \
+    libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev \ 
+    libsdl-gfx1.2-dev libsdl-pango-dev</code></pre>
+
+<h4>Or Compiling Dependencies</h4>
+
+<p>To compile from scratch a compiler, system header packages and some
+libraries are required.</p>
+
+<pre><code>    sudo apt-get install build-essential xorg-dev libx11-dev libxv-dev \
+    libpango1.0-dev libfreetype6-dev libvorbis-dev libpng12-dev \
+    libogg-dev</code></pre>
+
+<h3>CPAN install</h3>
+
+<pre><code>    sudo cpan SDL</code></pre>
+
+<p>For most platforms a CPAN install will suffice. Supported and tested
+platforms are listed at http://pass.cpantesters.org/distro/S/SDL.html.</p>
+
+<h2>Contact</h2>
+
+<p>Hopefully this book answers most of your questions. If you find you need
+assistance please contact us in one of the following methods:</p>
+
+<h3>Internet</h3>
+
+<p>SDL Perl's homepage is at http://sdl.perl.org/.</p>
+
+<h3>IRC</h3>
+
+<p>The	channel <code>#sdl</code> on <code>irc.perl.org</code> is very
+active and a great resource for help and getting involved.</p>
+
+<h3>Mailing lists</h3>
+
+<p>If you need help with SDL Perl, send an  to
+<code>sdl-devel@perl.org</code>.</p>
+
+<h2>Examples</h2>
+
+<p>The code examples in this books are provided on
+http://github.com/PerlGameDev/SDL_Manual/tree/master/code_listings/ .</p>
+
+<h2>Acknowledgements</h2>
+
+<p>Perl community on <code>#sdl</code> and <code>#perl</code>.</p>
+
+<h1>The Screen</h1>
+
+<h2>Background</h2>
+
+<p>SDL manages a single screen which is attached to the video device. An
+SDL application may contain one or more Surfaces of different kinds. But
+we'll leave that issue till later. The screen is typically created using
+the <code>SDLx::App</code> class.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use SDLx::App;
+
+    my $app = SDLx::App-&gt;new();
+
+    sleep( 2 );</code></pre>
+
+<p>The above code causes a window to appear on the desktop with nothing in
+it. Most current systems will fill it with a default black screen as shown.
+For some systems, however, a transparent window will might be shown. It is
+a good idea to ensure what we intend to display is shown. So we update the
+<code>$app</code> to ensure that.</p>
+
+<pre><code>    $app-&gt;update();</code></pre>
+
+<h2><code>SDLx::App</code> Options</h2>
+
+<p><code>SDLx::App</code> also allows you to specify several options for
+your application.</p>
+
+<h3>Dimensions</h3>
+
+<p>First are the physical dimensions of the screen itself. Lets make the
+screen a square size of 400×400. Change the initialization line to:</p>
+
+<pre><code>    my $app = SDLx::App-&gt;new( width =&gt; 400, height =&gt; 400 );</code></pre>
+
+<h3>Title</h3>
+
+<p>You will notice that the window's title is either blank or on some
+window managers it displays the path to the script file, depending on your
+operating system. Suppose we want a title for a new Pong clone game:</p>
+
+<pre><code>    my $app = SDLx::App-&gt;new( width  =&gt; 400,
+                              height =&gt; 400,
+                              title  =&gt; &#39;Ping - A clone&#39; );</code></pre>
+
+<p>At this point your screen will be:</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/first.png}
+\caption{Your first SDL screen!} \label{fig:first_screen}</p>
+
+
+
+<h3>Shortcuts</h3>
+
+<p>There are short-hand versions of the parameter names used in the call to
+<code>new()</code>. The parameters <code>width</code>, <code>height</code>,
+and <code>title</code> may be abbreviated as <code>w</code>, <code>h</code>
+and <code>t</code> respectively. So, the previous example could be written
+like this:</p>
+
+<pre><code>    my $app = SDLx::App-&gt;new( w =&gt; 400,
+                              h =&gt; 400,
+                              t =&gt; &#39;Ping - A clone&#39; );</code></pre>
+
+<h1>Drawing</h1>
+
+<h2>Preview</h2>
+
+<p>SDL provides several ways to draw graphical elements on the screen;
+these methods can be broken down into three general categories: Primitives,
+Images and Text. Methods in each of the three categories draw a single
+object on the Surface. The Surface is represented by
+<code>SDLx::Surface</code>. Even our <code>SDLx::App</code> is a
+<code>SDLx::Surface</code>. This means that we can draw directly on the
+<code>SDLx::App</code>, however there are several advantages to drawing on
+multiple surfaces. In this chapter we will explore these methods of
+drawing, and make a pretty picture.</p>
+
+<h2>Coordinates</h2>
+
+<p>SDL surfaces coordinate system has x=0, y=0 in the upper left corner and
+work downward and to the right. The API always lists coordinates in x,y
+order. More discussion of these details can be found in the SDL library
+documentation:
+http://www.sdltutorials.com/sdl-coordinates-and-blitting/</p>
+
+<h2>Objective</h2>
+
+<p>Using SDL we will try to construct the following image.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/flower.png}
+\caption{A field of flowers} \label{fig:flowers}</p>
+
+
+
+<h2>Program</h2>
+
+<p>Below is the program that generates the above image.</p>
+
+<pre><code>    use SDL;
+    use SDLx::App;
+    use SDLx::Sprite;
+
+    my $app = SDLx::App-&gt;new(
+        w     =&gt; 500,
+        h     =&gt; 500,
+        d     =&gt; 32,
+        title =&gt; &#39;Pretty Flowers&#39;
+    );
+
+    # Draw Code Starts here
+
+    my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
+
+    $flower-&gt;surface-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
+
+    $flower-&gt;surface-&gt;draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+    $flower-&gt;alpha_key(0);
+
+    $app-&gt;draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
+
+    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
+
+    foreach ( 0 .. 500 ) {
+        my $y = 425 - rand(50);
+        $flower-&gt;draw_xy( $app, rand(500) - 20, $y );
+    }
+
+    #Draw Code Ends Here
+
+    $app-&gt;update();
+
+    sleep(2);</code></pre>
+
+<h2>Drawing the Flower</h2>
+
+<p>To begin actually drawing the flower, we need to cover some theory.</p>
+
+<h3>Syntax Overview</h3>
+
+<p>Drawing in SDL are done on Surfaces. The <code>SDLx::Surface</code>
+object provides access to methods in the form of:</p>
+
+<pre><code>    $surface-&gt;draw_{something}( .... );</code></pre>
+
+<p>Parameters are usually provided as array references, to define areas and
+colors.</p>
+
+<h4>Rectangular Parameters</h4>
+
+<p>Some parameters are just a quick definition of the positions and
+dimensions. For a rectangle that will be placed at <code>(20, 20)</code>
+pixel units on the screen, and a dimension of <code>40x40</code> pixel
+units the following would suffice.</p>
+
+<pre><code>    my $rect = [20, 20, 40, 40];</code></pre>
+
+<h4>Color</h4>
+
+<p> in SDL is described by 4 numbers. The first three numbers define the
+Red, Blue, Green intensity of the color. The final number defines the
+transparency of the Color.</p>
+
+<pre><code>    my $color = [255, 255, 255, 255];
+    </code></pre>
+
+<p>Color can also be defined as hexadecimal values:</p>
+
+<pre><code>    my $color = 0xFFFFFFFF;</code></pre>
+
+<p>The values of the numbers range from 0-255 for 32 bit depth in RGBA
+format. Alternately color can be described as a 4 byte hexadecimal value,
+each two digit byte encoding the same RGBA vaues as above:</p>
+
+<pre><code>    my $goldenrod = 0xDAA520FF;</code></pre>
+
+<blockquote>
+
+<h5>NOTE: Depth of Surface</h5>
+
+<p>The bits of the surface are set when the <code>SDLx::Surface</code> or
+<code>SDLx::App</code> is made.</p>
+
+<pre><code>    my $app = SDLx::App-&gt;new(  depth =&gt; 32 ); </code></pre>
+
+<p>Other options are 24,16 and 8. 32 is the default bit depth.</p>
+
+</blockquote>
+
+<h3>Pixels</h3>
+
+<p>All <code>SDLx::Surface</code>s are made of pixels that can be read and
+written to via a tied array interface.</p>
+
+<pre><code>    $app-&gt;[$x][$y] = $color;</code></pre>
+
+<p>The <code>$color</code> is defined as an unsigned integer value which is
+construct in the following format, <code>0xRRBBGGAA</code>. This is a
+hexadecimal number. Here are some examples:</p>
+
+<pre><code>    $white = 0xFFFFFFFF;
+    $black = 0x000000FF;
+    $red   = 0xFF0000FF;
+    $blue  = 0x00FF00FF;
+    $green = 0x0000FFFF;</code></pre>
+
+<p>Pixels can also be defined as anonymous arrays as before <code>[$red,
+$blue, $green, $alpha]</code>.</p>
+
+<h3>Primitives</h3>
+
+<p>Drawing  are usually simples shapes that can be used for creating
+graphics dynamically.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/draw-1.png}
+\caption{Drawing a line} \label{fig:draw_line}</p>
+
+
+
+<h4>Lines</h4>
+
+<pre><code>    $app-&gt;draw_line( [200,20], [20,200], [255, 255, 0, 255] );</code></pre>
+
+<p>This will draw a yellow line from positions <code> (200,20) </code> to
+<code> (20,200) </code>.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/draw-2.png}
+\caption{Drawing a Rectangle} \label{fig:draw_rect}</p>
+
+
+
+<h4>Rectangles</h4>
+
+<p>Rectangles are a common building blocks for games. In SDL, rectangles
+are the most cost effective of the primitives to draw.</p>
+
+<pre><code>    $app-&gt;draw_rect( [10,20, 40, 40 ], [255, 255, 255,255] );</code></pre>
+
+<p>The above will add a white square of size <code>40x40</code> onto the
+screen at the position <code>(10,20)</code>.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/draw-3.png}
+\caption{Drawing a Circle} \label{fig:draw_circle}</p>
+
+
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/draw-4.png}
+\caption{Drawing a filled Circle} \label{fig:draw_filled_circle}</p>
+
+
+
+<h4>Circles</h4>
+
+<p>Circles are drawn similarly either filled or unfilled.</p>
+
+<pre><code>    $app-&gt;draw_circle( [100,100], 20, [255,0,0,255] );
+    $app-&gt;draw_circle_filled( [100,100], 19, [0,0,255,255] );</code></pre>
+
+<p>Now we will have a filled circle, colored blue and unfilled circle,
+colored as red.</p>
+
+<h4>More Primitives</h4>
+
+<p>For more complex drawing functions have a look at
+<code>SDL::GFX::Primitives</code>.</p>
+
+<h3>Application: Primitives</h3>
+
+<p>Using our knowledge of Primitives in SDL, lets draw our field, sky and a
+simple flower.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use SDLx::App;
+
+    my $app = SDLx::App-&gt;new(
+        w     =&gt; 500,
+        h     =&gt; 500,
+        d     =&gt; 32,
+        title =&gt; &#39;Pretty Flowers&#39;
+    );
+
+    #Adding the blue skies
+    $app-&gt;draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
+
+    #Draw our green field
+    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
+
+    # Make a surface 50x100 pixels
+    my $flower = SDLx::Surface-&gt;new( width =&gt; 50, height =&gt; 100 );
+
+    # Lets make the background black
+    $flower-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
+
+    # Now for a pretty green stem
+    $flower-&gt;draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+
+    # And the simple flower bud
+    $flower-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
+    $flower-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+
+    $flower-&gt;blit( $app, [ 0, 0, 50, 100 ] );
+
+    $app-&gt;update();
+
+    sleep(1);</code></pre>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/flower-1.png}
+\caption{Looks so lonely there all alone} \label{fig:draw_flower_lone}</p>
+
+
+
+<h2>Drawing a Field of Flowers</h2>
+
+<h3>Multiple Surfaces</h3>
+
+<p>So far we have been drawing only on one surface, the display. In SDL it
+is possible to write on several surfaces that are in memory. These surfaces
+can later on be added on to the display to show them. The Surface is
+defined as a <code>SDLx::Surface</code> type in SDL Perl.</p>
+
+<h4>Creating Surfaces</h4>
+
+<p>There are several ways to create <code>SDLx::Surface</code> for use.</p>
+
+<h4>Raw Surfaces</h4>
+
+<p>For the purposes of preparing surfaces using only draw functions ( as
+mentioned above ) we can create a surface using the
+<code>SDLx::Surface</code>'s constructor.</p>
+
+<pre><code>    $surface = SDLx::Surface-&gt;new( width =&gt; $width, height =&gt; $height );</code></pre>
+
+<h4>Images in SDL</h4>
+
+<p>Using <code>SDL::Image</code> and <code>SDL::Video</code> we can load
+images as surfaces too. <code>SDL::Image</code> provides support for all
+types of images, however it requires <code>SDL_image</code> library support
+to be compiled with the right library.</p>
+
+<pre><code>    $surface = SDL::Image::load( &#39;picture.png&#39; );</code></pre>
+
+<p>In case the <code>SDL_Image</code> library is unavailable we can use the
+build in support for the <code>.bmp</code> format.</p>
+
+<pre><code>    $surface = SDL::Video::load_BMP( &#39;picture.bmp&#39; );</code></pre>
+
+<p>Generally however the <code>SDLx::Sprite</code> module is used.</p>
+
+<h2>Lots of Flowers but One Seed</h2>
+
+<h3>Sprites</h3>
+
+<p>You might have noticed that putting another <code>SDLx::Surface</code>
+on the <code>$app</code> requires the usage of a <code>blit( )</code>
+function, which may not clarify as to what is going on there. Fortunately a
+<code>SDLx::Sprite</code> can be used to make our flower. Besides making
+drawing simpler, <code>SDLx::Sprite</code> adds several other features that
+we need for game images that move a lot. For now lets use
+<code>SDLx::Sprite</code> for our flowers.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use SDLx::App;
+    use SDLx::Sprite;
+
+    my $app = SDLx::App-&gt;new(
+        w     =&gt; 500,
+        h     =&gt; 500,
+        d     =&gt; 32,
+        title =&gt; &#39;Pretty Flowers&#39;
+    );
+
+    #Adding the blue skies
+    $app-&gt;draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
+
+    #Draw our green field
+    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
+
+    my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
+
+    # To access the SDLx::Surface to write to we use the -&gt;surface() method
+
+    # Lets make the background black
+    $flower-&gt;surface-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
+
+    # Now for a pretty green stem
+    $flower-&gt;surface-&gt;draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+
+    # And the simple flower bud
+    $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+
+    $flower-&gt;draw_xy( $app, 0, 0 );
+
+    $app-&gt;update();
+
+    sleep(1);</code></pre>
+
+<p>Obviously at this point we don't want our single flower floating in the
+sky, so we will draw several of them on the ground. Delete everything
+including and after</p>
+
+<pre><code>    $flower-&gt;draw_xy($app, 0,0)</code></pre>
+
+<p>and insert the below code to get a field of flowers.</p>
+
+<pre><code>    foreach( 0..500 )
+    {
+            my $y =  425 - rand( 50 );
+            $flower-&gt;draw_xy( $app, rand(500)-20, $y );
+    }
+
+    $app-&gt;update();
+
+    sleep(1);  </code></pre>
+
+<h1>Handling Events</h1>
+
+<h2>The SDL Queue and Events</h2>
+
+<p>SDL process events using a queue. The event queue holds all events that
+occur until they are removed. Events are any inputs such as: key presses,
+mouse movements and clicks, window focuses, and joystick presses. Every
+time the window sees one of these events, it puts it on the event queue
+once. The queue holds SDL events, which can be read via an
+<code>SDL::Event</code> object. We can process the Event Queue manually by
+pumping and polling the queue, constantly.</p>
+
+<pre><code>        use strict;
+        use warnings;
+        use SDL;
+        use SDL::Event;
+        use SDL::Events;
+        use SDLx::App;
+
+        my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200 );
+
+        my $event = SDL::Event-&gt;new();
+        
+        my $quit = 0;
+
+        while (!$quit) {
+                SDL::Events::pump_events();    #Updates the queue to recent events
+
+                #Process all events that are available
+                while ( SDL::Events::poll_event($event) ) {
+
+                        #Check by Event type
+                        do_key() if $event-&gt;type == SDL_KEYDOWN;
+                }
+        }
+
+
+        sub do_key { $quit = 1 }</code></pre>
+
+<p><code>SDLx::Controller</code> via the <code>SDLx::App</code> handles
+this loop by accepting Event Callbacks. Every application loop, each event
+callback is called repetitively with each event in the queue. This chapter
+will go through some examples of how to process various events for common
+usage.</p>
+
+<h2>Quitting with Grace</h2>
+
+<p>So far we have not been exiting an <code>SDLx::App</code> in a graceful
+manner. Using the built in <code>SDLx::Controller</code> in the
+<code>$app</code> we can handle events using callbacks.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use SDL::Event;
+    use SDLx::App;
+
+    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32, title =&gt; &quot;Quit Events&quot; );
+
+    #We can add an event handler 
+    $app-&gt;add_event_handler( \&amp;quit_event );
+
+    #Then we will run the app
+    #which will start a loop for keeping the app alive
+    $app-&gt;run();
+
+    sub quit_event
+    {
+        #The callback is provided a SDL::Event to use
+            my $event = shift;
+
+        #Each event handler also returns you back the Controller call it
+            my $controller = shift;
+
+        #Stopping the controller for us will exit $app-&gt;run() for us
+            $controller-&gt;stop if $event-&gt;type == SDL_QUIT;
+    }</code></pre>
+
+<p><code>SDLx::App</code> calls the event_handlers, from an internal
+<code>SDLx::Controller</code>, until a
+<code>SDLx::Controller::stop()</code> is called. <code>SDLx::App</code>
+will exit gracefully once it is stopped.</p>
+
+<h3>Event Type Defines</h3>
+
+<p>In the above sample <code>SDL_QUIT</code> was used to define the type of
+event we have. SDL uses a lot of integers to define different types of
+objects and states. Fortunately these integers are wrapped in constant
+functions like <code>SDL_QUIT</code>. More defines are explained in the
+<code>SDL::Events</code> documentation. Have a look at the perldoc for
+<code>SDL::Events</code>.</p>
+
+<pre><code>    perldoc SDL::Events </code></pre>
+
+<blockquote>
+
+<p>Events can also be processed without using callbacks from
+<code>SDLx::App</code>. Chapter 5 goes more in detail for this topic. The
+perldoc for <code>SDL::Events</code> will also show how do the
+processing.</p>
+
+</blockquote>
+
+<h3>Exit on Quit</h3>
+
+<p>Exiting when the <code>SDL_QUIT</code> event is call is a common
+callback so <code>SDLx::App</code> provides it for you, as a constructor
+option.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use SDLx::App;
+
+    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32, 
+                              title =&gt; &quot;Quit Events&quot;, 
+                             exit_on_quit =&gt; 1); 
+
+        #exit_on_quit option exits when SDL_QUIT is processed
+
+    #Then we will run the app
+    #which will start a loop for keeping the app alive
+    $app-&gt;run();
+  </code></pre>
+
+<h2>Small Paint: Input Devices</h2>
+
+<p>SDL events also allow us to handle input from various devices. To
+demonstrate two of the common devices, lets make a simple paint program. It
+will provide a small black window where you can draw with the mouse.
+Moreover when you press the number keys 0-10 it will pick different colors.
+By pressing 'q' or 'Q' we will exit. Similarity pressing 'c' or 'C' will
+clear the screen. Pressing 'ctrl-s' will save our image to the file
+'painted.bmp'.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/painted.png}
+\caption{Simple Paint: Smile} \label{fig:Smile</p>
+
+
+
+<h3>Keyboard</h3>
+
+<p>To handle the keyboard specifications we will create another event
+callback.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use Cwd;
+    use SDL::Event;
+    use SDLx::App;
+
+    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32, title =&gt; &quot;Simple Paint&quot;);
+    sub quit_event {
+
+        my $event = shift;
+        my $controller = shift;
+        $controller-&gt;stop() if $event-&gt;type == SDL_QUIT;
+    }
+
+   
+    my @colors = (  0xFF0000FF, 0x00FF00FF,
+                    0x0000FFFF, 0xFFFF00FF,
+                    0xFF00FFFF, 0x00FFFFFF,
+                    0xCCFFCCFF, 0xFFCC33FF,
+                    0x000000FF, 0xFFFFFFFF );
+
+    my $brush_color = 0;
+
+ 
+    sub save_image {
+
+       if( SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0 &amp;&amp; -e &#39;painted.bmp&#39;)
+        {
+             warn &#39;Saved painted.bmp to &#39;.cwd();
+        }
+        else 
+        {
+            warn &#39;Could not save painted.bmp: &#39;.SDL::get_errors();
+        }
+
+    }
+   
+
+    sub keyboard_event
+    {
+        my $event = shift;
+        
+        #Check that our type of event press is a SDL_KEYDOWN
+        if( $event-&gt;type == SDL_KEYDOWN )
+        {
+            #Convert the key_symbol (integer) to a keyname
+            my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
+            
+            #if our $key_name is a digit use it as a color
+            my $brush_color = $key_name if $key_name =~ /^\d$/;
+           
+            #Get the keyboard modifier perldoc SDL::Events
+            #We are using any CTRL so KMOD_CTRL is fine
+            my $mod_state = SDL::Events::get_mod_state();
+            
+            #Save the image.         
+            save_image if $key_name =~ /^s$/ &amp;&amp; ($mod_state &amp; KMOD_CTRL); 
+
+            #Clear the screen if we pressed C or c
+            $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 ) if $key_name =~ /^c$/;
+            
+            #Exit if we press a Q or q
+            $app-&gt;stop() if $key_name =~ /^q$/
+        }
+        $app-&gt;update();    
+    }
+
+    $app-&gt;add_event_handler(\&amp;quit_event);
+    $app-&gt;add_event_handler(\&amp;keyboard_event);
+    $app-&gt;run()
+  </code></pre>
+
+<blockquote>
+
+<h5>NOTE: Globals and Callbacks</h5>
+
+<p>When adding a callback to <code>SDLx::App</code> which uses globals (
+<code>$brush_color</code> and <code>@colors</code> in this case ), be sure
+to define them before declaring the subroutine. Also add it to the
+<code>SDLx::App</code> after the subroutine is defined. The reason for this
+is so that <code>SDLx::App</code> is aware of the globals before it calls
+the callback internally.</p>
+
+</blockquote>
+
+<h3>Mouse</h3>
+
+<p>Now we will go about capturing our Mouse events, by inserting the
+following code after the <code>keyboard_event</code> subroutine.</p>
+
+<pre><code>    #Keep track if we are drawing 
+    my $drawing = 0;
+    sub mouse_event {
+
+        my $event = shift;
+        
+        #We will detect Mouse Button events
+        #and check if we already started drawing
+        if($event-&gt;type == SDL_MOUSEBUTTONDOWN || $drawing)
+        {
+            # set drawing to 1 
+            $drawing = 1;
+
+            # get the X and Y values of the mouse
+            my $x =  $event-&gt;button_x;
+            my $y =  $event-&gt;button_y;
+            
+            # Draw a rectangle at the specified position
+            $app-&gt;draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
+    
+            # Update the application
+            $app-&gt;update();
+        }
+
+        # Turn drawing off if we lift the mouse button
+        $drawing = 0 if($event-&gt;type == SDL_MOUSEBUTTONUP );
+     
+    }
+
+
+    $app-&gt;add_event_handler( \&amp;mouse_event );</code></pre>
+
+<p>Currently we don't make a distinction between what mouse click is done.
+This can be accomplished by taking a look at the
+<code>button_button()</code> method in <code>SDL::Event</code>. At this
+point we have a simple paint application done.</p>
+
+<p>Another point to note is that each event_handler is called in the order
+that it was attached.</p>
+
+<h1>The Game Loop</h1>
+
+<h2>Simplest Game Loop</h2>
+
+<p>The simplest game loop can be boiled down to the following.</p>
+
+<pre><code>    while(!$quit)
+    {
+       get_events();
+       calculate_next_positions();
+       render();
+    }</code></pre>
+
+<p>In <code>get_events()</code> we get events from what input devices that
+we need. It is important to process events first to prevent lag. In
+<code>calculate_next_positions</code> we update the game state according to
+animations and the events captured. In <code>render()</code> we will update
+the screen and show the game to the player.</p>
+
+<p>A practical example of this is a moving laser bolt.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use SDL::Event;
+    use SDL::Events;
+    use SDLx::App;
+    
+    my $app = SDLx::App-&gt;new( 
+                             width=&gt; 200, height =&gt; 200,
+                             title=&gt; &#39;Pew Pew&#39;
+                            );
+
+    #Don&#39;t need to quit yet
+    my $quit = 0;
+    #Start laser on the left
+    my $laser = 0;
+    sub get_events{ 
+
+                    my $event = SDL::Event-&gt;new();
+                    
+                    #Pump the event queue
+                    SDL::Events::pump_events;
+
+                    while( SDL::Events::poll_event($event) )
+                    {
+                        $quit = 1 if $event-&gt;type == SDL_QUIT  
+                    }
+                  }
+
+    sub calculate_next_positions{
+        # Move the laser over
+        $laser++;
+        # If the laser goes off the screen bring it back
+        $laser = 0 if $laser &gt; $app-&gt;w();
+
+    }
+    
+    sub render { 
+        
+        #Draw the background first
+        $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 );
+
+        #Draw the laser, in the middle height of the screen
+        $app-&gt;draw_rect( [$laser, $app-&gt;h/2, 10, 2], [255,0,0,255]);
+
+        $app-&gt;update();
+
+    }
+
+
+    # Until we quit stay looping 
+    while(!$quit)
+    {
+         get_events();
+         calculate_next_positions();
+         render();
+    }</code></pre>
+
+<h3>Issues</h3>
+
+<p>This game loop works well for consoles and devices where the share of
+CPU clock speed is always known. The game users will be using the same
+processor characteristics to run this code. This means that each animation
+and calculation will happen at the exact same time in each machine.
+Unfortunately this is typical not typical true for modern operating systems
+and hardware. For faster CPUs and systems with varying loads we need to
+regulate updates so game play will be consistent in most cases.</p>
+
+<h2>Fixed FPS</h2>
+
+<p>One way to solve this problem is to regulate the "Frames Per Second" for
+your games updates. A "frame" is defined as a complete redraw of the screen
+representing the updated game state. We can keep track of the number of
+frames we are delivering each second and control it using the technique
+illustrated below.</p>
+
+<h3>Exercise</h3>
+
+<p>First run the below script with no fps fixing:</p>
+
+<pre><code>    perl game_fixed.pl</code></pre>
+
+<p>You will see that the FPS is erratic, and the laser seems to speed up
+and slow down randomly.</p>
+
+<p>Next fix the upper bounds of the FPS</p>
+
+<pre><code>    perl game_fixed.pl 1</code></pre>
+
+<p>This will prevent the laser from going too fast, in this case faster
+then 60 frames per second.</p>
+
+<p>Finally fix the lower bounds of the FPS</p>
+
+<pre><code>    perl game_fixed.pl 1 1</code></pre>
+
+<p>At this point the FPS should be at a steady 60 frames per second.
+However if this is not the case read on to the problems below.</p>
+
+<pre><code>        use strict;
+        use warnings;
+        use SDL;
+        use SDL::Event;
+        use SDL::Events;
+        use SDLx::App;
+
+        my $app = SDLx::App-&gt;new(
+                        width  =&gt; 200,
+                        height =&gt; 200,
+                        title  =&gt; &#39;Pew Pew&#39;
+                        );
+
+        # Variables 
+        # to save our start/end and delta times for each frame
+        # to save our frames and FPS 
+        my ( $start, $end, $delta_time, $FPS, $frames ) = ( 0, 0, 0, 0, 0 );
+
+        # We will aim for a rate of 60 frames per second 
+        my $fixed_rate = 60;
+
+        # Our times are in micro second, so we will compensate for it
+        my $fps_check = (1000/ $fixed_rate );
+
+        #Don&#39;t need to quit yet
+        my $quit = 0;
+
+        #Start laser on the left
+        my $laser = 0;
+
+        sub get_events {
+
+                my $event = SDL::Event-&gt;new();
+
+        #Pump the event queue
+                SDL::Events::pump_events;
+
+                while ( SDL::Events::poll_event($event) ) {
+                        $quit = 1 if $event-&gt;type == SDL_QUIT;
+                }
+        }
+
+        sub calculate_next_positions {
+                $laser++;
+
+                $laser = 0 if $laser &gt; $app-&gt;w;
+        }
+
+        sub render {
+
+        #Draw the background first
+                $app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0 );
+
+        #Draw the laser
+                $app-&gt;draw_rect( [ $laser, $app-&gt;h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
+
+        #Draw our FPS on the screen so we can see
+                $app-&gt;draw_gfx_text( [ 10, 10 ], [ 255, 0, 255, 255 ], &quot;FPS: $FPS&quot; );
+
+                $app-&gt;update();
+        }
+
+
+        # Called at the end of each frame, whether we draw or not
+        sub calculate_fps_at_frame_end
+        {
+
+                # Ticks are microseconds since load time
+                $end = SDL::get_ticks();
+
+                # We will average our frame rate over 10 frames, to give less erratic rates
+                if ( $frames &lt; 10 ) {
+                        
+                        #Count a frame
+                        $frames++;
+                        
+                        #Calculate how long it took from the start 
+                        $delta_time += $end - $start;
+                }
+                else {
+
+                        # Our frame rate is our  Frames * 100 / Time Elapsed in us
+                        $FPS        = int( ( $frames * 100 ) / $delta_time );
+
+                        # Reset our metrics
+                        $frames     = 0;
+                        $delta_time = 0;
+                }
+
+
+
+        }
+
+        while ( !$quit ) {
+
+
+                # Get the time for the starting of the frame
+                $start = SDL::get_ticks();
+
+                get_events();
+
+                # If we are fixing the lower bounds of the frame rate
+                if( $ARGV[1] )
+                {
+
+                        # And our delta time is going too slow for frame check
+                        if ( $delta_time &gt; $fps_check ) {
+
+                                # Calculate our FPS from this 
+                                calculate_fps_at_frame_end();
+
+                                # Skip rendering and collision detections 
+                                # The heavy functions in the game loop
+                                next;             
+
+                        }
+
+                }
+
+
+                calculate_next_positions();
+                render();
+
+                # A normal frame with rendering actually performed
+                calculate_fps_at_frame_end();
+
+                # if we are fixing the upper bounds of the frame rate
+                if ( $ARGV[0] ) {
+                        
+                        # and our delta time is going too fast compared to the frame check
+                        if ( $delta_time &lt; $fps_check ) {
+
+                                # delay for the difference
+                                SDL::delay( $fps_check - $delta_time );
+                        }
+                }
+
+
+        }</code></pre>
+
+<h3>Problems</h3>
+
+<p>Generally this method is sufficient for most computers out there. The
+animations will be smooth enough that we see the same game play on
+differing hardware. However there are some serious problems with this
+method. First if a computer is too slow for 60 frames for second it will
+skip a lot of rendering, and the animation will look sparse and jittery.
+Maybe it would be better for 30 fps or lower for that machine, which is
+hard for the developer to predict. Secondly if a CPU is fast, a lot of CPU
+cycles are wasted in the delay.</p>
+
+<p>Finally this method does not fix the fundamental problem that the
+rendering is fixed to CPU clock speed.</p>
+
+<h3>Potential Fix: Variable FPS</h3>
+
+<p>One way to fix the problem of a computer being consistently faster or
+slower for the default Frame per Second set, is to change the FPS
+accordingly. So far a slow CPU it will jump down to 30 FPS and so on. In
+our opinion, although a consistent FPS can be achieved this way, it still
+presents the problem of differing animation speeds for different CPUs and
+systems. There are better solutions available.</p>
+
+<h2>Integrating Physics</h2>
+
+<p>The problem caused by coupling rendering to the CPU speed has a
+convenient solution. We can derive our rendering from a physical model
+based on the passage of time. Objects moving according to real world time
+will have consistent behavior at all CPU speeds, and smooth interpolation
+between frames. SDLx::App provides just such features for our convenience
+through movement handlers and 'show' handlers.</p>
+
+<p>A simple physics model for our laser has a consistent horizontal
+velocity in pixels per time step at the window's mid-point:</p>
+
+<pre><code>    X = Velocity * time step,
+    Y = 100</code></pre>
+
+<p>Assuming a velocity of say 10, we will get points like:</p>
+
+<pre><code>    0,100
+    10,100
+    20,100
+    30,100
+    ...
+    200,100</code></pre>
+
+<p>Note that it no longer matters at what speed this equation is processed,
+instead the values are coupled to the passage of real time.</p>
+
+<p>The biggest problem with this sort of solution the book keeping required
+for many objects and callbacks. The implementation of such complex models
+is non trivial, and will not be explored in this book. The topic is
+discussed at length in the <code>SDLx::Controller</code> module.</p>
+
+<h3>Laser in Real Time</h3>
+
+<p>This version of the laser example demonstrates the use of movement, and
+'show' handlers and the simple physics model described above. This example
+is also much simpler since SDLx::App is doing more of the book work for us.
+It even implements the whole game loop for us.</p>
+
+<pre><code>        use strict;
+        use warnings;
+        use SDL;
+        use SDL::Event;
+        use SDLx::App;
+
+        my $app = SDLx::App-&gt;new(
+            width  =&gt; 200,
+            height =&gt; 200,
+            title  =&gt; &#39;Pew Pew&#39;
+        );
+
+        my $laser    = 0;
+        my $velocity = 10;
+
+        #We can add an event handler
+        $app-&gt;add_event_handler( \&amp;quit_event );
+
+        #We tell app to handle the appropriate times to
+        #call both rendering and physics calculation
+
+        $app-&gt;add_move_handler( \&amp;calculate_laser );
+        $app-&gt;add_show_handler( \&amp;render_laser );
+
+        $app-&gt;run();
+
+        sub quit_event {
+
+            #The callback is provided a SDL::Event to use
+            my $event = shift;
+
+            #Each event handler also returns you back the Controller call it
+            my $controller = shift;
+
+            #Stopping the controller for us will exit $app-&gt;run() for us
+            $controller-&gt;stop if $event-&gt;type == SDL_QUIT;
+        }
+
+        sub calculate_laser {
+
+            # The step is the difference in Time calculated for the
+            # next jump
+            my ( $step, $app, $t ) = @_;
+            $laser += $velocity * $step;
+            $laser = 0 if $laser &gt; $app-&gt;w;
+        }
+
+        sub render_laser {
+            my ( $delta, $app ) = @_;
+
+            # The delta can be used to render blurred frames
+
+            #Draw the background first
+            $app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0 );
+
+            #Draw the laser
+            $app-&gt;draw_rect( [ $laser, $app-&gt;h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
+            $app-&gt;update();
+
+        }</code></pre>
+
+<h2>Learn More</h2>
+
+<p>To learn more about this topic please, see an excellent blog post by
+<b>GafferOnGames.com</b>:
+http://gafferongames.com/game-physics/fix-your-timestep/.</p>
+
+<h1>Pong!</h1>
+
+<h2>The Game</h2>
+
+<p>Pong is one of the first popular video games in the world. It was
+created by Allan Alcorn for Atari Inc. and released in 1972, being Atari's
+first game ever, and sparkling the beginning of the video game
+industry.</p>
+
+<p>Pong simulates a table tennis match ("ping pong"), where you try to
+defeat your opponent by earning a higher score. Each player controls a
+paddle moving it vertically on the screen, and use it to hit a bouncing
+ball back and forth. You earn a point if your opponent is unable to return
+the ball to your side of the screen.</p>
+
+<p>And now we're gonna learn how to create one ourselves in Perl and
+SDL.</p>
+
+<h3>Getting our feet wet</h3>
+
+<p>Let's start by making a simple screen for our Pong clone. Open a file in
+your favourite text editor and type:</p>
+
+<pre><code>    + #!/usr/bin/perl
+    + use strict;
+    + use warnings;
+    + 
+    + use SDL;
+    + use SDLx::App;
+    + 
+    + # create our main screen
+    + my $app = SDLx::App-&gt;new(
+    +     width        =&gt; 500,
+    +     height       =&gt; 500,
+    +     title        =&gt; &#39;My Pong Clone!&#39;,
+    +     dt           =&gt; 0.02,
+    +     exit_on_quit =&gt; 1,
+    + );
+    + 
+    + # let&#39;s roll!
+    + $app-&gt;run;</code></pre>
+
+<p>Save this file as <code>"pong.pl"</code> and run it by typing on the
+command line:</p>
+
+<pre><code>  perl pong.pl</code></pre>
+
+<p>You should see a 500x500 black window entitled <i>"My Pong Clone!"</i>.
+In our SDLx::App construction we also set a time interval (dt) of 0.02 for
+the game loop, and let it handle SDL_QUIT events for us. If any of the
+arguments above came as a surprise to you, please refer to previous
+chapters for an in-depth explanation.</p>
+
+<h3>Game Objects</h3>
+
+<p>There are three main game objects in Pong: the player's paddle, the
+enemy's paddle, and a bouncing ball.</p>
+
+<p>Paddles are rectangles moving vertically on the screen, and can be
+easily represented with SDLx::Rect objects. First, put
+<code>SDLx::Rect</code> in your module's declarations:</p>
+
+<pre><code>      use SDL;
+      use SDLx::App;
+    + use SDLx::Rect;</code></pre>
+
+<p>Now let's add a simple hash reference in our code to store our player's
+paddle, between the call to <code>SDLx::App->new()</code> and
+<code>$app->run</code>.</p>
+
+<p>We'll use a hash reference instead of just assigning a
+<code>SDLx::Rect</code> to a variable because it will allow us to store
+more information later on. If you were building a more complex game, you
+should consider using actual objects. For now, a simple hash reference will
+suffice:</p>
+
+<pre><code>    + my $player1 = {
+    +      paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40),
+    + };</code></pre>
+
+<p>As we know, <code>SDLx::Rect</code> objects receive four arguments: x,
+y, width and height, in this order. So in the code above we're creating a
+10x40 paddle rect for player 1, on the left side of the screen (<code>x =
+10</code>) and somewhat in the center (<code>y = $app->h / 2</code>).</p>
+
+<p>Let's do the same for player 2, adding the following code right after
+the one above:</p>
+
+<pre><code>    + my $player2 = {
+    +      paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),
+    + };</code></pre>
+
+<p>Player 2's paddle, also 10x40, needs to go to the right end of the
+screen. So we make its <code>x</code> position as our screen's width minus
+20. Since the paddle has a width of 10 itself and the <code>x</code>
+position refers to the rect's top-left corner, it will leave a space of 10
+pixels between its rightmost side and the end of the screen, just like we
+did for player 1.</p>
+
+<p>Finally, the bouncing ball, a 10x10 rect in the middle of the
+screen:</p>
+
+<pre><code>    + my $ball = {
+    +     rect =&gt; SDLx::Rect-&gt;new( $app-&gt;w / 2, $app-&gt;h / 2, 10, 10 ),
+    + };</code></pre>
+
+<p>Yes, it's a "square ball", just like the original :)</p>
+
+<h4>Show me what you got!</h4>
+
+<p>Now that we created our game objects, let's add a 'show' handler to
+render them on the screen:</p>
+
+<pre><code>    + $app-&gt;add_show_handler(
+    +     sub {
+    +         # first, we clear the screen
+    +         $app-&gt;draw_rect( [0, 0, $app-&gt;w, $app-&gt;h], 0x000000FF );
+    + 
+    +         # then we render the ball
+    +         $app-&gt;draw_rect( $ball-&gt;{rect}, 0xFF0000FF );
+    + 
+    +         # ... and each paddle
+    +         $app-&gt;draw_rect( $player1-&gt;{paddle}, 0xFF0000FF );
+    +         $app-&gt;draw_rect( $player2-&gt;{paddle}, 0xFF0000FF );
+    + 
+    +         # finally, we update the screen
+    +         $app-&gt;update;
+    +     }
+    + );</code></pre>
+
+<p>Our approach is rather simple here, "clearing" the screen by painting a
+black rectangle the size of the screen, then using <code>draw_rect()</code>
+calls to paint opaque red (<code>0xFF0000FF</code>) rectangles in each
+object's position.</p>
+
+<p>The result can be seen on the screenshot below:</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/pong1.png}
+\caption{First view of our Pong clone} \label{fig:pong1}</p>
+
+
+
+<h3>Moving the Player's Paddle</h3>
+
+<p>It's time to let the player move the left paddle! Take a few moments to
+recap what motion is all about: changing your object's position with
+respect to time. If it's some sort of magical teleportation repositioning,
+just change the (x,y) coordinates and be gone with it. If however, we're
+talking about real motion, we need to move at a certain speed. Our paddle
+will have constant speed, so we don't need to worry about acceleration.
+Also, since it will only move vertically, we just need to add the vertical
+(y) velocity. Let's call it <code>v_y</code> and add it to our paddle
+structure:</p>
+
+<pre><code>      my $player1 = {
+           paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40),
+    +      v_y    =&gt; 0,
+      };</code></pre>
+
+<p>Ok, now we have an attribute for vertical velocity (<code>v_y</code>) in
+our paddle, so what? How will this update the <code>y</code> position of
+the paddle? Well, velocity is how much displacement happens in a unit of
+time, like 20 km/h or 4 m/s. In our case, the unit of time is the app's
+<code>dt</code>, so all we have to do is move the paddle <code>v_y</code>
+pixels per <code>dt</code>. Here is where the motion handlers come in
+handy:</p>
+
+<pre><code>    + # handles the player&#39;s paddle movement
+    + $app-&gt;add_move_handler( sub {
+    +     my ( $step, $app ) = @_;
+    +     my $paddle = $player1-&gt;{paddle};
+    +     my $v_y = $player1-&gt;{v_y};
+    + 
+    +     $paddle-&gt;y( $paddle-&gt;y + ( $v_y * $step ) );
+    + });</code></pre>
+
+<p>If you recall previous chapters, the code above should be pretty
+straightforward. When <code>v_y</code> is 0 at any given run cycle, the
+paddle won't change its <code>y</code> position. If, however, there is a
+vertical velocity, we update the <code>y</code> position based on how much
+of the expected cycle time (our app's "dt") has passed. A value of 1 in
+<code>$step</code> indicates a full cycle went through, and makes
+<code>$v_y * $step</code> the same as <code>$v_y * 1</code>, thus, plain
+<code>$v_y</code> - which is the desired speed for our cycle. Should the
+handler be called in a shorter cycle, we'll move only the relative factor
+of that.</p>
+
+<h4>Player 2? Rinse and repeat</h4>
+
+<p>We're not going to worry at this point about moving your nemesis'
+paddle, but since it uses the same motion mechanics of our player's, it
+won't hurt to prepare it:</p>
+
+<pre><code>      my $player2 = {
+           paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),
+    +      v_y    =&gt; 0,
+      };</code></pre>
+
+<p>And add a simple motion handler, just like our player's:</p>
+
+<pre><code>    + # handles AI&#39;s paddle movement
+    + $app-&gt;add_move_handler( sub {
+    +     my ( $step, $app ) = @_;
+    +     my $paddle = $player2-&gt;{paddle};
+    +     my $v_y = $player2-&gt;{v_y};
+    +
+    +     $paddle-&gt;y( $paddle-&gt;y + ( $v_y * $step ) );
+    + });</code></pre>
+
+<h4>Back to our Player: Move that Paddle!</h4>
+
+<p>We have preset <code>v_y</code> to zero as the paddle's initial
+velocity, so our player's paddle won't go haywire when the game starts. But
+we still need to know when the user wants to move it up or down the screen.
+In order to do that, we can bind the up and down arrow keys of the keyboard
+to positive and negative velocities for our paddle, through an event hook.
+Since we're going to use some event constants like <code>SDLK_DOWN</code>,
+we need to load the SDL::Events module:</p>
+
+<pre><code>     use SDL;
+   + use SDL::Events;
+     use SDLx::App;
+     use SDLx::Rect;</code></pre>
+
+<p>Then we can proceed to create our event hook:</p>
+
+<pre><code>   + # handles keyboard events
+   + $app-&gt;add_event_handler(
+   +     sub {
+   +         my ( $event, $app ) = @_;
+   +
+   +         # user pressing a key
+   +         if ( $event-&gt;type == SDL_KEYDOWN ) {
+   +
+   +             # up arrow key means going up (negative vel)
+   +             if ( $event-&gt;key_sym == SDLK_UP ) {
+   +                 $player1-&gt;{v_y} = -2;
+   +             }
+   +             # down arrow key means going down (positive vel)
+   +             elsif ( $event-&gt;key_sym == SDLK_DOWN ) {
+   +                 $player1-&gt;{v_y} = 2;
+   +             }
+   +         }
+   +         # user releasing a key
+   +         elsif ( $event-&gt;type == SDL_KEYUP ) {
+   +
+   +             # up or down arrow keys released, stop the paddle
+   +             if (
+   +                     $event-&gt;key_sym == SDLK_UP
+   +                  or $event-&gt;key_sym == SDLK_DOWN
+   +             ) {
+   +                 $player1-&gt;{v_y} = 0;
+   +             }
+   +         }
+   +     }
+   + );</code></pre>
+
+<p>Again, nothing new here. Whenever the user presses the up arrow key, we
+want the paddle to go up. Keep in mind our origin point (0,0) in SDL is the
+top-left corner, so a negative <code>v_y</code> will decrease the paddle's
+<code>y</code> and send us <b>up</b> the screen. Alternatively, we add a
+positive value to <code>v_y</code> whenever the user presses the down arrow
+key, so the paddle will move <b>down</b>, away from the top of the screen.
+When the user releases either the up or down arrow keys, we stop the paddle
+by setting <code>v_y</code> to 0.</p>
+
+<h3>A Bouncing Ball</h3>
+
+<p>How about we animate the game ball? The movement itself is pretty
+similar to our paddle's, except the ball will also have a horizontal
+velocity ("<code>v_x</code>") component, letting it move all over the
+screen.</p>
+
+<p>First, we add the velocity components to our ball structure:</p>
+
+<pre><code>     my $ball = {
+         rect =&gt; SDLx::Rect-&gt;new( $app-&gt;w / 2, $app-&gt;h / 2, 10, 10 ),
+   +     v_x  =&gt; -2.7,
+   +     v_y  =&gt; 1.8,
+     };</code></pre>
+
+<p>The ball will have an initial velocity of -2.7 horizontally (just as a
+negative vertical velocity moves the object up, a negative horizontal
+velocity will move it towards the left side of the screen), and 1.8
+vertically. Next, we create a motion handler for the ball, updating the
+ball's <code>x</code> and <code>y</code> position according to its
+speed:</p>
+
+<pre><code>   + # handles the ball movement
+   + $app-&gt;add_move_handler( sub {
+   +     my ( $step, $app ) = @_;
+   +     my $ball_rect = $ball-&gt;{rect};
+   +
+   +     $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
+   +     $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
+   + });</code></pre>
+
+<p>This is just like our paddle's motion handler: we update the ball's
+<code>x</code> and <code>y</code> positioning on the screen according to
+the current velocity. If you are paying attention, however, you probably
+realized the code above is missing a very important piece of logic. Need a
+clue? Try running the game as it is. You'll see the ball going, going,
+and... gone!</p>
+
+<p>We need to make sure the ball is bound to the screen. That is, it needs
+to collide and bounce back whenever it reaches the top and bottom edges of
+the screen. So let's change our ball's motion handler a bit, adding this
+functionality:</p>
+
+<pre><code>     # handles the ball movement
+     $app-&gt;add_move_handler( sub {
+         my ( $step, $app ) = @_;
+         my $ball_rect = $ball-&gt;{rect};
+    
+         $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
+         $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
+ 
+   +     # collision to the bottom of the screen
+   +     if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {
+   +         $ball_rect-&gt;bottom( $app-&gt;h );
+   +         $ball-&gt;{v_y} *= -1;
+   +     }
+   +
+   +     # collision to the top of the screen
+   +     elsif ( $ball_rect-&gt;top &lt;= 0 ) {
+   +         $ball_rect-&gt;top( 0 );
+   +         $ball-&gt;{v_y} *= -1;
+   +     }
+     });</code></pre>
+
+<p>If the new x (<code>"left"</code>) and y (<code>"top"</code>) values
+would take the ball totally or partially off the screen, we replace it with
+the farthest position possible (making it "touch" that edge of the screen)
+and reverse <code>v_y</code>, so it will go the opposite way on the next
+cycle, bouncing back into the screen.</p>
+
+<h4>He shoots... and scores!!</h4>
+
+<p>So far, so good. But what should happen when the ball hits the left or
+right edges of the screen? Well, according to the rules of Pong, this means
+the player on the opposite side scored a point, and the ball should go back
+to the center of the screen. Let's begin by adding a 'score' attribute for
+each player:</p>
+
+<pre><code>      my $player1 = {
+           paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40),
+           v_y    =&gt; 0,
+    +      score  =&gt; 0,
+      };
+
+      my $player2 = {
+           paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),
+           v_y    =&gt; 0,
+    +      score  =&gt; 0,
+      };</code></pre>
+
+<p>Now we should teach the ball's motion handler what to do when it reaches
+the left and right corners:</p>
+
+<pre><code>     # handles the ball movement
+     $app-&gt;add_move_handler( sub {
+         my ( $step, $app ) = @_;
+         my $ball_rect = $ball-&gt;{rect};
+    
+         $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
+         $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
+ 
+         # collision to the bottom of the screen
+         if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {
+             $ball_rect-&gt;bottom( $app-&gt;h );
+             $ball-&gt;{v_y} *= -1;
+         }
+    
+         # collision to the top of the screen
+         elsif ( $ball_rect-&gt;top &lt;= 0 ) {
+             $ball_rect-&gt;top( 0 );
+             $ball-&gt;{v_y} *= -1;
+         }
+   
+   +     # collision to the right: player 1 score!
+   +     elsif ( $ball_rect-&gt;right &gt;= $app-&gt;w ) {
+   +         $player1-&gt;{score}++;
+   +         reset_game();
+   +         return;
+   +     }
+   +
+   +     # collision to the left: player 2 score!
+   +     elsif ( $ball_rect-&gt;left &lt;= 0 ) {
+   +         $player2-&gt;{score}++;
+   +         reset_game();
+   +         return;
+   +     }
+     });</code></pre>
+
+<p>If the ball's right hits the right end of the screen (the app's width),
+we increase player 1's score, call <code>reset_game()</code> and return
+without updating the ball's position. If the ball's left hits the left end
+of the screen, we do the same for player 2.</p>
+
+<p>We want the <code>reset_game()</code> function called above to set the
+ball back on the center of the screen, so let's make it happen:</p>
+
+<pre><code>   + sub reset_game {
+   +     $ball-&gt;{rect}-&gt;x( $app-&gt;w / 2 );
+   +     $ball-&gt;{rect}-&gt;y( $app-&gt;h / 2 );
+   + }</code></pre>
+
+<h3>Collision Detection: The Ball and The Paddle</h3>
+
+<p>We already learned how to do some simple collision detection, namely
+between the ball and the edges of the screen. Now it's time to take it one
+step further and figure out how to check whether the ball and the paddles
+are overlapping one another (colliding, or rather, intersecting). This is
+done via the Separating Axis Theorem, which roughly states that two convex
+shapes in a 2D plane are <b>not</b> intersecting if and only if we can
+place a line separating them. Since our rect objects (the ball and paddles)
+are both axis-aligned, we can simply pick one, and there will be only 4
+possible lines to test: its left, right, top and bottom. If the other
+object is completely to the other side of any of those lines, then there is
+<b>no</b> collision. But if all four conditions are false, they are
+intersecting.</p>
+
+<p>To put it in more general terms, if we have 2 rects, A and B, we can
+establish the following conditions, illustrated by the figure below:</p>
+
+<p>\includegraphics[width=0.9\textwidth]{../src/images/collision.png}
+\caption{if B is completely to the left, right, top or bottom of A, they do
+NOT intersect} \label{fig:pong1}</p>
+
+
+
+<ul>
+
+<li>if A's bottom side is above B's top side, then A is completely above B
+(fig. 6.2.1).</li>
+
+<li>if A's top side is below B's bottom side, then A is completely below B
+(fig. 6.2.2).</li>
+
+<li>if A's right side is to the left of B's left side, then A is completely
+to the left of B (fig. 6.2.3).</li>
+
+<li>if A's left side is to the right of B's right side, then A is
+completely to the right of B (fig 6.2.4).</li>
+
+</ul>
+
+<p>Keeping in mind that our origin point (0,0) in SDL is the top-left
+corner, we can translate the rules above to the following generic
+<code>check_collision()</code> function, receiving two rect objects and
+returning true if they collide:</p>
+
+<pre><code>   + sub check_collision {
+   +     my ($A, $B) = @_;
+   +
+   +     return if $A-&gt;bottom &lt; $B-&gt;top;
+   +     return if $A-&gt;top    &gt; $B-&gt;bottom;
+   +     return if $A-&gt;right  &lt; $B-&gt;left;
+   +     return if $A-&gt;left   &gt; $B-&gt;right;
+   +
+   +     # if we got here, we have a collision!
+   +     return 1;
+   + }</code></pre>
+
+<p>We can now use it in the ball's motion handler to see if it hits any of
+the paddles:</p>
+
+<pre><code>     # handles the ball movement
+     $app-&gt;add_move_handler( sub {
+         my ( $step, $app ) = @_;
+         my $ball_rect = $ball-&gt;{rect};
+    
+         $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
+         $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
+ 
+         # collision to the bottom of the screen
+         if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {
+             $ball_rect-&gt;bottom( $app-&gt;h );
+             $ball-&gt;{v_y} *= -1;
+         }
+    
+         # collision to the top of the screen
+         elsif ( $ball_rect-&gt;top &lt;= 0 ) {
+             $ball_rect-&gt;top( 0 );
+             $ball-&gt;{v_y} *= -1;
+         }
+   
+         # collision to the right: player 1 score!
+         elsif ( $ball_rect-&gt;right &gt;= $app-&gt;w ) {
+             $player1-&gt;{score}++;
+             reset_game();
+             return;
+         }
+    
+         # collision to the left: player 2 score!
+         elsif ( $ball_rect-&gt;left &lt;= 0 ) {
+             $player2-&gt;{score}++;
+             reset_game();
+             return;
+         }
+
+   +     # collision with player1&#39;s paddle
+   +     elsif ( check_collision( $ball_rect, $player1-&gt;{paddle} )) {
+   +         $ball_rect-&gt;left( $player1-&gt;{paddle}-&gt;right );
+   +         $ball-&gt;{v_x} *= -1;
+   +     }
+   +
+   +     # collision with player2&#39;s paddle
+   +     elsif ( check_collision( $ball_rect, $player2-&gt;{paddle} )) {
+   +         $ball-&gt;{v_x} *= -1;
+   +         $ball_rect-&gt;right( $player2-&gt;{paddle}-&gt;left );
+   +     }
+     });</code></pre>
+
+<p>That's it! If the ball hits player1's paddle, we reverse its horizontal
+velocity (<code>v_x</code>) to make it bounce back, and set its left edge
+to the paddle's right so they don't overlap. Then we do the exact same
+thing for the other player's paddle, except this time we set the ball's
+right to the paddle's left - since the ball is coming from the other
+side.</p>
+
+<h3>Artificial Stupidity</h3>
+
+<p>Our Pong game is almost done now. We record the score, the ball bounces
+around, we keep track of each player's score, and we can move the left
+paddle with the up and down arrow keys. But this will be a very dull game
+unless our nemesis moves too!</p>
+
+<p>There are several complex algorithms to model artificial intelligence,
+but we don't have to go that far for a simple game like this. What we're
+going to do is make player2's paddle follow the ball wherever it goes, by
+adding the following to its motion handler:</p>
+
+<pre><code>      # handles AI&#39;s paddle movement
+      $app-&gt;add_move_handler( sub {
+          my ( $step, $app ) = @_;
+          my $paddle = $player2-&gt;{paddle};
+          my $v_y = $player2-&gt;{v_y};
+
+    +     if ( $ball-&gt;{rect}-&gt;y &gt; $paddle-&gt;y ) {
+    +         $player2-&gt;{v_y} = 1.5;
+    +     }
+    +     elsif ( $ball-&gt;{rect}-&gt;y &lt; $paddle-&gt;y ) {
+    +         $player2-&gt;{v_y} = -1.5;
+    +     }
+    +     else {
+    +         $player2-&gt;{v_y} = 0;
+    +     }
+
+          $paddle-&gt;y( $paddle-&gt;y + ( $v_y * $step ) );
+      });</code></pre>
+
+<p>If the ball's "<code>y</code>" value (its top) is greater than the
+nemesis' paddle, it means the ball is below it, so we give the paddle a
+positive velocity, making it go downwards. On the other hand, if the ball
+has a lower "<code>y</code>" value, we set the nemesis' <code>v_y</code> to
+a negative value, making it go up. Finally, if the ball is somewhere in
+between those two values, we keep the paddle still.</p>
+
+<h3>Cosmetics: Displaying the Score</h3>
+
+<p>How about we display the score so the player can see who's winning? To
+render a text string in SDL, we're going to use the SDLx::Text module, so
+let's add it to the beginning of our code:</p>
+
+<pre><code>     use SDL;
+     use SDL::Events;
+     use SDLx::App;
+     use SDLx::Rect;
+   + use SDLx::Text;</code></pre>
+
+<p>Now we need to create the score object:</p>
+
+<pre><code>   + my $score = SDLx::Text-&gt;new( font =&gt; &#39;font.ttf&#39;, h_align =&gt; &#39;center&#39; );</code></pre>
+
+<p>The <code>font</code> parameter specifies the path to a TrueType Font.
+Here we are loading the '<i>font.ttf</i>' file, so feel free to change this
+to whatever font you have in your system. The <code>h_align</code>
+parameter lets us choose a horizontal alignment for the text we put in the
+object. It defaults to '<i>left</i>', so we make it '<i>center</i>'
+instead.</p>
+
+<p>All that's left is using this object to write the score on the screen,
+so we update our 'show' handler:</p>
+
+<pre><code>      $app-&gt;add_show_handler(
+          sub {
+              # first, we clear the screen
+              $app-&gt;draw_rect( [0, 0, $app-&gt;w, $app-&gt;h], 0x000000FF );
+      
+              # then we render the ball
+              $app-&gt;draw_rect( $ball-&gt;{rect}, 0xFF0000FF );
+      
+              # ... and each paddle
+              $app-&gt;draw_rect( $player1-&gt;{paddle}, 0xFF0000FF );
+              $app-&gt;draw_rect( $player2-&gt;{paddle}, 0xFF0000FF );
+      
+    +         # ... and each player&#39;s score!
+    +         $score-&gt;write_to(
+    +             $app,
+    +             $player1-&gt;{score} . &#39; x &#39; . $player2-&gt;{score}
+    +         );
+
+              # finally, we update the screen
+              $app-&gt;update;
+          }
+      );</code></pre>
+
+<p>The <code>write_to()</code> call will write to any surface passed as the
+first argument - in our case, the app itself. The second argument, as you
+probably figured, is the string to be rendered. Note that the string's
+position is relative to the surface it writes to, and defaults to (0,0).
+Since we told it to center horizontally, it will write our text to the
+top/center, instead of top/left.</p>
+
+<p>The result, and our finished game, can be seen on the figure below:</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/pong2.png}
+\caption{our finished Pong clone, in all its glory} \label{fig:pong2}</p>
+
+
+
+<h3>Exercises</h3>
+
+<ul>
+
+<li>1. Every time a player scores, the ball goes back to the middle but has
+the same sense and direction as before. See if you can make it restart at a
+random direction instead.
+
+<li>2. Red is boring, you want to make a completely psychedelic Pong! Pick
+3 different colours and make each paddle oscillate between them every time
+the ball hits it.
+
+</ul>
+
+<p>See if you can solve the exercises above by yourself, to make sure you
+understand what is what and how to do things in SDL Perl. Once you're done,
+check out the answers below. Of course, there's always more than one way to
+do things, so the ones below are not the only possible answers.</p>
+
+<h4>Answers</h4>
+
+<p>1. To make the ball restart at a random direction, we can improve our
+<code>reset_game()</code> function to set the ball's <code>v_x</code> and
+<code>v_y</code> to a random value between, say, 1.5 and 2.5, or -1.5 and
+-2.5:</p>
+
+<pre><code>     sub reset_game {
+         $ball-&gt;{rect}-&gt;x( $app-&gt;w / 2 );
+         $ball-&gt;{rect}-&gt;y( $app-&gt;h / 2 );
+
+   +     $ball-&gt;{v_x} = (1.5 + int rand 1) * (rand 2 &gt; 1 ? 1 : -1);
+   +     $ball-&gt;{v_y} = (1.5 + int rand 1) * (rand 2 &gt; 1 ? 1 : -1);
+     }</code></pre>
+
+<p>2. We can either choose one colour set for both paddles or one for each.
+Let's go with just one set, as an array of hex values representing our
+colours. We'll also hold the index for the current colour for each
+player:</p>
+
+<pre><code>    + my @colours = qw( 0xFF0000FF 0x00FF00FF 0x0000FFFF 0xFFFF00FF );
+
+      my $player1 = {
+           paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40),
+           v_y    =&gt; 0,
+           score  =&gt; 0,
+    +      colour =&gt; 0,
+      };
+
+      my $player2 = {
+           paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),
+           v_y    =&gt; 0,
+           score  =&gt; 0,
+    +      colour =&gt; 0,
+      };</code></pre>
+
+<p>Next we make it update the <code>colour</code> every time the ball hits
+the paddle:</p>
+
+<pre><code>     # handles the ball movement
+     $app-&gt;add_move_handler( sub {
+         my ( $step, $app ) = @_;
+         my $ball_rect = $ball-&gt;{rect};
+    
+         $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
+         $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
+ 
+         # collision to the bottom of the screen
+         if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {
+             $ball_rect-&gt;bottom( $app-&gt;h );
+             $ball-&gt;{v_y} *= -1;
+         }
+    
+         # collision to the top of the screen
+         elsif ( $ball_rect-&gt;top &lt;= 0 ) {
+             $ball_rect-&gt;top( 0 );
+             $ball-&gt;{v_y} *= -1;
+         }
+   
+         # collision to the right: player 1 score!
+         elsif ( $ball_rect-&gt;right &gt;= $app-&gt;w ) {
+             $player1-&gt;{score}++;
+             reset_game();
+             return;
+         }
+    
+         # collision to the left: player 2 score!
+         elsif ( $ball_rect-&gt;left &lt;= 0 ) {
+             $player2-&gt;{score}++;
+             reset_game();
+             return;
+         }
+
+         # collision with player1&#39;s paddle
+         elsif ( check_collision( $ball_rect, $player1-&gt;{paddle} )) {
+             $ball_rect-&gt;left( $player1-&gt;{paddle}-&gt;right );
+             $ball-&gt;{v_x} *= -1;
+   +         $player1-&gt;{colour} = ($player1-&gt;{colour} + 1) % @colours;
+         }
+    
+         # collision with player2&#39;s paddle
+         elsif ( check_collision( $ball_rect, $player2-&gt;{paddle} )) {
+             $ball-&gt;{v_x} *= -1;
+             $ball_rect-&gt;right( $player2-&gt;{paddle}-&gt;left );
+   +         $player2-&gt;{colour} = ($player2-&gt;{colour} + 1) % @colours;
+         }
+     });</code></pre>
+
+<p>Finally, we change our 'show' handler to use the current colour
+referenced by <code>colour</code>, instead of the previously hardcoded red
+(0xFF0000FF):</p>
+
+<pre><code>      $app-&gt;add_show_handler(
+          sub {
+              # first, we clear the screen
+              $app-&gt;draw_rect( [0, 0, $app-&gt;w, $app-&gt;h], 0x000000FF );
+      
+              # then we render the ball
+              $app-&gt;draw_rect( $ball-&gt;{rect}, 0xFF0000FF );
+      
+              # ... and each paddle
+    -         $app-&gt;draw_rect( $player1-&gt;{paddle}, 0xFF0000FF );
+    +         $app-&gt;draw_rect( $player1-&gt;{paddle}, $colours[ $player1-&gt;{colour} ] );
+    -         $app-&gt;draw_rect( $player2-&gt;{paddle}, 0xFF0000FF );
+    +         $app-&gt;draw_rect( $player2-&gt;{paddle}, $colours[ $player2-&gt;{colour} ] );
+  
+              # ... and each player&#39;s score!
+              $score-&gt;write_to(
+                  $app,
+                  $player1-&gt;{score} . &#39; x &#39; . $player2-&gt;{score}
+              );
+
+              # finally, we update the screen
+              $app-&gt;update;
+          }
+      );</code></pre>
+
+<h2>Author</h2>
+
+<p>This chapter's content graciously provided by Breno G. de Oliveira
+(<code>garu</code>).</p>
+
+<h1>Tetris</h1>
+
+<h2>The Game Window</h2>
+
+<p>First we will make our window with a fixed size so we can place our art
+work in a fixed format.</p>
+
+<pre><code>   use strict;
+   use warnings;
+
+   use SDL;
+   use SDL::Event;
+   use SDL::Events;
+   use SDLx::App;
+
+   # create our main screen
+   my $app = SDLx::App-&gt;new(
+      w            =&gt; 400,
+      h            =&gt; 512,
+      exit_on_quit =&gt; 1,
+      dt           =&gt; 0.2,
+      title        =&gt; &#39;SDLx Tetris&#39;
+   );</code></pre>
+
+<h2>Loading Artwork</h2>
+
+<p>We can load our artwork simply by storing an array of
+<code>SDLx::Surface</code>s.</p>
+
+<pre><code>   use SDL;
+   +use SDLx::Surface;
+   
+   ...
+
+   +my $back  = SDLx::Surface-&gt;load( &#39;data/tetris_back.png&#39; );
+   +my @piece = (undef);
+   +push(@piece, SDLx::Surface-&gt;load( &quot;data/tetris_$_.png&quot; )) for(1..7);</code></pre>
+
+<p>The background is held in the <code>$back</code> surface, and the pieces
+are held in the <code>@piece</code> array. Later on we will blit these onto
+our main screen as we need.</p>
+
+<h2>Data Structures</h2>
+
+<p>In Tetris the blocks are critical pieces of data that must be
+represented in code such that it is easy to access, and quick to perform
+calculations on. A hash will allow us to quickly access our pieces, based
+on their keys.</p>
+
+<pre><code>   my %pieces = (
+      I =&gt; [0,5,0,0,
+           0,5,0,0,
+           0,5,0,0,
+           0,5,0,0],
+      J =&gt; [0,0,0,0,
+           0,0,6,0,
+           0,0,6,0,
+           0,6,6,0],
+      L =&gt; [0,0,0,0,
+           0,2,0,0,
+           0,2,0,0,
+           0,2,2,0],
+      O =&gt; [0,0,0,0,
+           0,3,3,0,
+           0,3,3,0,
+           0,0,0,0],
+      S =&gt; [0,0,0,0,
+           0,4,4,0,
+           4,4,0,0,
+           0,0,0,0],
+      T =&gt; [0,0,0,0,
+           0,7,0,0,
+           7,7,7,0,
+           0,0,0,0],
+      Z =&gt; [0,0,0,0,
+           1,1,0,0,
+           0,1,1,0,
+           0,0,0,0],
+   );</code></pre>
+
+<p>Further more we have a 1-dimensional array for each piece that
+represents a grid of the piece.</p>
+
+<p>The grid of each piece is filled with empty spaces and a number from 1
+to 7. When this grid is imposed on the game grid, we can use the non zero
+number to draw the write piece block on to it.</p>
+
+<h2>Game flow</h2>
+
+<h3>Considerations</h3>
+
+<h4>Refactor the first draft</h4>
+
+<h2>Collisions</h2>
+
+<p>What is colliding to what?</p>
+
+<h3>Considerations</h3>
+
+<h4>Dynamic</h4>
+
+<p>Are both colliers going to collide?</p>
+
+<h4>Direction of Collisions</h4>
+
+<p>Multiple directions of collisions?</p>
+
+<h4>Game Events</h4>
+
+<p>Should they trigger a game event? React?</p>
+
+<h3>The Game</h3>
+
+<h1>Puzz! A puzzle game</h1>
+
+<h2>Abstract</h2>
+
+<p>We are now ready to write another complete game. Instead of listing the
+code and then explaining it, I will go through the process of how I might
+write it.</p>
+
+<p>Puzz is a simple rearrangment puzzle. A random image from the folder
+Puzz is in is chosen and broken into a 4x4 grid. The top left corner piece
+is then taken away, and every other piece is then moved to a random
+position, scrambling the image up. The goal is then to move pieces which
+are in the 4 squares adjacent to the empty square on to the empty square,
+and eventually restore the image.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/puzz1.png}
+\caption{Credits to Sebastian Riedel (kraih.com) for the Perl6 logo used
+with permission in the application.} \label{fig:puzz}</p>
+
+
+
+<h2>The Window</h2>
+
+<p>So, first thing we do is create the window. I've decided I want each
+piece to be 100x100, so the window needs to be 400x400.</p>
+
+<pre><code>       use strict;
+       use warnings;
+
+       use SDL;
+       use SDLx::App;
+
+       my $App = SDLx::App-&gt;new(w =&gt; 400, h =&gt; 400, t =&gt; &#39;Puzz&#39;);</code></pre>
+
+<p>Next thing we usually do is figure out what global vars we will be
+needing. As with $App, I like to name my globals with title case, so they
+are easily distinguishable from lexical vars. The globals we need are the
+grid (the positions of the pieces), the images we have to use, the current
+image, and a construct that will give us piece movement, along with an
+animation.</p>
+
+<pre><code>    my @Grid;
+    my @Img;
+    my $CurrentImg;
+    my %Move;</code></pre>
+
+<p>For now, lets fill in @Grid with what it's going to look like:</p>
+
+<pre><code>    @Grid = (
+       [0,  1,  2,  3],
+       [4,  5,  6,  7],
+       [8,  9,  10, 11],
+       [12, 13, 14, 15],
+    );</code></pre>
+
+<p><code>0</code> will be our blank piece, but we could have chosen it to
+be any other number. When the grid looks like this, it's solved, so
+eventually we will need a way to scramble it. It's good enough for now,
+though.</p>
+
+<h2>Loading the images</h2>
+
+<p>To load the images, we would normally use <code>SDLx::Surface</code>,
+but we're going to do it the libsdl way with <code>SDL::Image</code>
+because we need to do our own error handling.</p>
+
+<pre><code>    use SDL::Image;
+    use SDL::GFX::Rotozoom &#39;SMOOTHING_ON&#39;;
+
+    while(&lt;./*&gt;) {
+        if(-f and my $i = SDL::Image::load($_)) {
+            $i = SDL::GFX::Rotozoom::surface_xy($i, 0, 400 / $i-&gt;w, 400 / $i-&gt;h, SMOOTHING_ON);
+            push @Img, $i;
+        }
+        else
+        {   
+            warn &quot;Cannot Load $_: &quot; . SDL::get_error() if $_ =~ /jpg|png|bmp/;
+        }
+    }
+    $CurrentImg = $Img[rand @Img];
+    
+    die &quot;Please place images in the Current Folder&quot; if $#Img &lt; 0;</code></pre>
+
+<p>We just go through every file in the current directory, and try to load
+it as an image. <code>SDL::Image::load</code> will return false if there
+was an error, so we want to discard it when that happens. If we used
+<code>SDLx::Surface</code> to load the images, we would get a warning every
+time a file fails to load as an image, which we don't want. The <code>my $i
+= SDL::Image::load($_)</code> is just an idiom for setting a var and
+checking it for truth at the same time.</p>
+
+<p>We want the image to be 400x400, and <code>SDL::GFX::Rotozoom</code>
+makes this possible. The two Rotozoom functions that are the most useful
+are <code>surface</code> and <code>surface_xy</code>. They work like
+this:</p>
+
+<pre><code>    $zoomed_src = SDL::GFX::Rotozoom::surface($src, $angle, $zoom, $smoothing)
+    $zoomed_src = SDL::GFX::Rotozoom::surface_xy($src, $angle, $x_zoom, $y_zoom, $smoothing)</code></pre>
+
+<p>The zoom values are the multiplier for that component, or for both
+components at once as with <code>$zoom</code>. <code>$angle</code> is an
+angle of rotation in degrees. <code>$smoothing</code> should be
+<code>SMOOTHING_ON</code> or <code>SMOOTHING_OFF</code> (which can be
+exported by <code>SDL::GFX::Rotozoom</code>) or just 1 or 0.</p>
+
+<p>Once the image is zoomed, it is added to the image array. The current
+image is then set to a random value of the array.</p>
+
+<h2>Handling Events</h2>
+
+<p>The next part I like to write is the events. We're going to make Escape
+quit, and left click will move the pieces around. We <code>use
+SDL::Events</code> for the constants.</p>
+
+<pre><code>    use SDL::Events;
+
+    sub on_event {
+        my ($e) = @_;
+        if($e-&gt;type == SDL_QUIT or $e-&gt;type == SDL_KEYDOWN and $e-&gt;key_sym == SDLK_ESCAPE) {
+            $App-&gt;stop;
+        }
+        elsif($e-&gt;type == SDL_MOUSEBUTTONDOWN and $e-&gt;button_button == SDL_BUTTON_LEFT) {
+            ...
+        }
+    }
+
+    $App-&gt;add_event_handler(\&amp;on_event);
+    # $App-&gt;add_move_handler(\&amp;on_move); 
+    # $App-&gt;add_show_handler(\&amp;on_show);
+    $App-&gt;run;</code></pre>
+
+<h2>Filling the Grid</h2>
+
+<p>Once we have something like this, it's a good time to put some
+<code>warn</code> messages in to make sure the inputs are working
+correctly. Once they are, it's time to fill it in.</p>
+
+<pre><code>    my $x = int($e-&gt;button_x / 100);
+    my $y = int($e-&gt;button_y / 100);
+    if(!%Move and $Grid[$y][$x]) {`
+        ...
+    }</code></pre>
+
+<p>From the pixel coordinates of the click (0 to 399), we want to find out
+the grid coordinates (0 to 3), so we divide both components by 100 and
+round them down. Then, we only want to continue on to see if that piece can
+move if no other piece is moving (<code>%Move</code> is false), and the
+piece clicked isn't the blank piece (0).</p>
+
+<pre><code>    for([-1, 0], [0, -1], [1, 0], [0, 1]) {
+        my $nx = $x + $_-&gt;[0];
+        my $ny = $y + $_-&gt;[1];
+        if($nx &gt;= 0 and $nx &lt; 4 and $ny &gt;= 0 and $ny &lt; 4 and !$Grid[$ny][$nx]) {
+            ...
+        }
+    }</code></pre>
+
+<h2>Moving the Pieces</h2>
+
+<p>We check that the blank piece is in the 4 surrounding places by
+constructing 4 vectors. These will take us to those squares. The
+<code>x</code> component is first and the second is <code>y</code>. We
+iterate through them, setting <code>$nx</code> and <code>$ny</code> to the
+new position. Then if both <code>$nx</code> and <code>$ny</code> are within
+the grid (0 to 3), and that position in the grid is 0, we can move the
+piece to the blank square.</p>
+
+<pre><code>    %Move = (
+        x      =&gt; $x,
+        y      =&gt; $y,
+        x_dir  =&gt; $_-&gt;[0],
+        y_dir  =&gt; $_-&gt;[1],
+        offset =&gt; 0,
+    );</code></pre>
+
+<p>To make a piece move, we construct the move hash with all the
+information it needs to move the piece. The <code>x</code> and
+<code>y</code> positions of the piece, the <code>x</code> and
+<code>y</code> directions it will be moving (the vector), and it's current
+pixel offset from it's position (for the moving animation), which starts at
+0.</p>
+
+<h3>The Move Handler Callback</h3>
+
+<p>Next we will write the move handler. All it needs to do is move any
+moving piece along by updating the offset, and click it in to where it's
+being moved to when it has moved the whole way (offset is 100 or more).</p>
+
+<pre><code>    sub on_move {
+        if(%Move) {
+            $Move{offset} += 30 * $_[0];
+            if($Move{offset} &gt;= 100) {
+                $Grid[$Move{y} + $Move{y_dir}][$Move{x} + $Move{x_dir}] = $Grid[$Move{y}][$Move{x}];
+                $Grid[$Move{y}][$Move{x}] = 0;
+                undef %Move;
+            }
+        }
+    }
+    </code></pre>
+
+<p>30 has been arbitrarily chosen as the speed of the move, as it felt the
+best after a little playing and tweaking. Always remember to multiply
+things like this by the step value in <code>$_[0]</code> so that the
+animation moves in correct time with the updating.</p>
+
+<p>Once the offset is 100 or more, the grid place that the piece is moving
+to is set to the value of the piece, and the piece is set to the blank
+value. The move is then finished, so <code>%Move</code> is deleted.</p>
+
+<h2>Rendering the Game</h2>
+
+<p>Now that we have all the functionality we need it's finally time to see
+the game.</p>
+
+<pre><code>    sub on_show {
+        $App-&gt;draw_rect( [0,0,$App-&gt;w,$App-&gt;h], 0 );
+        for my $y (0..3) {
+            for my $x (0..3) {
+                ...
+            }
+        }
+        $App-&gt;flip;
+    }
+    </code></pre>
+
+<p>We start the show handler by drawing a black rect over the entire app.
+Entire surface and black are the defaults of <code>draw_rect</code>, so
+letting it use the defaults is good. Next we iterate through a
+<code>y</code> and <code>x</code> of 0 to 3 so that we can go through each
+piece of the grid. At the end of the handler we update the app with a call
+to <code>flip</code>.</p>
+
+<pre><code>    next unless my $val = $Grid[$y][$x];
+    my $xval = $val % 4;
+    my $yval = int($val / 4);
+    my $move = %Move &amp;&amp; $Move{x} == $x &amp;&amp; $Move{y} == $y;
+    ...</code></pre>
+
+<p>Inside the two loops we put this. First we set <code>$val</code> to the
+grid value at the current position, and we skip to the next piece if it's
+the blank piece. We have the <code>x</code> and <code>y</code> coordinates
+of where that piece is on the board, but we need to figure out where it is
+on the image. If you refer back to the initialisation of the grid, the two
+operations to find the values should make sense. <code>$move</code> is set
+with a bool of whether it is this piece that is moving, if there is a piece
+moving at all.</p>
+
+<pre><code>    $App-&gt;blit_by(
+        $CurrentImg,
+        [$xval * 100, $yval * 100, 100, 100],
+        [$x * 100 + ($move ? $Move{offset} * $Move{x_dir} : 0),
+         $y * 100 + ($move ? $Move{offset} * $Move{y_dir} : 0)]
+    );</code></pre>
+
+<p>Now that we have all of this, we can blit the portion of the current
+image we need to the app. We use <code>blit_by</code> because the image
+we're blitting isn't an SDLx::Surface (because we didn't load it as one),
+but the app is. Here's how <code>blit_by</code> works as opposed to
+<code>blit</code>:</p>
+
+<pre><code>    $src-&gt;blit($dest, $src_rect, $dest_rect)
+    $dest-&gt;blit_by($src, $src_rect, $dest_rect)</code></pre>
+
+<p>The portion we need is from the <code>$xval</code> and
+<code>$yval</code>, and where it needs to go to is from <code>$x</code> and
+<code>$y</code>. All are multiplied by 100 because we're dealing with 0 to
+300, not 0 to 3. If the piece is moving, the offset multiplied by the
+diretion is added to the position.</p>
+
+<p>When the code is run with all 3 handlers, we have a fully working game.
+The pieces move around nicely when clicked. The only things it still needs
+are a shuffled grid and a way to check if the player has won. To imlement
+these two things, we will make two more functions.</p>
+
+<pre><code>    use List::Util &#39;shuffle&#39;;
+
+    sub new_grid {
+        my @new = shuffle(0..15);
+        @Grid = map { [@new[ $_*4..$_*4+3 ]] } 0..3;
+        $CurrentImg = $Img[rand @Img];
+    }
+    </code></pre>
+
+<p>We will replace the grid initialising we did with this sub. First it
+shffles the numbers 0 through 15 with <code>List::Util::shuffle</code>.
+This array is then arranged into a 2D grid with a <code>map</code> and put
+in to @Grid. Setting the current image is also put into this sub.</p>
+
+<pre><code>    sub won {
+        my $correct = 0;
+        for(@Grid) {
+            for(@$_) {
+                return 0 if $correct != $_;
+                $correct++;
+            }
+        }
+        return 1;
+    }</code></pre>
+
+<p>This sub returns whether the grid is in the winning configuration, that
+is, all piece values are in order from 0 to 15.</p>
+
+<p>Now we put a call to <code>new_grid</code> to replace the grid
+initialisation we had before. We put <code>won</code> into the event
+handler to make click call <code>new_grid</code> if you have won. Finally,
+<code>won</code> is put into the show handler to show the blank piece if
+you have won.</p>
+
+<h2>Complete Code</h2>
+
+<p>Here is the finished code:</p>
+
+<pre><code>    use strict;
+    use warnings;
+
+    use SDL;
+    use SDLx::App;
+    use SDL::Events;
+    use SDL::Image;
+    use SDL::GFX::Rotozoom &#39;SMOOTHING_ON&#39;;
+    use List::Util &#39;shuffle&#39;;
+
+    my $App = SDLx::App-&gt;new(w =&gt; 400, h =&gt; 400, t =&gt; &#39;Puzz&#39;);
+
+    my @Grid;
+    my @Img;
+    my $CurrentImg;
+    my %Move;
+
+    while(&lt;./*&gt;) {
+        if(-f and my $i = SDL::Image::load($_)) {
+            $i = SDL::GFX::Rotozoom::surface_xy($i, 0, 400 / $i-&gt;w, 400 / $i-&gt;h, SMOOTHING_ON);
+            push @Img, $i;
+        }
+        else
+        {   
+            warn &quot;Cannot Load $_: &quot; . SDL::get_error() if $_ =~ /jpg|png|bmp/;
+        }
+
+    }
+    
+    die &quot;Please place images in the Current Folder&quot; if $#Img &lt; 0;    
+
+    new_grid();
+
+    sub on_event {
+        my ($e) = @_;
+        if($e-&gt;type == SDL_QUIT or $e-&gt;type == SDL_KEYDOWN and $e-&gt;key_sym == SDLK_ESCAPE) {
+            $App-&gt;stop;
+        }
+        elsif($e-&gt;type == SDL_MOUSEBUTTONDOWN and $e-&gt;button_button == SDL_BUTTON_LEFT) {
+            my($x, $y) = map { int($_ / 100) } $e-&gt;button_x, $e-&gt;button_y;
+            if(won()) {
+                new_grid();
+            }
+            elsif(!%Move and $Grid[$y][$x]) {
+                for([-1, 0], [0, -1], [1, 0], [0, 1]) {
+                    my($nx, $ny) = ($x + $_-&gt;[0], $y + $_-&gt;[1]);
+                    if($nx &gt;= 0 and $nx &lt; 4 and $ny &gt;= 0 and $ny &lt; 4 and !$Grid[$ny][$nx]) {
+                        %Move = (
+                            x      =&gt; $x,
+                            y      =&gt; $y,
+                            x_dir  =&gt; $_-&gt;[0],
+                            y_dir  =&gt; $_-&gt;[1],
+                            offset =&gt; 0,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    sub on_move {
+        if(%Move) {
+            $Move{offset} += 30 * $_[0];
+            if($Move{offset} &gt;= 100) {
+                $Grid[$Move{y} + $Move{y_dir}][$Move{x} + $Move{x_dir}] = $Grid[$Move{y}][$Move{x}];
+                $Grid[$Move{y}][$Move{x}] = 0;
+                undef %Move;
+            }
+        }
+    }
+
+    sub on_show {
+        $App-&gt;draw_rect( [0,0,$App-&gt;w,$App-&gt;h], 0 );
+        for my $y (0..3) {
+            for my $x (0..3) {
+                next if not my $val = $Grid[$y][$x] and !won();
+                my $xval = $val % 4;
+                my $yval = int($val / 4);
+                my $move = %Move &amp;&amp; $Move{x} == $x &amp;&amp; $Move{y} == $y;
+                $App-&gt;blit_by(
+                    $CurrentImg,
+                    [$xval * 100, $yval * 100, 100, 100],
+                    [$x * 100 + ($move ? $Move{offset} * $Move{x_dir} : 0),
+                     $y * 100 + ($move ? $Move{offset} * $Move{y_dir} : 0)]
+                );
+            }
+        }
+        $App-&gt;flip;
+    }
+
+    sub new_grid {
+        my @new = shuffle(0..15);
+        @Grid = map { [@new[ $_*4..$_*4+3 ]] } 0..3;
+        $CurrentImg = $Img[rand @Img];
+    }
+
+    sub won {
+        my $correct = 0;
+        for(@Grid) {
+            for(@$_) {
+                return 0 if $correct != $_;
+                $correct++;
+            }
+        }
+        return 1;
+    }
+
+    $App-&gt;add_event_handler(\&amp;on_event);
+    $App-&gt;add_move_handler(\&amp;on_move); 
+    $App-&gt;add_show_handler(\&amp;on_show);
+    $App-&gt;run;</code></pre>
+
+<p>You now hopefully know more of the process that goes in to creating a
+simple game. The process of creating a complex game is similar, it just
+requires more careful planning. You should have also picked up a few other
+tricks, like with <code>SDL::GFX::Rotozoom</code>,
+<code>SDL::Image::load</code> and <code>blit_by</code>.</p>
+
+<h2>Activities</h2>
+
+<ol>
+
+<li>1. Make the blank piece the bottom right piece instead of the top left
+piece.</li>
+
+<li>2. Make the grid dimensions variable by getting the value from
+<code>$ARGV[0]</code>. The grid will then be 5x5 if <code>$ARGV[0]</code>
+is 5 and so on.</li>
+
+</ol>
+
+<h2>Author</h2>
+
+<p>This chapter's content graciously provided by Blaizer.</p>
+
+<h1>Sound and Music</h1>
+
+<p>Sound and Music in SDL are handled by the <code>Audio</code> and
+<code>SDL_Mixer</code> components. Enabling <code>Audio</code> devices is
+provided with the Core SDL Library and only supports wav files.
+<code>SDL_Mixer</code> supports more audio file formats and has additional
+features that we need for sound in Game Development.</p>
+
+<p>Similarly to video in SDL, there are several way for perl developers to
+access the Sound components of SDL. For the plain <code>Audio</code>
+component the <code>SDL::Audio</code> and related modules are available.
+<code>SDL_Mixer</code> is supported with th <code>SDL::Mixer</code> module.
+There is currently a <code>SDLx::Sound</code> module in the work, but not
+completed at the time of writing this manual. For that reason this chapter
+will use <code>SDL::Audio</code> and <code>SDL::Mixer</code>.</p>
+
+<h2>Simple Sound Script</h2>
+
+<p>To begin using sound we must enable and open an audiospec:</p>
+
+<pre><code>   use strict;
+   use warnings;
+   use SDL;
+   use Carp;
+   use SDL::Audio;
+   use SDL::Mixer;
+   
+   SDL::init(SDL_INIT_AUDIO);
+   
+   unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
+   {
+      Carp::croak &quot;Cannot open audio: &quot;.SDL::get_error(); 
+   }
+   </code></pre>
+
+<p><code>open_audio</code> will open an audio device with frequency at
+44100 Mhz, audio format AUDIO_S16SYS (Note: This is currently the most
+portable format, however there are others), 2 channels and a chunk size of
+4096. Fiddle with these values if you are comfortable with sound
+terminology and techniques.</p>
+
+<h3>Loading Samples</h3>
+
+<p>Next we will load sound samples that generally used for sound effects
+and the like. Currently <code>SDL_Mixer</code> reserves samples for
+<code>.WAV</code>, <code>.AIFF</code>, <code>.RIFF</code>
+<code>.OGG</code>, and <code>.VOC</code> formats.</p>
+
+<p>Samples run on one of the 2 channels that we opened up, while the other
+channel will be reserved for multiple plays of the sample. To load samples
+we will be doing the following:</p>
+
+<pre><code>   +use SDL::Mixer::Samples;
+
+   +#Brillant Lazer Sound from http://www.freesound.org/samplesViewSingle.php?id=30935
+   +my $sample = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
+
+   +unless($sample)
+   +{
+   +   Carp::croak &quot;Cannot load file data/sample.wav: &quot;.SDL::get_error();   
+   +}</code></pre>
+
+<h3>Playing the sample and closing audio</h3>
+
+<p>Now we can play that sample on any open channel looping forever:</p>
+
+<pre><code>    use SDL::Mixer::Samples;
+   +use SDL::Mixer::Channels;
+   
+   my $sample =  SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
+   unless( $sample)
+   {
+      Carp::croak &quot;Cannot load file data/sample.wav: &quot;.SDL::get_error(); 
+   }
+
+   +my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );</code></pre>
+
+<p><code>play_channel</code> allows us to assign a sample to the channel
+<code>-1</code> which indicates any open channel. <code>0</code> indicates
+we want to play the sample only once.</p>
+
+<p>Note that since the sound will be playing in an external process we will
+need to keep the perl script running. In a game this is no problem but for
+a single script like this we can just use a simple <code>sleep</code>
+function. Once we are done we can go ahead and close the audio device.</p>
+
+<pre><code>   +sleep(1);
+   +SDL::Mixer::close_audio();</code></pre>
+
+<h3>Streaming Music</h3>
+
+<p>Next we will use <code>SDL::Mixer::Music</code> to add a background
+music to our script here.</p>
+
+<pre><code>    use SDL::Mixer::Channels;
+    +use SDL::Mixer::Music;
+
+    +#Load our awesome music from http://8bitcollective.com
+    +my $background_music = 
+        +         SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
+
+
+    +unless( $background_music )
+    +{
+    +   Carp::croak &quot;Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: &quot;.SDL::get_error() ;
+    +}</code></pre>
+
+<p>Music types in <code>SDL::Mixer</code> run in a seperate channel from
+our samples which allows us to have sound effects (like jump, or lasers
+etc) to play at the same time.</p>
+
+<pre><code>   +SDL::Mixer::Music::play_music($background_music,0); </code></pre>
+
+<p><code>play_music</code> also takes a parameter for how many loops you
+would like to play the song for, where 0 is 1.</p>
+
+<p>To stop the music we can call <code>halt_music</code>.</p>
+
+<pre><code>    sleep(2);
+   +SDL::Mixer::Music::halt_music();
+    SDL::Mixer::close_audio();</code></pre>
+
+<blockquote>
+
+<p>Controlling Volume can be as simple as:</p>
+
+<pre><code>   #All channels indicated by the -1
+   SDL::Mixer::Channels::volume(-1,10); 
+
+   #Specifically for the Music
+   SDL::Mixer::Music::volume_music( 10 );</code></pre>
+
+<p>Volumes can be set at anytime and range from <code>1-100</code>.</p>
+
+</blockquote>
+
+<h3>Code so far</h3>
+
+<pre><code>   use strict;
+   use warnings;
+   use SDL;
+   use Carp;
+   use SDL::Audio;
+   use SDL::Mixer;
+   use SDL::Mixer::Samples;
+   use SDL::Mixer::Channels;
+   use SDL::Mixer::Music;
+   SDL::init(SDL_INIT_AUDIO);
+
+   unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
+   {
+      Carp::croak &quot;Cannot open audio: &quot;.SDL::get_error(); 
+   }
+
+
+   my $sample = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
+
+   unless( $sample)
+   {
+      Carp::croak &quot;Cannot load file data/sample.wav: &quot;.SDL::get_error(); 
+   }
+
+   my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
+
+   #Load our awesome music from http://8bitcollective.com
+   my $background_music = SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
+
+   unless( $background_music )
+   {
+      Carp::croak &quot;Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg:&quot;.SDL::get_error();
+   }
+
+   SDL::Mixer::Music::play_music( $background_music,0 );
+
+   sleep(2);
+
+   SDL::Mixer::Music::halt_music();
+   SDL::Mixer::close_audio;</code></pre>
+
+<h2>Sound Applications</h2>
+
+<p>Now that we know how to prepare and play simple sounds we will apply it
+to an <code>SDLx::App</code>.</p>
+
+<h3>SDLx::App Audio Initialization</h3>
+
+<p><code>SDLx::App</code> will initialize everything normally for us.
+However for a stream line application it is recommend to initialize only
+the things we need. In this case that is <code>SDL_INIT_VIDEO</code> and
+<code>SDL_INIT_AUDIO</code>.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use Carp;
+    use SDLx::App;
+    use SDL::Audio;
+    use SDL::Mixer;
+    use SDL::Event;
+    use SDL::Events;
+    use SDL::Mixer::Music;
+    use SDL::Mixer::Samples;
+    use SDL::Mixer::Channels;
+
+    my $app = SDLx::App-&gt;new(
+        init  =&gt; SDL_INIT_AUDIO | SDL_INIT_VIDEO,
+        width =&gt; 250,
+        height =&gt; 75,
+        title =&gt; &quot;Sound Event Demo&quot;,
+        eoq   =&gt; 1
+  
+  );</code></pre>
+
+<h3>Loading Resources</h3>
+
+<p>It is highly recommended to perform all resource allocations before a
+<code>SDLx::App::run()</code> method is called.</p>
+
+<pre><code>    # Initialize the Audio
+    unless ( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 ) {
+        Carp::croak &quot;Cannot open audio: &quot; . SDL::get_error();
+    }
+
+    #Something to show while we play music and sounds
+    my $channel_volume = 100;
+    my $music_volume   = 100;
+    my $laser_status   = &#39;none&#39;;
+    my $music_status   = &#39;not playing&#39;;
+
+    # Load our sound resources
+    my $laser = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
+    unless ($laser) {
+        Carp::croak &quot;Cannot load sound: &quot; . SDL::get_error();
+    }
+
+    my $background_music =
+    SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
+    unless ($background_music) {
+        Carp::croak &quot;Cannot load music: &quot; . SDL::get_error();
+    }</code></pre>
+
+<h3>The Show Handler</h3>
+
+<p>For the purposes of describing the current state of the music lets draw
+text to the screen in a <code>show_handler</code>.</p>
+
+<pre><code>    $app-&gt;add_show_handler(
+    sub { 
+
+        $app-&gt;draw_rect([0,0,$app-&gt;w,$app-&gt;h], 0 );
+
+        $app-&gt;draw_gfx_text( [10,10], [255,0,0,255], &quot;Channel Volume : $channel_volume&quot; );
+        $app-&gt;draw_gfx_text( [10,25], [255,0,0,255], &quot;Music Volume   : $music_volume&quot; );
+        $app-&gt;draw_gfx_text( [10,40], [255,0,0,255], &quot;Laser Status   : $laser_status&quot; );
+        $app-&gt;draw_gfx_text( [10,55], [255,0,0,255], &quot;Music Status   : $music_status&quot; );
+
+        $app-&gt;update();
+
+    }
+    );</code></pre>
+
+<p>This will draw the channel volume of our samples, and the volume of the
+music. It will also print the status of our two sounds in the
+application.</p>
+
+<h3>The Event Handler</h3>
+
+<p>Finally our event handler will do the actual leg work and trigger the
+music and sound as we need it.</p>
+
+<pre><code>    $app-&gt;add_event_handler(
+        sub {
+            my $event = shift;
+
+            if ( $event-&gt;type == SDL_KEYDOWN ) {
+                my $keysym  = $event-&gt;key_sym;
+                my $keyname = SDL::Events::get_key_name($keysym);
+
+                if ( $keyname eq &#39;space&#39; ) {
+
+                    $laser_status = &#39;PEW!&#39;;
+                    #fire lasers!
+                    SDL::Mixer::Channels::play_channel( -1, $laser, 0 );
+
+                }
+                elsif ( $keyname eq &#39;up&#39; ) {
+                    $channel_volume += 5 unless $channel_volume == 100;
+                }
+                elsif ( $keyname eq &#39;down&#39; ) {
+                    $channel_volume -= 5 unless $channel_volume == 0;
+                }
+                elsif ( $keyname eq &#39;right&#39; ) {
+                    $music_volume += 5 unless $music_volume == 100;
+                }
+                elsif ( $keyname eq &#39;left&#39; ) {
+                    $music_volume -= 5 unless $music_volume == 0;
+                }
+                elsif ( $keyname eq &#39;return&#39; ) {
+                    my $playing = SDL::Mixer::Music::playing_music();
+                    my $paused  = SDL::Mixer::Music::paused_music();
+
+                    if ( $playing == 0 &amp;&amp; $paused == 0 ) {
+                        SDL::Mixer::Music::play_music( $background_music, 1 );
+                        $music_status = &#39;playing&#39;;
+                    }
+                    elsif ( $playing &amp;&amp; !$paused ) {
+                        SDL::Mixer::Music::pause_music();
+                        $music_status = &#39;paused&#39;
+                    }
+                    elsif ( $playing &amp;&amp; $paused ) {
+                        SDL::Mixer::Music::resume_music();
+                        $music_status = &#39;resumed playing&#39;;
+                    }
+
+                }
+
+                SDL::Mixer::Channels::volume( -1, $channel_volume );
+                SDL::Mixer::Music::volume_music($music_volume);
+
+            }
+
+          }
+
+    );</code></pre>
+
+<p>The above event handler fires the laser on pressing the 'Space' key. Go
+ahead and press it multiple times as if you are firing a gun in a game! You
+will notice that depending on how fast you fire the laser the application
+will still manage to overlap the sounds as needed. The sample overlapping
+is accomplished by requiring multiple channels in the
+<code>open_audio</code> call. If your game has lots of samples that may
+play at the same time you may need more channels allocated. Additionally
+you can see that the volume control is easily managed both on the channels
+and the music with just incrementing or decrementing a value and calling
+the appropriate function.</p>
+
+<p>Finally it is worth noticing the various state the background music can
+be in.</p>
+
+<p>Lets run this application and the make sure to clean up the audio on the
+way out. $app->run(); SDL::Mixer::Music::halt_music();
+SDL::Mixer::close_audio;</p>
+
+<h3>Completed Code</h3>
+
+<pre><code>    my $app = SDLx::App-&gt;new(
+        init  =&gt; SDL_INIT_AUDIO | SDL_INIT_VIDEO,
+        width =&gt; 250,
+        height =&gt; 75,
+        title =&gt; &quot;Sound Event Demo&quot;,
+        eoq   =&gt; 1
+    );
+
+    # Initialize the Audio
+    unless ( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 ) {
+        Carp::croak &quot;Cannot open audio: &quot; . SDL::get_error();
+    }
+
+    my $channel_volume = 100;
+    my $music_volume   = 100;
+    my $laser_status   = &#39;none&#39;;
+    my $music_status   = &#39;not playing&#39;;
+
+    # Load our sound resources
+    my $laser = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
+    unless ($laser) {
+        Carp::croak &quot;Cannot load sound: &quot; . SDL::get_error();
+    }
+
+    my $background_music =
+      SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
+    unless ($background_music) {
+        Carp::croak &quot;Cannot load music: &quot; . SDL::get_error();
+    }
+
+
+    $app-&gt;add_show_handler(
+    sub { 
+
+        $app-&gt;draw_rect([0,0,$app-&gt;w,$app-&gt;h], 0 );
+
+        $app-&gt;draw_gfx_text( [10,10], [255,0,0,255], &quot;Channel Volume : $channel_volume&quot; );
+        $app-&gt;draw_gfx_text( [10,25], [255,0,0,255], &quot;Music Volume   : $music_volume&quot; );
+        $app-&gt;draw_gfx_text( [10,40], [255,0,0,255], &quot;Laser Status   : $laser_status&quot; );
+        $app-&gt;draw_gfx_text( [10,55], [255,0,0,255], &quot;Music Status   : $music_status&quot; );
+
+        $app-&gt;update();
+
+    }
+    );
+
+    $app-&gt;add_event_handler(
+        sub {
+            my $event = shift;
+
+            if ( $event-&gt;type == SDL_KEYDOWN ) {
+                my $keysym  = $event-&gt;key_sym;
+                my $keyname = SDL::Events::get_key_name($keysym);
+
+                if ( $keyname eq &#39;space&#39; ) {
+
+                    $laser_status = &#39;PEW!&#39;;
+                    #fire lasers!
+                    SDL::Mixer::Channels::play_channel( -1, $laser, 0 );
+
+                }
+                elsif ( $keyname eq &#39;up&#39; ) {
+                    $channel_volume += 5 unless $channel_volume == 100;
+                }
+                elsif ( $keyname eq &#39;down&#39; ) {
+                    $channel_volume -= 5 unless $channel_volume == 0;
+                }
+                elsif ( $keyname eq &#39;right&#39; ) {
+                    $music_volume += 5 unless $music_volume == 100;
+                }
+                elsif ( $keyname eq &#39;left&#39; ) {
+                    $music_volume -= 5 unless $music_volume == 0;
+                }
+                elsif ( $keyname eq &#39;return&#39; ) {
+                    my $playing = SDL::Mixer::Music::playing_music();
+                    my $paused  = SDL::Mixer::Music::paused_music();
+
+                    if ( $playing == 0 &amp;&amp; $paused == 0 ) {
+                        SDL::Mixer::Music::play_music( $background_music, 1 );
+                        $music_status = &#39;playing&#39;;
+                    }
+                    elsif ( $playing &amp;&amp; !$paused ) {
+                        SDL::Mixer::Music::pause_music();
+                        $music_status = &#39;paused&#39;
+                    }
+                    elsif ( $playing &amp;&amp; $paused ) {
+                        SDL::Mixer::Music::resume_music();
+                        $music_status = &#39;resumed playing&#39;;
+                    }
+
+                }
+
+                SDL::Mixer::Channels::volume( -1, $channel_volume );
+                SDL::Mixer::Music::volume_music($music_volume);
+
+            }
+
+          }
+
+    );
+
+    $app-&gt;run();
+
+    SDL::Mixer::Music::halt_music();
+    SDL::Mixer::close_audio;</code></pre>
+
+<h2>Mixer Effects</h2>
+
+<p>Making a dynamic spectrograph.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/spectro-1.png}
+\caption{A Spectrograph of an awesome song} \label{fig:spectro}</p>
+
+
+
+<blockquote>
+
+<p>The songs provided with this chapters code have been used by the talent
+authors on http://8bitcollective.com. To see the individual credits of each
+song have a look at <code>data/music/Songs</code>. This is truly a great
+site for game songs, but please give all artists their due credits.</p>
+
+</blockquote>
+
+<h2>Modules</h2>
+
+<h3><code>SDLx::Sound</code></h3>
+
+<p>Simple SDL Mixer initialization.</p>
+
+<h3><code>SDL::Audio</code></h3>
+
+<p>Creating music on the fly.</p>
+
+<h3><code>SDL::Mixer</code></h3>
+
+<p>Full fledge music support.</p>
+
+<h1>CPAN</h1>
+
+<p>The Comprehensive Perl Archive Network (CPAN) is the other part of the
+Perl language. By now most Perl developers should be aware of how to search
+and get modules from CPAN. This chapter will focus on why to use CPAN for
+games. Next we will take a look in what domain (Model, View or Controller)
+does a module solve a problem for. Moreover we would want to look at what
+is criteria to pick one module from another, using the many tools provided
+by CPAN.</p>
+
+<h2>Modules</h2>
+
+<p>It is good to reuse code.</p>
+
+<h3>MVC Method</h3>
+
+<p>See where the module fits, Model, View or Controller</p>
+
+<h4>View</h4>
+
+<p>SDL will do most but helper module (Clipboard) are cool to have.</p>
+
+<p>The <i>SDLx::Widget</i> bundle comes separately, but is meant to provide
+you with several common game elements such as menu, dialog boxes and
+buttons, all seamlessly integrated with SDL.</p>
+
+<h4>Model</h4>
+
+<p>The logic and modelling behind most popular games is already on CPAN, so
+you can easily plug them in to create a new game of Chess, Checkers, Go,
+Life, Minesweeping, Cards, etc. There are even classes for platform games
+(like <i>Games::Nintendo::Mario</i>), creating and solving mazes,
+generating random dungeon maps, you name it.</p>
+
+<p>If your game needs to store data, like objects and status for saved
+games or checkpoints, you can use <i>Storable</i> or any of the many data
+serializers available.</p>
+
+<p>In fact, speaking of data structures, it is common to keep game data in
+standard formats such as JSON, YAML or XML, to make you able to
+import/export them directly from third-party tools like visual map makers
+or 3D modeling software. Perl provides very nice modules to handle the most
+popular formats - and some pretty unusual ones. Parsers vary in speed, size
+and thoroughness, so make sure to check the possible candidates and use the
+one that fits your needs for speed, size and accuracy.</p>
+
+<h4>Controller</h4>
+
+<p>If you need to roll a dice, you can use <i>Games::Dice</i>, that even
+lets you receive an array of rolled dice, and use RPG-like syntax (e.g.
+"2d6+1" for 2 rolls of a 6-side die, adding 1 to the result).</p>
+
+<p>You can also use <i>Sub::Frequency</i> if you need to do something or
+trigger a particular action or event only sometimes, or at a given
+probability.</p>
+
+<p>Your game may need you to mix words, find substrings or manipulate word
+permutations in any way (like when playing scrabble), in which case you
+might find the <i>Games::Word</i> module useful.</p>
+
+<h2>Picking Modules</h2>
+
+<p>So, you thought of a nice game, identified your needs, typed some
+keywords in http://seach.cpan.org, and got tons of results. What now? How
+to avoid vaporware and find the perfect solution for your needs?</p>
+
+<h3>Documentation</h3>
+
+<p>Once you find a potential module for your application, make sure you
+will know how to use it. Take a look at the SYNOPSIS section of the module,
+it should contain some code snippets showing you how to use the module's
+main features. Are you comfortable with the usage syntax? Does it seem to
+do what you expect it to? Will it fit nicely to whatever it is you're
+coding?</p>
+
+<p>Next, skim through the rest of the documentation. Is it solid enough for
+you? Does it look complete enough for your needs, or is it easily
+extendable?</p>
+
+<h3>License</h3>
+
+<p>It's useless to find a module you can't legally use. Most (if not all)
+modules in CPAN are free and open source software, but even so each needs a
+license telling developers what they can and cannot do with it. A lot of
+CPAN modules are released <i>"under the same terms as Perl itself"</i>, and
+this means you can pick between the Artistic License or the GPL (version
+1).</p>
+
+<p>Below is a short and incomplete list of some popular license choices by
+CPAN developers:</p>
+
+<ul>
+
+<li>Artistic License - http://dev.perl.org/licenses/artistic.html</li>
+
+<li>GPL (all versions and variations) - http://www.gnu.org/licenses</li>
+
+<li>MIT License - http://www.opensource.org/licenses/mit-license.php</li>
+
+</ul>
+
+<p>See http://www.opensource.org/licenses/alphabetical for a comprehensive
+list with each license's full documentation.</p>
+
+<p>You should be able to find the module's license by going to a "LICENSE
+AND COPYRIGHT" section, usually available at the bottom of the
+documentation, or by looking for a license file inside that
+distribution.</p>
+
+<p><b>Note:</b> Some modules might even be released into CPAN as <i>public
+domain</i>, meaning they are not covered by intellectual property rights at
+all, and you are free to use them as you see fit. Even so, it's usually
+considered polite to mention authors as a courtesy, you know, giving credit
+where credit is due.</p>
+
+<h3>Ratings</h3>
+
+<p>The CPAN Ratings is a service where developers rate modules they used
+for their own projects, and is a great way to have some actual feedback on
+how it was to use the code on a real application. The ratings are compiled
+into a 1 to 5 grade, and displayed below the module name on CPAN. You can
+click on the <i>"Reviews"</i> link right next to the rating stars to see
+any additional comments by the reviewers, praising, criticizing or giving
+some additional comments or the distribution and/or its competition.</p>
+
+<h3>Dependencies</h3>
+
+<p>Modules exist so you don't have to reinvent the wheel, and for that same
+reason each usually depends on one or more modules itself. Don't worry if a
+module depends on several others - code reusability is a good thing.</p>
+
+<p>You may, however, be interested in <b>which</b> modules it depends on,
+or, more practically, in the likelihood of a clean installation by your
+users. For that, you can browse to http://deps.cpantesters.org and input
+the module's name on the search box.</p>
+
+<p>The CPAN Testers is a collaborative matrix designed to help developers
+test their modules in several different platforms, with over a hundred
+testers each month making more than 3 million reports of CPAN modules. This
+particular CPAN Testers service will show you a list of dependencies and
+test results for each of them, calculating the average chance of all tests
+passing (for any platform).</p>
+
+<p>While seeing all the dependencies and test results of a couple of
+modules that do the same thing might help you make your pick, it's
+important to realize that the <i>"chance of all tests passing"</i>
+information at the bottom of the results means very little. This is because
+test failures can rarely be considered independent events, and are usually
+tied to not running on a specific type of operating system, to the perl
+version, or even due to the tester running out of memory for reasons that
+may not even concern the module being evaluated. If you don't care about
+your application running on AIX or on perl 5.6.0, why would you dismiss a
+module that only fails on those conditions?</p>
+
+<h3>CPAN Testers Charts</h3>
+
+<p>So, how do you know the actual test results for a module on the CPAN?
+How can you tell if that module will run in your target machine according
+to architecture, operating system and perl version?</p>
+
+<p>The CPAN Testers website at http://www.cpantesters.org offers a direct
+search for distributions by name or author. To see the results for the SDL
+module, for instance, you can go to
+http://www.cpantesters.org/distro/S/SDL.html. You can also find a test
+report summary directly on CPAN, by selecting the distribution and looking
+at the <i>"CPAN Testers"</i> line. If you click on the <i>"View
+Reports"</i> link, you'll be redirected to the proper CPAN Testers page,
+like the one shown above.</p>
+
+<p>The first chart is a PASS summary, containing information about the most
+recent version of that module with at least one <i>PASS</i> report
+submitted, separated by platform and perl version.</p>
+
+<p>Second is a list of selected reports, detailing all the submitted test
+results for the latest version of the given module. If you see a
+<i>FAIL</i> or <i>UNKNOWN</i> result that might concern you - usually at a
+platform you expect your application to run - you can click on it to see a
+verbose output of all the tests, to see why it failed.</p>
+
+<p>Another interesting information displayed is the report summary on the
+left sidebar, showing a small colored graph of PASS-UNKNOWN-FAIL results
+for the latest versions of the chosen module. If you see a released version
+with lots of FAIL results, it might be interesting to dig deeper or simply
+require a greater version of that module in your application.</p>
+
+<h4>Bug Reports</h4>
+
+<p>When picking a module to use, it is very important to check out its bug
+reports. You can do that by either clicking on the <i>"View/Report
+Bugs"</i> link on the module's page on CPAN, or on the <i>"CPAN RT"</i>
+(for Request Tracker) box on the right side of the documentation page.</p>
+
+<p>Look for open bugs and their description - i.e. if it's a bug or a
+whislist - and see if it concerns your planned usage for that module. Some
+bug reports are simple notices about a typo on the documentation or a very
+specific issue, so make sure you look around the ticket description to see
+if it's something that blocks your usage, or if you can live with it, at
+least until the author delivers an update.</p>
+
+<p>It may also interest you to see how long the open bugs have been there.
+Distributions with bugs dating for more than two years might indicate that
+the author abandoned the module to pursue other projects, so you'll likely
+be on your own if you find any bumps. Of course, being free software, that
+doesn't mean you can't fix things yourself, and maybe even ask the author
+for maintainance privileges so you can update your fixes for other people
+to use.</p>
+
+<h3>Release Date</h3>
+
+<p>A old distribution might mean a solid and stable distribution, but it
+can also mean that the author doesn't care much about it anymore. If you
+find a module whose latest version is over 5 years old, make sure to double
+check test results and bug reports, as explained above.</p>
+
+<h2>Conclusion</h2>
+
+<p>CPAN is an amazing repository filled with nice modules ready for you to
+use in your games. More than often you'll find that 90% of your application
+is already done on CPAN, and all you have to do to get that awesome idea
+implemented is glue them together, worrying only about your application's
+own logic instead of boring sidework. This means faster development, and
+more fun!</p>
+
+<h1>Profiling</h1>
+
+<p>Games generally need to be as tight in using memory and CPU as possible.
+Although Perl is generally thought to be too slow for games, this is not
+always the case. Usually Perl will be quicker to develop code in after
+which many steps can be taken `to profile the code for production use.
+However the key step is to first write code without concern of
+optimizations.</p>
+
+<h2>Make some code first</h2>
+
+<p>Make a Perl draft first, go make it now. Why are you still here, go make
+it! Don't optimize anything, nothing at all.</p>
+
+<h2>Profile</h2>
+
+<p>Run NYTProf.</p>
+
+<h3>Calls</h3>
+
+<p>What is called often? Load time? Run time? In the game loop?</p>
+
+<h2>Optimize</h2>
+
+<h3>Algorithms</h3>
+
+<p>Are you doing something inefficent? Is there a well know algorithm to do
+this?</p>
+
+<h3>Design Patterns</h3>
+
+<p>Any design patterns that can do what you need? Maybe use modules that do
+this for you.</p>
+
+<h3>XS</h3>
+
+<p>Nothing else left? Move it to C.</p>
+
+<h1>Pixel Effects</h1>
+
+<p>In this chapter we will look at how to use pixel effects in Perl. Pixel
+effects are operations that are done directly on the bacnk of a
+<code>SDL_Surface</code>'s pixel. These effects are used to do visual
+effects in games and applications, most notably by <code>Frozen
+Bubble</code>.</p>
+
+<p>\includegraphics[h!][width=0.5\textwidth]{../src/images/effects.png}
+\caption{Snow Effect covering Frozen Bubble's Logo }
+\label{fig:frozen_bubble}</p>
+
+
+
+<p>These effects can be done in purely in Perl, for 1 passes and non real
+time applications. Effects that need to be done real time will have to be
+done in C via XS. This chapter will show two methods of doing this.</p>
+
+<h2>Sol's Ripple Effect</h2>
+
+<p>For our first pixel effect we will be doing is a ripple effect from a
+well known SDL resource, http://sol.gfxile.net/gp/ch02.html. This effects
+uses <code>SDL::get_ticks</code> to animate a ripple effect across the
+surface as seen at \fig{fig:ripple}.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/xs_effects.png}
+\caption{Sol's Chapter 01 Ripple Effect} \label{fig:ripple}</p>
+
+
+
+<h3>Pure Perl</h3>
+
+<p>First lets make the effect in pure perl. To do any operations with a
+<code>SDL::Surface</code> we must do
+<code>SDL::Video::lock_surface()</code> call as seen below. Locking the
+surface prevents other process in SDL from accessing the surface. The
+surface pixels can be accessed several ways from Perl. Here we are using
+the <code>SDL::Surface::set_pixels</code> which takes an offset for the
+<code>SDL_Surface</code> pixels array, and sets a value there for us. The
+actual pixel effect is just a time dependent (using
+<code>SDL::get_ticks</code> for time) render of a function. See
+http://sol.gfxile.net/gp/ch02.html for a deeper explanation.</p>
+
+<pre><code>    use strict;
+    use warnings;
+
+    use SDL;
+    use SDLx::App;
+
+        # Render callback that we use to fiddle the colors on the surface
+    sub render {
+        my $screen = shift;
+        if ( SDL::Video::MUSTLOCK($screen) ) {
+            return if ( SDL::Video::lock_surface($screen) &lt; 0 );
+        }
+
+        my $ticks = SDL::get_ticks();
+        my ( $i, $y, $yofs, $ofs ) = ( 0, 0, 0, 0 );
+        for ( $i = 0; $i &lt; 480; $i++ ) {
+            for ( my $j = 0, $ofs = $yofs; $j &lt; 640; $j++, $ofs++ ) {
+                $screen-&gt;set_pixels( $ofs, ( $i * $i + $j * $j + $ticks ) );
+            }
+            $yofs += $screen-&gt;pitch / 4;
+        }
+
+
+        SDL::Video::unlock_surface($screen) if ( SDL::Video::MUSTLOCK($screen) );
+
+        SDL::Video::update_rect( $screen, 0, 0, 640, 480 );
+
+        return 0;
+    }
+
+
+    my $app = SDLx::App-&gt;new( width =&gt; 640,
+                              height =&gt; 480, 
+                              eoq =&gt; 1, 
+                              title =&gt; &quot;Grovvy XS Effects&quot; );
+
+    $app-&gt;add_show_handler( sub{ render( $app ) } );
+
+    $app-&gt;run();</code></pre>
+
+<p>One you run this program you will find it pretty much maxing out the CPU
+and not running very smoothly. At this point running a loop through the
+entire pixel bank of a <code>640x480</code> sized screen is too much for
+Perl. We will need to move the intensive calculations to
+<code>C</code>.</p>
+
+<h3>Inline Effects </h3>
+
+<p>In the below example we use <code>Inline</code> to write inline
+<code>C</code> code to handle the pixel effect for us. <code>SDL</code> now
+provides support to work with <code>Inline</code>. The <code>render</code>
+callback is now moved to <code>C</code> code, using <code>Inline C</code>.
+When the program first runs it will compile the code and link it in for
+us.</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use Inline with =&gt; &#39;SDL&#39;;
+    use SDL;
+    use SDLx::App;
+
+
+    my $app = SDLx::App-&gt;new( width =&gt; 640, 
+                              height =&gt; 480, 
+                              eoq =&gt; 1, 
+                              title =&gt; &quot;Grovvy XS Effects&quot; );
+
+        # Make render a callback which has the expected signature from show_handlers
+    $app-&gt;add_show_handler( \&amp;render);
+
+    $app-&gt;run();
+
+    use Inline C =&gt; &lt;&lt;&#39;END&#39;;
+
+        // Show handlers recieve both float and the SDLx::App which is a SDL_Screen
+    void render( float delta, SDL_Surface *screen )
+    {   
+        // Lock surface if needed
+        if (SDL_MUSTLOCK(screen)) 
+            if (SDL_LockSurface(screen) &lt; 0) 
+                return;
+
+        // Ask SDL for the time in milliseconds
+        int tick = SDL_GetTicks();
+
+        // Declare a couple of variables
+        int i, j, yofs, ofs;
+
+        // Draw to screen
+        yofs = 0;
+        for (i = 0; i &lt; 480; i++)
+        {
+            for (j = 0, ofs = yofs; j &lt; 640; j++, ofs++)
+            {
+                ((unsigned int*)screen-&gt;pixels)[ofs] = i * i + j * j + tick;
+            }
+            yofs += screen-&gt;pitch / 4;
+        }
+
+        // Unlock if needed
+        if (SDL_MUSTLOCK(screen)) 
+            SDL_UnlockSurface(screen);
+
+        // Tell SDL to update the whole screen
+        SDL_UpdateRect(screen, 0, 0, 640, 480);    
+    }
+
+    END</code></pre>
+
+<h2>Modules</h2>
+
+<p>Making it usable at least.</p>
+
+<h1>Additional Modules</h1>
+
+<h2>PDL</h2>
+
+<p>The Perl Data Language (PDL) is a tool aimed at a more scientific crowd.
+Accuracy is paramount and speed is the name of the game. PDL brings to Perl
+fast matrix and numerical calculations. For games in most cases a accuracy
+is not critical, but speed and efficiency is a great concern. For this
+reason we will briefly explore how to share SDL texture data between PDL
+and OpenGL.</p>
+
+<p>This example will do the following:</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/pdl.png}
+\caption{Not terribly interesting, but the speed is phenomenal}
+\label{fig:pdl}</p>
+
+
+
+<h3>Make the application</h3>
+
+<p>Let's start an application to use with PDL. Make sure you do <code>use
+PDL</code>.</p>
+
+<pre><code>    + use strict;
+    + use warnings;
+    + use SDL;
+    + use SDL::Video;
+    + use SDLx::App;
+    +
+    + use PDL;
+    +
+    + my $app = SDLx::App-&gt;new(
+    +                           title =&gt; &#39;PDL and SDL application&#39;,
+    +                           width =&gt; 640, height =&gt; 480, depth =&gt; 32,
+    +                           eoq =&gt; 1);</code></pre>
+
+<h3>Attaching the Piddle</h3>
+
+<p>PDL core object is something called a piddle. To be able to perform PDL
+calculations and show them on SDL surfaces, we need to share the memory
+between them. SDL Surface memory is stored in a <code>void *</code> block
+called <code>pixels</code>. <code>void *</code> memory has the property
+that allows Surfaces to have varying depth, and pixel formats. This also
+means that we can have PDL's memory as our <code>pixels</code> for our
+surface.</p>
+
+<pre><code>    + sub make_surface_piddle {
+    + my ( $bytes_per_pixel, $width, $height) = @_;
+    + my $piddle = zeros( byte, $bytes_per_pixel, $width, $height );
+    + my $pointer = $piddle-&gt;get_dataref();</code></pre>
+
+<p>At this point we have a pointer to the <code>$piddle</code>'s memory
+with the given specifications. Next we have our surface use that
+memory.</p>
+
+<pre><code>    + my $s = SDL::Surface-&gt;new_form( 
+    +                                       $pointer, $width, $height, 32, 
+    +                                       $width * $bytes_per_pixel 
+    +                                      );
+    +
+    + #Wrap it into a SDLx::Surface for ease of use
+    + my $surface = SDLx::Surface-&gt;new( surface =&gt; $s );
+    +
+    + return ( $piddle, $surface );
+    + } </code></pre>
+
+<p>Lets make some global variables to hold our <code>$piddle</code> and
+<code>$surface</code>.</p>
+
+<pre><code>    + my ( $piddle, $surface ) = make_surface_piddle( 4, 400, 200 ); </code></pre>
+
+<h3>Drawing and Updating</h3>
+
+<p><code>make_surface_piddle()</code> will return to use an anonymous array
+with a <code>$piddle</code> and <code>$surface</code> which we can use with
+PDL and SDL. PDL will be used to operate on the <code>$piddle</code>. SDL
+will be used to update the <code>$surface</code> and render it to the
+<code>SDLx::App</code>.</p>
+
+<pre><code>    + $app-&gt;add_move_handler( sub {
+    +
+    +   SDL::Video::lock_surface($surface);
+    + 
+    +   $piddle-&gt;mslice( &#39;X&#39;,
+    +   [ rand(400), rand(400), 1 ],
+    +   [ rand(200), rand(200), 1 ] 
+    +   ) .= pdl( rand(225), rand(225), rand(225), 255 );
+    +
+    +   SDL::Video::unlock_surface($surface);
+    + } );</code></pre>
+
+<p><code>SDL::Video::lock_surface</code> prevents SDL from doing any
+operations on the <code>$surface</code> until
+<code>SDL::Video::unlock_surface</code> is called. Next we will blit this
+surface onto the <code>$app</code>.</p>
+
+<p>In this case we use PDL to draw random rectangles of random color.</p>
+
+<h3>Running the App</h3>
+
+<p>Finally we blit the <code>$surface</code> and update the
+<code>$app</code>.</p>
+
+<pre><code>    + $app-&gt;add_show_handler( sub {
+    +
+    +    $surface-&gt;blit( $app, [0,0,$surface-&gt;w,$surface-&gt;h], [10,10,0,0] );
+    +    $app-&gt;update();
+    +
+    + });
+
+    + $app-&gt;run();</code></pre>
+
+<h3>Complete Program</h3>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDLx::App;
+
+    use PDL;
+
+    my $app = SDLx::App-&gt;new(
+            title =&gt; &quot;PDL and SDL aplication&quot;,
+            width =&gt; 640, height =&gt; 480, eoq =&gt; 1 );
+
+
+    sub make_surface_piddle {
+        my ( $bytes_per_pixel, $width, $height) = @_;
+        my $piddle = zeros( byte, $bytes_per_pixel, $width, $height );
+        my $pointer = $piddle-&gt;get_dataref();
+        my $s = SDL::Surface-&gt;new_from(
+            $pointer, $width, $height, 32,
+            $width * $bytes_per_pixel
+        );
+
+        my $surface = SDLx::Surface-&gt;new( surface =&gt; $s );
+
+        return ( $piddle, $surface );
+    } 
+
+
+    my ( $piddle, $surface ) = make_surface_piddle( 4, 400, 200 );
+
+    $app-&gt;add_move_handler( sub {
+
+            SDL::Video::lock_surface($surface);
+
+            $piddle-&gt;mslice( &#39;X&#39;,
+                [ rand(400), rand(400), 1 ],
+                [ rand(200), rand(200), 1 ] 
+                ) .= pdl( rand(225), rand(225), rand(225), 255 );
+
+            SDL::Video::unlock_surface($surface);
+            } );
+
+
+    $app-&gt;add_show_handler( sub {
+
+        $surface-&gt;blit( $app, [0,0,$surface-&gt;w,$surface-&gt;h], [10,10,0,0] );
+        $app-&gt;update();
+
+    });
+
+    $app-&gt;run();</code></pre>
+
+<h2>OpenGL and SDL</h2>
+
+<p>OpenGL is a cross platform library for interactive 2D and 3D graphics
+applications. However OpenGL specifies only the graphics pipeline and
+doesn't handle inputs and events. SDL can hand over the graphics component
+of an application over to OpenGL and take control over the event handling,
+sound, and textures. In the first example we will see how to set up Perl's
+<code>OpenGL</code> module with <code>SDLx::App</code>.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/opengl-1.png}
+\caption{The lovely blue teapot} \label{fig:opengl-1}</p>
+
+
+
+<h3>SDL Setup</h3>
+
+<pre><code>        use strict;
+        use warnings;
+        use SDL;
+        use SDLx::App;
+
+        use OpenGL qw/:all/;
+
+        my $app = SDLx::App-&gt;new( 
+                title  =&gt; &quot;OpenGL App&quot;,
+                width  =&gt; 600,
+                height =&gt; 600,
+                gl     =&gt; 1,
+                eoq    =&gt; 1
+           );
+
+
+        $app-&gt;run();</code></pre>
+
+<p>Enabling <code>OpenGL</code> mode is as simple as adding the
+<code>gl</code> flag to the <code>SDLx::App</code> constructor.</p>
+
+<h3>OpenGL Setup</h3>
+
+<p>Next we will make a <code>OpenGL</code> perspective with the
+<code>$app</code>'s dimensions:</p>
+
+<pre><code>        glEnable(GL_DEPTH_TEST);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity;
+        gluPerspective(60, $app-&gt;w/$app-&gt;h, 1, 1000 );
+        glTranslatef( 0,0,-20);</code></pre>
+
+<p>Additionally we will be initializing <code>glut</code>, but just to draw
+something quick.</p>
+
+<pre><code>        #Using glut to draw something interesting really quick
+        glutInit();</code></pre>
+
+<h3>The Render Callback</h3>
+
+<p>Now we are prepared to put something on the screen.</p>
+
+<pre><code>        $app-&gt;add_show_handler( 
+                sub{
+                        my $dt = shift;
+                
+                        #clear the screen
+                        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+                        glColor3d(0,1,1);
+
+                        glutSolidTeapot(2); 
+
+                        #sync the SDL application with the OpenGL buffer data
+                        $app-&gt;sync;
+
+
+                }
+        );</code></pre>
+
+<p>At this point there should be a light blue teapot on the screen. The
+only special thing to notice here is that we need to call the
+<code>sync()</code> method on <code>$app</code>. This will flush the
+buffers and update the SDL application for us.</p>
+
+<h3>Event handling</h3>
+
+<p>Event handling is the same as any other <code>SDLx::App</code>. We will
+use the mouse motion changes to rotate the teapot.</p>
+
+<p>First add a global variable to hold your rotate values. And then use
+those values to rotate our teapot.</p>
+
+<pre><code>      glutInit();
+
+    + my $rotate = [0,0];
+     
+      $app-&gt;add_show_handler( 
+        sub{
+        my $dt = shift;
+    
+        #clear the screen
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+        glColor3d(0,1,1);
+
+    +   glPushMatrix();
+
+        +       glRotatef($rotate-&gt;[0], 1,0,0);
+    +   glRotatef($rotate-&gt;[1], 0,1,0);
+
+        glutSolidTeapot(2); 
+
+        #sync the SDL application with the OpenGL buffer data
+        $app-&gt;sync;
+
+   +    glPopMatrix();
+        }
+    );</code></pre>
+
+<p>Next we will add an event handler to the app to update the rotate values
+for us.</p>
+
+<pre><code>    $app-&gt;add_event_handler(
+
+        sub {
+            my ($e ) = shift;
+
+            if( $e-&gt;type == SDL_MOUSEMOTION )
+                {
+                    $rotate =   [$e-&gt;motion_x,  $e-&gt;motion_y];
+                }
+
+        }
+
+    );</code></pre>
+
+<p>Finally we run the application.</p>
+
+<pre><code>    $app-&gt;run();</code></pre>
+
+<h3>Complete Code</h3>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use SDLx::App;
+    use SDL::Event;
+
+    use OpenGL qw/:all/;
+
+    my $app = SDLx::App-&gt;new( 
+            title  =&gt; &quot;OpenGL App&quot;,
+            width  =&gt; 600,
+            height =&gt; 600,
+            gl     =&gt; 1,
+            eoq    =&gt; 1
+            );
+
+    glEnable(GL_DEPTH_TEST);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity;
+    gluPerspective(60, $app-&gt;w/$app-&gt;h, 1, 1000 );
+    glTranslatef( 0,0,-20);
+    glutInit();
+
+    my $rotate = [0,0];
+
+    $app-&gt;add_show_handler( 
+            sub{
+            my $dt = shift;
+
+    #clear the screen
+            glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+            glColor3d(0,1,1);
+
+            glPushMatrix();
+
+            glRotatef($rotate-&gt;[0], 1,0,0);
+            glRotatef($rotate-&gt;[1], 0,1,0);
+
+            glutSolidTeapot(2); 
+
+    #sync the SDL application with the OpenGL buffer data
+            $app-&gt;sync;
+
+            glPopMatrix();
+            }
+            );
+
+    $app-&gt;add_event_handler(
+
+            sub {
+            my ($e ) = shift;
+
+            if( $e-&gt;type == SDL_MOUSEMOTION )
+            {
+            $rotate =   [$e-&gt;motion_x,  $e-&gt;motion_y];
+            }
+
+            }
+
+            );
+
+    $app-&gt;run();</code></pre>
+
