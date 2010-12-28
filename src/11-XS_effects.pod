@@ -92,13 +92,15 @@ The C<render> callback is now moved to C<C> code, using C<Inline C>. When the pr
                               eoq => 1, 
                               title => "Grovvy XS Effects" );
 
-    $app->add_show_handler( sub{ render( $app ) } );
+	# Make render a callback which has the expected signature from show_handlers
+    $app->add_show_handler( \&render);
 
     $app->run();
 
     use Inline C => <<'END';
 
-    void render( SDL_Surface *screen )
+	// Show handlers recieve both float and the SDLx::App which is a SDL_Screen
+    void render( float delta, SDL_Surface *screen )
     {   
         // Lock surface if needed
         if (SDL_MUSTLOCK(screen)) 
