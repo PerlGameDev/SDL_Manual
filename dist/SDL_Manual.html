@@ -3319,18 +3319,67 @@ more fun!</p>
 <p>Games generally need to be as tight in using memory and CPU as possible.
 Although Perl is generally thought to be too slow for games, this is not
 always the case. Usually Perl will be quicker to develop code in after
-which many steps can be taken `to profile the code for production use.
+which many steps can be taken to profile the code for production use.
 However the key step is to first write code without concern of
 optimizations.</p>
 
-<h2>Make some code first</h2>
+<h2>Preparing a Game for Profiling</h2>
 
-<p>Make a Perl draft first, go make it now. Why are you still here, go make
-it! Don't optimize anything, nothing at all.</p>
+<p>In this chapter we will look at our Pong Code from Chapter 6. The script
+is provided for you in the <code>code_listings/pong.pl</code> on
+http://github.com/PerlGameDev/SDL_Manual/ site. Get the repository, extract
+it and run:</p>
 
-<h2>Profile</h2>
+<pre><code>    perl code_listings/pong.pl</code></pre>
 
-<p>Run NYTProf.</p>
+<p>Right now the code will be running the whole game, which is a problem
+for profiling as we want the game loop to run only a specified number of
+times. This can be accomplished by adding a run counter.</p>
+
+<pre><code>     use SDLx::Rect;
+    +my $profile_counter = 0;</code></pre>
+
+<p>Then in our game loop callbacks we will stop the application after a
+certain amount of calls.</p>
+
+<pre><code>    +$app-&gt;add_move_handler( sub{ $app-&gt;stop() if $profile_counter++ &gt; 100 } );
+     # all is set, run the app!
+     $app-&gt;run();</code></pre>
+
+<p>Run this code which is provided in
+<code>code_listings/pong_profile_1.pl</code>, and it will close sortly
+after a rendering the first 100 frames.</p>
+
+<pre><code>        perl code_listings/pong_profile_1.pl </code></pre>
+
+<blockquote>
+
+<p>Note that we selected the 1st 100 frames of this games just for
+illustration purposes. Usually for more complex games, scripts for various
+events and situtations in the Game would be converted to a script that can
+be profiled.</p>
+
+</blockquote>
+
+<h2>Profiling with NYTProf</h2>
+
+<p>First incase you don't have the profiler go ahead and get the module
+from cpan.</p>
+
+<pre><code>        cpan Devel::NYTProf </code></pre>
+
+<p>Next run the profiler on our prepared sample of the game.</p>
+
+<pre><code>        perl -d:NYTProf code_listings/pong_profile_1.pl </code></pre>
+
+<p>Once that has finished running we will generate HTML reports.</p>
+
+<pre><code>        nytprofhtml</code></pre>
+
+<p>Once the HTML reports are done we will go ahead an open them in a
+broswer.</p>
+
+<pre><code>        firefox nytprof/index.html </code></pre>
 
 <h3>Calls</h3>
 
