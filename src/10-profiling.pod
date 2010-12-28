@@ -1,5 +1,8 @@
 =head0 Profiling
 
+Games generally need to be as tight in using memory and CPU as possible. Although Perl is generally thought to be too slow 
+for games, this is not always the case. Usually Perl will be quicker to develop code in after which many steps can be taken 
+`to profile the code for production use. However the key step is to first write code without concern of optimizations. 
 
 =head1 Make some code first
 
