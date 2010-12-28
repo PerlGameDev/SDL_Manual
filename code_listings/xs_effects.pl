@@ -7,13 +7,13 @@ use SDLx::App;
 
 my $app = SDLx::App->new( width => 640, height => 480, eoq => 1, title => "Grovvy XS Effects" );
 
-$app->add_show_handler( sub{ render( $app ) } );
+$app->add_show_handler( \&render );
 
 $app->run();
 
 use Inline C => <<'END';
 
-void render( SDL_Surface *screen )
+void render( float delta, SDL_Surface *screen )
 {   
 	// Lock surface if needed
 	if (SDL_MUSTLOCK(screen)) 
@@ -28,9 +28,9 @@ void render( SDL_Surface *screen )
 
 	// Draw to screen
 	yofs = 0;
-	for (i = 0; i < 480; i++)
+	for (i = 0; i < screen->h; i++)
 	{
-		for (j = 0, ofs = yofs; j < 640; j++, ofs++)
+		for (j = 0, ofs = yofs; j < screen->w; j++, ofs++)
 		{
 			((unsigned int*)screen->pixels)[ofs] = i * i + j * j + tick;
 		}
@@ -42,7 +42,7 @@ void render( SDL_Surface *screen )
 		SDL_UnlockSurface(screen);
 
 	// Tell SDL to update the whole screen
-	SDL_UpdateRect(screen, 0, 0, 640, 480);    
+	SDL_UpdateRect(screen, 0, 0, screen->w,screen->h);    
 }
 
 END
