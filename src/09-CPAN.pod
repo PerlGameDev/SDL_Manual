@@ -26,7 +26,8 @@ CPAN, so you can easily plug them in to create a new game of
 Chess, Checkers, Go, Life, Minesweeping, Cards, etc. There are
 even classes for platform games (like I<Games::Nintendo::Mario>),
 creating and solving mazes, generating random dungeon maps, you
-name it.
+name it. Have a look at I<Roguelike-Utils> and
+I<Games::RolePlay::MapGen> for just a few of those.
 
 If your game needs to store data, like objects and status for saved
 games or checkpoints, you can use I<Storable> or any of the many
