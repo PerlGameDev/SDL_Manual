@@ -18,35 +18,35 @@ please let us know so we can update the list.
 
 =over 4
 
-=item * L<www.cgtextures.com>
+=item * U<http://www.cgtextures.com>
 
-=item * L<http://www.mayang.com/textures/>
+=item * U<http://www.mayang.com/textures/>
 
-=item * L<http://www.pixelpoke.com/>
+=item * U<http://www.pixelpoke.com/>
 
-=item * L<http://www.flyingyogi.com/fun/spritelib.html>
+=item * U<http://www.flyingyogi.com/fun/spritelib.html>
 
-=item * L<http://www.grsites.com/archive/textures/>
+=item * U<http://www.grsites.com/archive/textures/>
 
-=item * L<http://www.imageafter.com/>
+=item * U<http://www.imageafter.com/>
 
-=item * L<http://www.absolutecross.com/graphics/textures/>
+=item * U<http://www.absolutecross.com/graphics/textures/>
 
-=item * L<http://www.freefoto.com/>
+=item * U<http://www.freefoto.com/>
 
-=item * L<http://www.noctua-graphics.de>
+=item * U<http://www.noctua-graphics.de>
 
-=item * L<http://www.m3corp.com/a/download/3d_textures/pages/index.htm>
+=item * U<http://www.m3corp.com/a/download/3d_textures/pages/index.htm>
 
-=item * L<http://reinerstileset.4players.de/englisch.html>
+=item * U<http://reinerstileset.4players.de/englisch.html>
 
-=item * L<http://virtualworlds.wikia.com/>
+=item * U<http://virtualworlds.wikia.com/>
 
-=item * L<http://lunar.lostgarden.com/labels/free%20game%20graphics.html>
+=item * U<http://lunar.lostgarden.com/labels/free%20game%20graphics.html>
 
-=item * L<http://pdgameresources.wordpress.com/>
+=item * U<http://pdgameresources.wordpress.com/>
 
-=item * L<http://gaminggroundzero.com>
+=item * U<http://gaminggroundzero.com>
 
 =back
 
@@ -55,19 +55,19 @@ please let us know so we can update the list.
 
 =over 4
 
-=item * L<www.freesound.org>
+=item * U<www.freesound.org>
 
-=item * L<www.ccmixter.org>
+=item * U<www.ccmixter.org>
 
-=item * L<http://www.jamendo.com>
+=item * U<http://www.jamendo.com>
 
-=item * L<http://8bc.org>
+=item * U<http://8bc.org>
 
-=item * L<http://www.sakari-infinity.net>
+=item * U<http://www.sakari-infinity.net>
 
-=item * L<http://www.findsounds.com>
+=item * U<http://www.findsounds.com>
 
-=item * L<http://www.grsites.com/archive/sounds/>
+=item * U<http://www.grsites.com/archive/sounds/>
 
 =back
 
@@ -76,16 +76,16 @@ please let us know so we can update the list.
 
 =over 4
 
-=item * L<http://www.acidfonts.com/>
+=item * U<http://www.acidfonts.com/>
 
-=item * L<http://www.grsites.com/archive/fonts/>
+=item * U<http://www.grsites.com/archive/fonts/>
 
 =back
 
 
 =head1 DIY
 
-L<http://www.gamesounddesign.com/> has several tips on making game
+U<http://www.gamesounddesign.com/> has several tips on making game
 music, including several sources for inspiration.
 
 If you want to create 3D models, either for cutscenes or to integrate
@@ -93,8 +93,14 @@ into your game via OpenGL, there are several nice libraries out there
 for you:
 
 B<Blender> - A free 3D graphics application for modeling, texturing,
-water and smoke simulations, rendering, etc. L<http://blender.org>
+water and smoke simulations, rendering, etc. U<http://blender.org>
 
 B<OGRE> - An open-source graphics rendering engine, used in a large number
 of production projects. It can be easily integrated via Scott Lanning's
-I<Ogre> Perl bindings, on CPAN. L<http://www.ogre3d.org>
+I<Ogre> Perl bindings, on CPAN. U<http://www.ogre3d.org>
+
+=head1 Author
+
+This chapter's content graciously provided by Breno G. de Oliveira (C<garu>).
+
+=for vim: spell
