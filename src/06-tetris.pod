@@ -80,7 +80,35 @@ allow us to quickly access our pieces, based on their keys.
 Further more we have a 1-dimensional array for each piece that represents a grid of the piece.
 
 The grid of each piece is filled with empty spaces and a number from 1 to 7. When this grid is 
-imposed on the game grid, we can use the non zero number to draw the write piece block on to it.
+imposed on the game grid, we can use the non zero number to draw the right piece block on to it.
+
+The non zero number corresponds to the images file that we loaded ealier.
+
+   push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
+
+=head1 Selecting Pieces 
+
+
+     use strict;
+     use warnings;
+
+    +use List::Util qw(shuffle min max);
+
+We will use the List::Util module to provide us with some neeeded functions. 
+
+    ...
+         Z => [0,0,0,0,
+               1,1,0,0,
+               0,1,1,0,
+               0,0,0,0],
+     );
+
+    +my $next_tile         = shuffle(keys %pieces);
+    +my $curr_tile         = [undef, 4, 0];
+    +   @{$curr_tile->[0]} = @{$pieces{$next_tile}};
+    +   $next_tile         = shuffle(keys %pieces); 
+
+We will randomly pick a C<$next_tile> and then set the piece data for our first piece in C<$curr_tile>.
 
 =head1 Game flow
 
