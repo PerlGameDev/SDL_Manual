@@ -109,35 +109,196 @@ We will use the List::Util module to provide us with some neeeded functions.
     +   $next_tile         = shuffle(keys %pieces); 
 
 We will randomly pick a C<$next_tile> and then set the piece data for our first piece in C<$curr_tile>.
+Then we will pick another tile for our C<$next_tile>.
 
-=head1 Game flow
+=head1 Moving Pieces
 
-=head2 Considerations
+     push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
 
-=head3 Refactor the first draft
+    +# to check for collisions we compare the position of the moving piece with the non-movin pieces
+    +my $grid  = []; # moving piece
+    +my $store = []; # non-moving pieces
+     my %pieces = (
+          I => [0,5,0,0,
 
-=head1 Collisions
+In our conceptual model of Tetris we have two grids that overlap each other. First we have the C<$grid> where the
+piece that is moving is stored. Once a piece has collided with sometime we move it to C<$store> grid and hold it 
+there until a line is cleared. 
 
-What is colliding to what?
+     $next_tile         = shuffle(keys %pieces); 
 
-=head2 Considerations
+    + sub rotate_piece {
+    +     my $_piece   = shift;
+    +     my $_rotated = [];
+    +     my $_i = 0;
+    +     for(@{$_piece}) {
+    +         $_rotated->[$_i + (($_i%4+1)*3) - (5*int($_i/4))] = $_;
+    +         $_i++;
+    +     }
+    +     return $_rotated;
+    + }
 
-=head3 Dynamic 
+    + sub can_move_piece {
+    +     my $direction = shift;
+    +     my $amount    = shift || 1;
+    +     for my $y (0..3) {
+    +         for my $x (0..3) {
+    +             if($curr_tile->[0]->[$x + 4 * $y]) {
+    +                 return if $direction eq 'left'  && $x - $amount + $curr_tile->[1]  < 0;
+    +                 return if $direction eq 'right' && $x + $amount + $curr_tile->[1]  > 9;
+    +                 return if $direction eq 'down'  && int($y + $amount + $curr_tile->[2]) > 22;
+    +                 
+    +                 return if $direction eq 'right' && $store->[ $x + $amount + $curr_tile->[1] + 10 * int($y           + $curr_tile->[2]) ];
+    +                 return if $direction eq 'left'  && $store->[ $x - $amount + $curr_tile->[1] + 10 * int($y           + $curr_tile->[2]) ];
+    +                 return if $direction eq 'down'  && $store->[ $x           + $curr_tile->[1] + 10 * int($y + $amount + $curr_tile->[2]) ];
+    +             }
+    +         }
+    +     }
+    +     return 1;
+    + }
 
-Are both colliers going to collide?
+    + sub move_piece {
+    +     my $direction = shift;
+    +     my $amount    = shift || 1;
+    +     if($direction eq 'right') {
+    +         $curr_tile->[1] += $amount;
+    +     }
+    +     elsif($direction eq 'left') {
+    +         $curr_tile->[1] -= $amount;
+    +     }
+    +     elsif($direction eq 'down') {
+    +         $curr_tile->[2] += $amount;
+    +     }
+    +     
+    +     @{$grid} = ();
+    +     for my $y (0..3) {
+    +         for my $x (0..3) {
+    +             if($curr_tile->[0]->[$x + 4 * $y]) {
+    +                 $grid->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] = $curr_tile->[0]->[$x + 4 * $y];
+    +             }
+    +         }
+    +     }
+    + }
 
-=head3 Direction of Collisions
+    + sub store_piece {
+    +     for my $y (0..3) {
+    +         for my $x (0..3) {
+    +             if($curr_tile->[0]->[$x + 4 * $y]) {
+    +                 $store->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] = $curr_tile->[0]->[$x + 4 * $y];
+    +             }
+    +         }
+    +     }
+    + }
 
-Multiple directions of collisions?
+    + sub trigger_move_event_handler {
+    +     my ( $event, $app ) = @_;
+    +     if( $event->type == SDL_KEYDOWN ) {
+    +         my $key = $event->key_sym;
+    +         if( $event->key_sym & (SDLK_LEFT|SDLK_RIGHT|SDLK_UP|SDLK_DOWN) ) {
+    +             if($key == SDLK_LEFT && can_move_piece('left')) {
+    +                 move_piece('left');
+    +             }
+    +             elsif($key == SDLK_RIGHT && can_move_piece('right')) {
+    +                 move_piece('right');
+    +             }
+    +             elsif($key == SDLK_DOWN && can_move_piece('down')) {
+    +                 move_piece('down')
+    +             }
+    +             elsif($key == SDLK_UP) {
+    +                 $curr_tile->[0] = rotate_piece($curr_tile->[0]);
+    +             }
+    +         }
+    +     }
+    + }
 
-=head3 Game Events
+    + $app->add_event_handler( \&trigger_move_event_handler );
 
-Should they trigger a game event? React?
+=head2 Score and Game State
 
-=head2 The Game
+    + $app->add_move_handler( sub {
+    +     my ( $step, $app ) = @_;
+    +     if(can_move_piece('down', $step / 2)) {
+    +         move_piece('down', $step / 2);
+    +     }
+    +     else {
+    +         store_piece($curr_tile); # placing the tile
+    +         
+    +         # checking for lines to delete
+    +         my $y;
+    +         my @to_delete = ();
+    +         for($y = 22; $y >= 0; $y--) {
+    +             # there is no space if min of this row is true (greater than zero)
+    +             if(min(@{$store}[($y*10)..((($y+1)*10)-1)])) {
+    +                 push(@to_delete, $y);
+    +             }
+    +         }
+    +         # deleting lines
+    +         foreach(@to_delete) {
+    +             splice(@{$store}, $_*10, 10);
+    +             $score++;
+    +         }
+    +         
+    +         # adding blank rows to the top
+    +         foreach(@to_delete) {
+    +             splice(@{$store}, 0, 0, (0,0,0,0,0,0,0,0,0,0));
+    +         }
+    +         
+    +         # launching new tile
+    +         @{$curr_tile->[0]}  = @{$pieces{$next_tile}};
+    +         $curr_tile->[1]     = 4;
+    +         $curr_tile->[2]     = 0;
+    +         $next_tile          = shuffle(keys %pieces);
+    +     }
+    + });
 
 
+=head2 Showing the Game
 
+    + # renders game objects on the screen
+    + $app->add_show_handler(
+    +     sub {
+    +         # first, we clear the screen
+    +         $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0x000000 );
+    +         # and draw the background image
+    +         $back->blit( $app );
+    +         my $x = 0;
+    +         my $y = 0;
+    +         # draw the not moving tiles
+    +         foreach(@{$store}) {
+    +             $piece[$_]->blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
+    +             $x++;
+    +             $y++ unless $x % 10;
+    +         }
+    +         $x = 0;
+    +         $y = 0;
+    +         # draw the moving tile
+    +         foreach(@{$grid}) {
+    +             $piece[$_]->blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
+    +             $x++;
+    +             $y++ unless $x % 10;
+    +         }
+    +         # the next tile will be...
+    +         my $next_tile_index = max(@{$pieces{$next_tile}});
+    +         for $y (0..3) {
+    +             for $x (0..3) {
+    +                 if($pieces{$next_tile}->[$x + 4 * $y]) {
+    +                     $piece[$next_tile_index]->blit( $app, undef, [ 264 + $x * 20, 48 + $y * 20 ] );
+    +                 }
+    +             }
+    +         }
+    +         $score_text->write_xy( $app, 248,  20, "Next Piece" );
+    +         $score_text->write_xy( $app, 248, 240, "Score: $score" );
+    +         # finally, we update the screen
+    +         $app->update;
+    +     }
+    + );
+
+    + # all is set, run the app!
+    + $app->run();
+
+=head1 Author
+
+Code for this chapter was provided by Tobias Leich "FROGGS". 
 
 
 =for vim: spell
