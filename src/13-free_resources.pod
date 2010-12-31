@@ -55,9 +55,9 @@ please let us know so we can update the list.
 
 =over 4
 
-=item * U<www.freesound.org>
+=item * U<http://www.freesound.org>
 
-=item * U<www.ccmixter.org>
+=item * U<http://www.ccmixter.org>
 
 =item * U<http://www.jamendo.com>
 
