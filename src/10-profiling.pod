@@ -6,30 +6,28 @@ to profile the code for production use. However the key step is to first write c
 
 =head1 Preparing a Game for Profiling
 
-In this chapter we will look at our Pong Code from Chapter 6. The script is provided 
-for you in the C<code_listings/pong.pl> on U<http://github.com/PerlGameDev/SDL_Manual/> 
+We will begin by profiling a simple collisions demo script. The script is provided 
+for you in the C<code_listings/profile_0.pl> on U<http://github.com/PerlGameDev/SDL_Manual/> 
 site. Get the repository, extract it and run:
 
-    perl code_listings/pong.pl
+    perl code_listings/profile_0.pl
 
 Right now the code will be running the whole game, which is a problem for profiling as
 we want the game loop to run only a specified number of times. This can be accomplished 
 by adding a run counter.
 
-     use SDLx::Rect;
     +my $profile_counter = 0;
 
 Then in our game loop callbacks we will stop the application after a certain amount of 
 calls. 
 
     +$app->add_move_handler( sub{ $app->stop() if $profile_counter++ > 100 } );
-     # all is set, run the app!
      $app->run();
 
-Run this code which is provided in C<code_listings/pong_profile_1.pl>, and it will close sortly
+Run this code which is provided in C<code_listings/profile_1.pl>, and it will close sortly
 after a rendering the first 100 frames.
 
-	perl code_listings/pong_profile_1.pl 
+	perl code_listings/profile_1.pl 
 
 =begin sidebar
 
@@ -48,7 +46,7 @@ First incase you don't have the profiler go ahead and get the module from cpan.
 
 Next run the profiler on our prepared sample of the game.
 
-	perl -d:NYTProf code_listings/pong_profile_1.pl 
+	perl -d:NYTProf code_listings/profile_1.pl 
 
 Once that has finished running we will generate HTML reports.
 
@@ -58,7 +56,7 @@ Once the HTML reports are done we will go ahead an open them in a broswer.
 
 	firefox nytprof/index.html 
 
-=head2 Calls
+=head2 The Reports
 
 What is called often? Load time? Run time? In the game loop?
 

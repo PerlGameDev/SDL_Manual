@@ -3123,7 +3123,9 @@ buttons, all seamlessly integrated with SDL.</p>
 you can easily plug them in to create a new game of Chess, Checkers, Go,
 Life, Minesweeping, Cards, etc. There are even classes for platform games
 (like <i>Games::Nintendo::Mario</i>), creating and solving mazes,
-generating random dungeon maps, you name it.</p>
+generating random dungeon maps, you name it. Have a look at
+<i>Roguelike-Utils</i> and <i>Games::RolePlay::MapGen</i> for just a few of
+those.</p>
 
 <p>If your game needs to store data, like objects and status for saved
 games or checkpoints, you can use <i>Storable</i> or any of the many data
@@ -3325,32 +3327,30 @@ optimizations.</p>
 
 <h2>Preparing a Game for Profiling</h2>
 
-<p>In this chapter we will look at our Pong Code from Chapter 6. The script
-is provided for you in the <code>code_listings/pong.pl</code> on
+<p>We will begin by profiling a simple collisions demo script. The script
+is provided for you in the <code>code_listings/profile_0.pl</code> on
 http://github.com/PerlGameDev/SDL_Manual/ site. Get the repository, extract
 it and run:</p>
 
-<pre><code>    perl code_listings/pong.pl</code></pre>
+<pre><code>    perl code_listings/profile_0.pl</code></pre>
 
 <p>Right now the code will be running the whole game, which is a problem
 for profiling as we want the game loop to run only a specified number of
 times. This can be accomplished by adding a run counter.</p>
 
-<pre><code>     use SDLx::Rect;
-    +my $profile_counter = 0;</code></pre>
+<pre><code>    +my $profile_counter = 0;</code></pre>
 
 <p>Then in our game loop callbacks we will stop the application after a
 certain amount of calls.</p>
 
 <pre><code>    +$app-&gt;add_move_handler( sub{ $app-&gt;stop() if $profile_counter++ &gt; 100 } );
-     # all is set, run the app!
      $app-&gt;run();</code></pre>
 
 <p>Run this code which is provided in
-<code>code_listings/pong_profile_1.pl</code>, and it will close sortly
-after a rendering the first 100 frames.</p>
+<code>code_listings/profile_1.pl</code>, and it will close sortly after a
+rendering the first 100 frames.</p>
 
-<pre><code>        perl code_listings/pong_profile_1.pl </code></pre>
+<pre><code>        perl code_listings/profile_1.pl </code></pre>
 
 <blockquote>
 
@@ -3370,7 +3370,7 @@ from cpan.</p>
 
 <p>Next run the profiler on our prepared sample of the game.</p>
 
-<pre><code>        perl -d:NYTProf code_listings/pong_profile_1.pl </code></pre>
+<pre><code>        perl -d:NYTProf code_listings/profile_1.pl </code></pre>
 
 <p>Once that has finished running we will generate HTML reports.</p>
 
@@ -3381,7 +3381,7 @@ broswer.</p>
 
 <pre><code>        firefox nytprof/index.html </code></pre>
 
-<h3>Calls</h3>
+<h3>The Reports</h3>
 
 <p>What is called often? Load time? Run time? In the game loop?</p>
 
@@ -3921,4 +3921,101 @@ for us.</p>
             );
 
     $app-&gt;run();</code></pre>
+
+<h1>Free Resources</h1>
+
+<p>When developing a game, coding is unfortunately not everything. Not by a
+very, very long shot. To make up (a little) for that, below is a list of
+free resources you can use in your games, either in full or simply as
+inspiration for your own productions, in case you have an artistic vein
+yourself.</p>
+
+<p>Make sure to check the licence for the resource and use it accordingly,
+giving the original author proper credit.</p>
+
+<p><b>Note:</b> websites come and go, so if you find any of the links
+broken, or know a nice free resource that's not listed here, please let us
+know so we can update the list.</p>
+
+<h2>Art and Sprites</h2>
+
+<ul>
+
+<li>www.cgtextures.com</li>
+
+<li>http://www.mayang.com/textures/</li>
+
+<li>http://www.pixelpoke.com/</li>
+
+<li>http://www.flyingyogi.com/fun/spritelib.html</li>
+
+<li>http://www.grsites.com/archive/textures/</li>
+
+<li>http://www.imageafter.com/</li>
+
+<li>http://www.absolutecross.com/graphics/textures/</li>
+
+<li>http://www.freefoto.com/</li>
+
+<li>http://www.noctua-graphics.de</li>
+
+<li>http://www.m3corp.com/a/download/3d_textures/pages/index.htm</li>
+
+<li>http://reinerstileset.4players.de/englisch.html</li>
+
+<li>http://virtualworlds.wikia.com/</li>
+
+<li>http://lunar.lostgarden.com/labels/free%20game%20graphics.html</li>
+
+<li>http://pdgameresources.wordpress.com/</li>
+
+<li>http://gaminggroundzero.com</li>
+
+</ul>
+
+<h2>Music and Sound Effects</h2>
+
+<ul>
+
+<li>www.freesound.org</li>
+
+<li>www.ccmixter.org</li>
+
+<li>http://www.jamendo.com</li>
+
+<li>http://8bc.org</li>
+
+<li>http://www.sakari-infinity.net</li>
+
+<li>http://www.findsounds.com</li>
+
+<li>http://www.grsites.com/archive/sounds/</li>
+
+</ul>
+
+<h2>Fonts</h2>
+
+<ul>
+
+<li>http://www.acidfonts.com/</li>
+
+<li>http://www.grsites.com/archive/fonts/</li>
+
+</ul>
+
+<h2>DIY</h2>
+
+<p>http://www.gamesounddesign.com/ has several tips on making game music,
+including several sources for inspiration.</p>
+
+<p>If you want to create 3D models, either for cutscenes or to integrate
+into your game via OpenGL, there are several nice libraries out there for
+you:</p>
+
+<p><b>Blender</b> - A free 3D graphics application for modeling, texturing,
+water and smoke simulations, rendering, etc. http://blender.org</p>
+
+<p><b>OGRE</b> - An open-source graphics rendering engine, used in a large
+number of production projects. It can be easily integrated via Scott
+Lanning's <i>Ogre</i> Perl bindings, on CPAN. http://www.ogre3d.org</p>
 
