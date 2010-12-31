@@ -433,35 +433,4 @@ Lets run this application and the make sure to clean up the audio on the way out
 
 =end programlisting 
 
-=head1 Mixer Effects
-
-Making a dynamic spectrograph. 
-
-=for figure 
-       \includegraphics[width=0.5\textwidth]{../src/images/spectro-1.png}      
-        \caption{A Spectrograph of an awesome song}               
-         \label{fig:spectro}   
-
-
-=begin sidebar
-
-The songs provided with this chapters code have been used by the talent authors on U<http://8bitcollective.com>. To see the individual credits of each song have a look at C<data/music/Songs>. This is truly a great site for game songs, but please give all artists their due credits. 
-
-
-=end sidebar
-
-=head1 Modules
-
-=head2 C<SDLx::Sound>
-
-Simple SDL Mixer initialization.
-
-=head2 C<SDL::Audio>
-
-Creating music on the fly.
-
-=head2 C<SDL::Mixer>
-
-Full fledge music support.
-
 =for vim: spell
