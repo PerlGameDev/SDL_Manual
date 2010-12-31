@@ -2050,41 +2050,50 @@ referenced by <code>colour</code>, instead of the previously hardcoded red
 
 <h1>Tetris</h1>
 
+<p>In this chapter we work on creating the classic Tetris game using what
+we have learned so far.</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/tetris.png}
+\caption{Tetris using SDLx Perl} \label{fig:tetris}</p>
+
+
+
 <h2>The Game Window</h2>
 
 <p>First we will make our window with a fixed size so we can place our art
 work in a fixed format.</p>
 
-<pre><code>   use strict;
-   use warnings;
+<pre><code>    use strict;
+    use warnings;
 
-   use SDL;
-   use SDL::Event;
-   use SDL::Events;
-   use SDLx::App;
+    use SDL;
+    use SDL::Event;
+    use SDL::Events;
+    use SDLx::App;
 
-   # create our main screen
-   my $app = SDLx::App-&gt;new(
-      w            =&gt; 400,
-      h            =&gt; 512,
-      exit_on_quit =&gt; 1,
-      dt           =&gt; 0.2,
-      title        =&gt; &#39;SDLx Tetris&#39;
-   );</code></pre>
+    # create our main screen
+    my $app = SDLx::App-&gt;new(
+       w            =&gt; 400,
+       h            =&gt; 512,
+       exit_on_quit =&gt; 1,
+       dt           =&gt; 0.2,
+       title        =&gt; &#39;SDLx Tetris&#39;
+    );</code></pre>
 
 <h2>Loading Artwork</h2>
 
 <p>We can load our artwork simply by storing an array of
 <code>SDLx::Surface</code>s.</p>
 
-<pre><code>   use SDL;
-   +use SDLx::Surface;
-   
-   ...
+<pre><code>     use SDL;
+    +use SDLx::Surface;
+   </code></pre>
 
-   +my $back  = SDLx::Surface-&gt;load( &#39;data/tetris_back.png&#39; );
-   +my @piece = (undef);
-   +push(@piece, SDLx::Surface-&gt;load( &quot;data/tetris_$_.png&quot; )) for(1..7);</code></pre>
+<p>Next we load up the artwork into an array.</p>
+
+<pre><code>    +my $back  = SDLx::Surface-&gt;load( &#39;data/tetris_back.png&#39; );
+    +my @piece = (undef);
+    +push(@piece, SDLx::Surface-&gt;load( &quot;data/tetris_$_.png&quot; )) for(1..7);</code></pre>
 
 <p>The background is held in the <code>$back</code> surface, and the pieces
 are held in the <code>@piece</code> array. Later on we will blit these onto
@@ -2097,7 +2106,7 @@ represented in code such that it is easy to access, and quick to perform
 calculations on. A hash will allow us to quickly access our pieces, based
 on their keys.</p>
 
-<pre><code>   my %pieces = (
+<pre><code>    my %pieces = (
       I =&gt; [0,5,0,0,
            0,5,0,0,
            0,5,0,0,
@@ -2126,7 +2135,7 @@ on their keys.</p>
            1,1,0,0,
            0,1,1,0,
            0,0,0,0],
-   );</code></pre>
+    );</code></pre>
 
 <p>Further more we have a 1-dimensional array for each piece that
 represents a grid of the piece.</p>
@@ -2138,7 +2147,7 @@ number to draw the right piece block on to it.</p>
 <p>The non zero number corresponds to the images file that we loaded
 ealier.</p>
 
-<pre><code>   push(@piece, SDLx::Surface-&gt;load( &quot;data/tetris_$_.png&quot; )) for(1..7);</code></pre>
+<pre><code>     push(@piece, SDLx::Surface-&gt;load( &quot;data/tetris_$_.png&quot; )) for(1..7);</code></pre>
 
 <h2>Selecting Pieces</h2>
 
@@ -2150,8 +2159,7 @@ ealier.</p>
 <p>We will use the List::Util module to provide us with some neeeded
 functions.</p>
 
-<pre><code>    ...
-         Z =&gt; [0,0,0,0,
+<pre><code>         Z =&gt; [0,0,0,0,
                1,1,0,0,
                0,1,1,0,
                0,0,0,0],
