@@ -554,8 +554,13 @@ The drawing callback for the C<SDLx::App> when a song is playing. We read the st
 					my $point_x   = ( $i / $#stream ) * $app->w;
 					
 			   
-					SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, $point_x+$l_wdt, $point_y, 40, 0, 255, 128 );
-					SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, $point_x+$l_wdt, $point_y_r , 255, 0, 40, 128 );
+					SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300,
+													 $point_x+$l_wdt, $point_y, 
+													 40, 0, 255, 128 );
+
+					SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, 
+													 $point_x+$l_wdt, $point_y_r , 
+													 255, 0, 40, 128 );
 
 				}
 			

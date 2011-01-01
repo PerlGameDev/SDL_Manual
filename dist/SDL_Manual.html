@@ -756,7 +756,7 @@ clear the screen. Pressing 'ctrl-s' will save our image to the file
 'painted.bmp'.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/painted.png}
-\caption{Simple Paint: Smile} \label{fig:Smile</p>
+\caption{Simple Paint: Smile} \label{fig:Smile}</p>
 
 
 
@@ -3260,6 +3260,194 @@ SDL::Mixer::close_audio;</p>
 
     SDL::Mixer::Music::halt_music();
     SDL::Mixer::close_audio;</code></pre>
+
+<h2>Music Visualizer</h2>
+
+<p>The final example in this section will be making a music visualizer that
+will take real time sound data and showing the wave form on our screen. It
+will look something like:</p>
+
+<p>\includegraphics[width=0.5\textwidth]{../src/images/spectro-1.png}
+\caption{Simple Music Visualization} \label{fig:Visualization}</p>
+
+
+
+<pre><code>        use strict;
+        use warnings;
+
+        use Cwd;
+        use Carp;
+        use File::Spec;
+
+        use threads;
+        use threads::shared;
+
+        use SDL;
+        use SDL::Event;
+        use SDL::Events;
+
+        use SDL::Audio;
+        use SDL::Mixer;
+        use SDL::Mixer::Music;
+        use SDL::Mixer::Effects;
+
+        use SDLx::App;
+
+        my $lines = 100;
+
+        my $app = SDLx::App-&gt;new(
+                init   =&gt; SDL_INIT_AUDIO | SDL_INIT_VIDEO,
+                width  =&gt; 800,
+                height =&gt; 600,
+                depth  =&gt; 32,
+                title  =&gt; &quot;Sound Event Demo&quot;,
+                eoq    =&gt; 1,
+                dt     =&gt; 0.2,
+        );</code></pre>
+
+<p>Initializing the Audio with a specific format that we know. Using
+<code>AUDIO_S16</code> provides us with a 16 bit signed integer array for
+the stream data.</p>
+
+<pre><code>        # Initialize the Audio
+        unless ( SDL::Mixer::open_audio( 44100, AUDIO_S16, 2, 1024 ) == 0 ) {
+                Carp::croak &quot;Cannot open audio: &quot; . SDL::get_error();
+        }</code></pre>
+
+<p>We will load all <code>*.ogg</code> music files from our data
+directory.</p>
+
+<pre><code>        # Load our music files
+        my $data_dir = &#39;.&#39;;
+        my @songs = glob &#39;data/music/*.ogg&#39;;</code></pre>
+
+<p>Next we will make a music effect to read our stream data, we need to use
+a shared lock and array.</p>
+
+<pre><code>        my $stream_data :shared = &#39;&#39;;
+        my $stream_lock :shared = 0;
+
+        # Music Effect to pull Stream Data 
+        sub music_data {
+                my $channel = shift;
+                my $samples = shift;
+                my $position = shift;
+                my @stream = @_;
+
+                if( $stream_lock != 0 ) 
+                {
+                        $stream_data = join &#39;,&#39;, @stream;
+                        $stream_lock = 0;
+                }
+                return @stream;
+        }</code></pre>
+
+<p>We hook the callback into <code>SDL::Mixer::Effects</code>.</p>
+
+<pre><code>        my $music_data_effect_id = 
+                  SDL::Mixer::Effects::register( MIX_CHANNEL_POST, &quot;main::music_data&quot;,
+                        &quot;main::done_music_data&quot;, 0 );</code></pre>
+
+<p>The drawing callback for the <code>SDLx::App</code> when a song is
+playing. We read the stream data and show it on the screen as a wave
+form.</p>
+
+<pre><code>        # Music Playing Callbacks 
+        my $current_song = 0;
+
+        my $current_music_callback = sub { 
+                my( $delta, $app ) = @_;
+
+                
+                if( $stream_lock == 0  ){
+
+                $app-&gt;draw_rect([ 0, 0, $app-&gt;w(), $app-&gt;h()], 0x000000FF );
+
+                                my @stream = split( &#39;,&#39;, $stream_data );
+                                $stream_data = &#39;&#39;;
+                                my @left;
+                                my @right;
+                                my $cut =  $#stream/$lines;
+                                my @x;
+                                                   
+                                my $l_wdt= ( $app-&gt;w() / $lines) /2;
+                                
+                                
+                                for ( my $i = 0 ; $i &lt; $#stream ; $i += $cut ) {
+
+                                        my $left  = $stream[$i];
+                                        my $right = $stream[ $i + 1 ];
+
+                                        my $point_y   = ( ( ($left) ) * $app-&gt;h()/4 / 32000 ) + ($app-&gt;h/2);
+                                        my $point_y_r = ( ( ($right) ) * $app-&gt;h()/4 / 32000 )+ ($app-&gt;h/2);
+                                        my $point_x   = ( $i / $#stream ) * $app-&gt;w;
+                                        
+                           
+                                        SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, $point_x+$l_wdt, $point_y, 40, 0, 255, 128 );
+                                        SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, $point_x+$l_wdt, $point_y_r , 255, 0, 40, 128 );
+
+                                }
+                        
+                
+                        $stream_lock = 1;
+                }
+                $app-&gt;flip();
+        };
+
+        my $cms_move_callback;
+        my $pns_move_callback; </code></pre>
+
+<p>When a song is finished playing we remove the show handler and hook on
+another callback to switch to the next song gracefully.</p>
+
+<pre><code>        sub music_finished_playing { 
+
+                SDL::Mixer::Music::halt_music();
+                $pns_move_callback = $app-&gt;add_move_handler( $play_next_song_callback ); 
+                $app-&gt;remove_show_handler($cms_move_callback); 
+
+        }
+
+        my $play_next_song_callback = sub {
+
+                $app-&gt;stop() if $current_song &gt; $#songs;
+                my $song = SDL::Mixer::Music::load_MUS($songs[$current_song++]);
+                
+                SDL::Mixer::Music::hook_music_finished(&#39;main::music_finished_playing&#39;);
+                SDL::Mixer::Music::play_music($song, 0 );
+
+                $app-&gt;remove_move_handler( $pns_move_callback ) if defined $pns_move_callback;
+                $cms_move_callback = $app-&gt;add_show_handler( $current_music_callback );
+        };</code></pre>
+
+<p>The event handler allows you to move through the songs.</p>
+
+<pre><code>        $app-&gt;add_event_handler(
+        sub {
+                my ($event, $app) = @_;
+
+                if( $event-&gt;type == SDL_KEYDOWN &amp;&amp; $event-&gt;key_sym == SDLK_DOWN)
+                {       
+                        #Indicate that we are done playing the music_finished_playing
+                        music_finished_playing();
+                }
+
+        }
+        );</code></pre>
+
+<p>Add the first callback to get our first song, and start runing the
+<code>$app</code>.</p>
+
+<pre><code>        $pns_move_callback= $app-&gt;add_move_handler( $play_next_song_callback);
+
+        $app-&gt;run();</code></pre>
+
+<p>Gracefully stop <code>SDL::Mixer</code>.</p>
+
+<pre><code>        SDL::Mixer::Effects::unregister( MIX_CHANNEL_POST, $music_data_effect_id );
+        SDL::Mixer::Music::hook_music_finished();
+        SDL::Mixer::Music::halt_music();
+        SDL::Mixer::close_audio();</code></pre>
 
 <h1>CPAN</h1>
 
