@@ -133,7 +133,7 @@ the file 'painted.bmp'.
 =for figure 
        \includegraphics[width=0.5\textwidth]{../src/images/painted.png}      
         \caption{Simple Paint: Smile}               
-         \label{fig:Smile   
+         \label{fig:Smile} 
 
 
 =head2 Keyboard

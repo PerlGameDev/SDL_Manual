@@ -433,4 +433,20 @@ Lets run this application and the make sure to clean up the audio on the way out
 
 =end programlisting 
 
+=head1 Music Visualizer 
+
+The final example in this section will be making a music visualizer that will take 
+real time sound data and showing the wave form on our screen. It will look something 
+like:
+
+
+=for figure 
+       \includegraphics[width=0.5\textwidth]{../src/images/spectro-1.png}      
+        \caption{Simple Music Visualization}               
+         \label{fig:Visualization} 
+
+=head2 Music Effect Callbacks
+
+To read the stream data of the music we need to use a 
+
 =for vim: spell
