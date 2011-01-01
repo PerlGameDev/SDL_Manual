@@ -3272,6 +3272,8 @@ will look something like:</p>
 
 
 
+<h3>The Code and Comments</h3>
+
 <pre><code>        use strict;
         use warnings;
 
@@ -3291,11 +3293,11 @@ will look something like:</p>
         use SDL::Mixer::Music;
         use SDL::Mixer::Effects;
 
-        use SDLx::App;
+        use SDLx::App;</code></pre>
 
-        my $lines = 100;
+<p>Start the application with audio and video support.</p>
 
-        my $app = SDLx::App-&gt;new(
+<pre><code>        my $app = SDLx::App-&gt;new(
                 init   =&gt; SDL_INIT_AUDIO | SDL_INIT_VIDEO,
                 width  =&gt; 800,
                 height =&gt; 600,
@@ -3352,7 +3354,12 @@ a shared lock and array.</p>
 playing. We read the stream data and show it on the screen as a wave
 form.</p>
 
-<pre><code>        # Music Playing Callbacks 
+<p>The number of lines to show in our visualizer.</p>
+
+<pre><code>    my $lines = $ARGV[0];
+       $lines = 50 unless $lines;
+
+        # Music Playing Callbacks 
         my $current_song = 0;
 
         my $current_music_callback = sub { 
@@ -3362,6 +3369,7 @@ form.</p>
                 if( $stream_lock == 0  ){
 
                 $app-&gt;draw_rect([ 0, 0, $app-&gt;w(), $app-&gt;h()], 0x000000FF );
+                $app-&gt;draw_gfx_text([5,$app-&gt;h()-10], [255,0,0,255], &quot;Playing Song: &quot;.$songs[$current_song-1]);
 
                                 my @stream = split( &#39;,&#39;, $stream_data );
                                 $stream_data = &#39;&#39;;
@@ -3383,8 +3391,13 @@ form.</p>
                                         my $point_x   = ( $i / $#stream ) * $app-&gt;w;
                                         
                            
-                                        SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, $point_x+$l_wdt, $point_y, 40, 0, 255, 128 );
-                                        SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, $point_x+$l_wdt, $point_y_r , 255, 0, 40, 128 );
+                                        SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300,
+                                                                                                         $point_x+$l_wdt, $point_y, 
+                                                                                                         40, 0, 255, 128 );
+
+                                        SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, 
+                                                                                                         $point_x+$l_wdt, $point_y_r , 
+                                                                                                         255, 0, 40, 128 );
 
                                 }
                         
@@ -3393,18 +3406,17 @@ form.</p>
                 }
                 $app-&gt;flip();
         };
+When a song is finished playing we remove the show handler and hook on another callback to switch to the
+next song gracefully. 
 
-        my $cms_move_callback;
-        my $pns_move_callback; </code></pre>
+        my $cms_move_callback_id;
+        my $pns_move_callback_id; 
 
-<p>When a song is finished playing we remove the show handler and hook on
-another callback to switch to the next song gracefully.</p>
-
-<pre><code>        sub music_finished_playing { 
+        sub music_finished_playing { 
 
                 SDL::Mixer::Music::halt_music();
-                $pns_move_callback = $app-&gt;add_move_handler( $play_next_song_callback ); 
-                $app-&gt;remove_show_handler($cms_move_callback); 
+                $pns_move_callback_id = $app-&gt;add_move_handler( $play_next_song_callback ); 
+                $app-&gt;remove_show_handler($cms_move_callback_id); 
 
         }
 
@@ -3416,11 +3428,14 @@ another callback to switch to the next song gracefully.</p>
                 SDL::Mixer::Music::hook_music_finished(&#39;main::music_finished_playing&#39;);
                 SDL::Mixer::Music::play_music($song, 0 );
 
-                $app-&gt;remove_move_handler( $pns_move_callback ) if defined $pns_move_callback;
-                $cms_move_callback = $app-&gt;add_show_handler( $current_music_callback );
-        };</code></pre>
+                $app-&gt;remove_move_handler( $pns_move_callback_id ) if defined $pns_move_callback_id;
+                $cms_move_callback_id = $app-&gt;add_show_handler( $current_music_callback );
+        };
+Add the first callback to get our first song.
 
-<p>The event handler allows you to move through the songs.</p>
+        $pns_move_callback_id= $app-&gt;add_move_handler( $play_next_song_callback);</code></pre>
+
+<p>Add a event handler allows you to move through the songs.</p>
 
 <pre><code>        $app-&gt;add_event_handler(
         sub {
@@ -3433,12 +3448,7 @@ another callback to switch to the next song gracefully.</p>
                 }
 
         }
-        );</code></pre>
-
-<p>Add the first callback to get our first song, and start runing the
-<code>$app</code>.</p>
-
-<pre><code>        $pns_move_callback= $app-&gt;add_move_handler( $play_next_song_callback);
+        );
 
         $app-&gt;run();</code></pre>
 

@@ -445,6 +445,7 @@ like:
         \caption{Simple Music Visualization}               
          \label{fig:Visualization} 
 
+=head2 The Code and Comments 
 
 	use strict;
 	use warnings;
@@ -467,7 +468,7 @@ like:
 
 	use SDLx::App;
 
-	my $lines = 100;
+Start the application with audio and video support. 
 
 	my $app = SDLx::App->new(
 		init   => SDL_INIT_AUDIO | SDL_INIT_VIDEO,
@@ -523,6 +524,11 @@ We hook the callback into C<SDL::Mixer::Effects>.
 
 The drawing callback for the C<SDLx::App> when a song is playing. We read the stream data and show it on the screen as a wave form.
 
+The number of lines to show in our visualizer. 
+	
+    my $lines = $ARGV[0];
+       $lines = 50 unless $lines;
+
 	# Music Playing Callbacks 
 	my $current_song = 0;
 
@@ -533,6 +539,7 @@ The drawing callback for the C<SDLx::App> when a song is playing. We read the st
 		if( $stream_lock == 0  ){
 
 		$app->draw_rect([ 0, 0, $app->w(), $app->h()], 0x000000FF );
+		$app->draw_gfx_text([5,$app->h()-10], [255,0,0,255], "Playing Song: ".$songs[$current_song-1]);
 
 				my @stream = split( ',', $stream_data );
 				$stream_data = '';
@@ -569,18 +576,17 @@ The drawing callback for the C<SDLx::App> when a song is playing. We read the st
 		}
 		$app->flip();
 	};
-
-	my $cms_move_callback;
-	my $pns_move_callback; 
-
 When a song is finished playing we remove the show handler and hook on another callback to switch to the
 next song gracefully. 
+
+	my $cms_move_callback_id;
+	my $pns_move_callback_id; 
 
 	sub music_finished_playing { 
 
 		SDL::Mixer::Music::halt_music();
-		$pns_move_callback = $app->add_move_handler( $play_next_song_callback ); 
-		$app->remove_show_handler($cms_move_callback); 
+		$pns_move_callback_id = $app->add_move_handler( $play_next_song_callback ); 
+		$app->remove_show_handler($cms_move_callback_id); 
 
 	}
 
@@ -592,11 +598,14 @@ next song gracefully.
 		SDL::Mixer::Music::hook_music_finished('main::music_finished_playing');
 		SDL::Mixer::Music::play_music($song, 0 );
 
-		$app->remove_move_handler( $pns_move_callback ) if defined $pns_move_callback;
-		$cms_move_callback = $app->add_show_handler( $current_music_callback );
+		$app->remove_move_handler( $pns_move_callback_id ) if defined $pns_move_callback_id;
+		$cms_move_callback_id = $app->add_show_handler( $current_music_callback );
 	};
+Add the first callback to get our first song.
 
-The event handler allows you to move through the songs. 
+	$pns_move_callback_id= $app->add_move_handler( $play_next_song_callback);
+
+Add a event handler allows you to move through the songs. 
 
 	$app->add_event_handler(
 	sub {
@@ -610,10 +619,6 @@ The event handler allows you to move through the songs.
 
 	}
 	);
-
-Add the first callback to get our first song, and start runing the C<$app>.
-
-	$pns_move_callback= $app->add_move_handler( $play_next_song_callback);
 
 	$app->run();
 
