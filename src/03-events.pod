@@ -192,7 +192,7 @@ To handle the keyboard specifications we will create another event callback.
             my $key_name = SDL::Events::get_key_name( $event->key_sym );
             
             #if our $key_name is a digit use it as a color
-            my $brush_color = $key_name if $key_name =~ /^\d$/;
+            $brush_color = $key_name if $key_name =~ /^\d$/;
            
             #Get the keyboard modifier perldoc SDL::Events
             #We are using any CTRL so KMOD_CTRL is fine
