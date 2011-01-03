@@ -246,11 +246,10 @@ operating system. Suppose we want a title for a new Pong clone game:</p>
 
 <p>At this point your screen will be:</p>
 
-<p>Your first SDL screen!</p>
+<p>\includegraphics[width=0.5\textwidth]{../src/images/first.png}
+\caption{Your first SDL screen!} \label{fig:first_screen}</p>
 
 
-
-<p><a name="first_screen"> <i>../src/images/first.png</i></p>
 
 <h3>Shortcuts</h3>
 
@@ -263,19 +262,6 @@ like this:</p>
 <pre><code>    my $app = SDLx::App-&gt;new( w =&gt; 400,
                               h =&gt; 400,
                               t =&gt; &#39;Ping - A clone&#39; );</code></pre>
-
-<h2>POD ERRORS</h2>
-
-<p>Hey! <b>The above document had some coding errors, which are explained
-below:</b></p>
-
-<ul>
-
-<li>Around line 50:
-
-<p>'=end' without a target?</p>
-
-</ul>
 
 <h1>Drawing</h1>
 
@@ -829,7 +815,7 @@ callback.</p>
             my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
             
             #if our $key_name is a digit use it as a color
-            my $brush_color = $key_name if $key_name =~ /^\d$/;
+            $brush_color = $key_name if $key_name =~ /^\d$/;
            
             #Get the keyboard modifier perldoc SDL::Events
             #We are using any CTRL so KMOD_CTRL is fine
