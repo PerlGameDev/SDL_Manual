@@ -200,7 +200,7 @@ read on to the problems below.
 		else {
 
 			# Our frame rate is our  Frames * 100 / Time Elapsed in us
-			$FPS        = int( ( $frames * 100 ) / $delta_time );
+			$FPS        = int( ( $frames * 100 ) / $delta_time ) if $delta_time != 0;
 
 			# Reset our metrics
 			$frames     = 0;
