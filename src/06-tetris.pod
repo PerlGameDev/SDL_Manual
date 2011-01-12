@@ -151,13 +151,19 @@ there until a line is cleared.
     +     for my $y (0..3) {
     +         for my $x (0..3) {
     +             if($curr_tile->[0]->[$x + 4 * $y]) {
-    +                 return if $direction eq 'left'  && $x - $amount + $curr_tile->[1]  < 0;
-    +                 return if $direction eq 'right' && $x + $amount + $curr_tile->[1]  > 9;
-    +                 return if $direction eq 'down'  && int($y + $amount + $curr_tile->[2]) > 22;
+    +                 return if $direction eq 'left'  
+    +                          && $x - $amount + $curr_tile->[1]  < 0;
+    +                 return if $direction eq 'right' 
+    +                          && $x + $amount + $curr_tile->[1]  > 9;
+    +                 return if $direction eq 'down'  
+    +                          && int($y + $amount + $curr_tile->[2]) > 22;
     +                 
-    +                 return if $direction eq 'right' && $store->[ $x + $amount + $curr_tile->[1] + 10 * int($y           + $curr_tile->[2]) ];
-    +                 return if $direction eq 'left'  && $store->[ $x - $amount + $curr_tile->[1] + 10 * int($y           + $curr_tile->[2]) ];
-    +                 return if $direction eq 'down'  && $store->[ $x           + $curr_tile->[1] + 10 * int($y + $amount + $curr_tile->[2]) ];
+    +                 return if $direction eq 'right' 
+    +                          && $store->[ $x + $amount + $curr_tile->[1] + 10 * int($y + $curr_tile->[2]) ];
+    +                 return if $direction eq 'left'  
+    +                          && $store->[ $x - $amount + $curr_tile->[1] + 10 * int($y + $curr_tile->[2]) ];
+    +                 return if $direction eq 'down'  
+    +                          && $store->[ $x + $curr_tile->[1] + 10 * int($y + $amount + $curr_tile->[2]) ];
     +             }
     +         }
     +     }
@@ -181,7 +187,8 @@ there until a line is cleared.
     +     for my $y (0..3) {
     +         for my $x (0..3) {
     +             if($curr_tile->[0]->[$x + 4 * $y]) {
-    +                 $grid->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] = $curr_tile->[0]->[$x + 4 * $y];
+    +                 $grid->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] 
+    +                           = $curr_tile->[0]->[$x + 4 * $y];
     +             }
     +         }
     +     }
@@ -191,7 +198,8 @@ there until a line is cleared.
     +     for my $y (0..3) {
     +         for my $x (0..3) {
     +             if($curr_tile->[0]->[$x + 4 * $y]) {
-    +                 $store->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] = $curr_tile->[0]->[$x + 4 * $y];
+    +                 $store->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] 
+    +                           = $curr_tile->[0]->[$x + 4 * $y];
     +             }
     +         }
     +     }
