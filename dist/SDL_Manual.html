@@ -1098,7 +1098,7 @@ However if this is not the case read on to the problems below.</p>
                 else {
 
                         # Our frame rate is our  Frames * 100 / Time Elapsed in us
-                        $FPS        = int( ( $frames * 100 ) / $delta_time );
+                        $FPS        = int( ( $frames * 100 ) / $delta_time ) if $delta_time != 0;
 
                         # Reset our metrics
                         $frames     = 0;
@@ -2208,13 +2208,25 @@ is stored. Once a piece has collided with sometime we move it to
     +     for my $y (0..3) {
     +         for my $x (0..3) {
     +             if($curr_tile-&gt;[0]-&gt;[$x + 4 * $y]) {
-    +                 return if $direction eq &#39;left&#39;  &amp;&amp; $x - $amount + $curr_tile-&gt;[1]  &lt; 0;
-    +                 return if $direction eq &#39;right&#39; &amp;&amp; $x + $amount + $curr_tile-&gt;[1]  &gt; 9;
-    +                 return if $direction eq &#39;down&#39;  &amp;&amp; int($y + $amount + $curr_tile-&gt;[2]) &gt; 22;
+    +                 return if $direction eq &#39;left&#39;  
+    +                          &amp;&amp; $x - $amount + $curr_tile-&gt;[1]  &lt; 0;
+    +                 return if $direction eq &#39;right&#39; 
+    +                          &amp;&amp; $x + $amount + $curr_tile-&gt;[1]  &gt; 9;
+    +                 return if $direction eq &#39;down&#39;  
+    +                          &amp;&amp; int($y + $amount + $curr_tile-&gt;[2]) &gt; 22;
     +                 
-    +                 return if $direction eq &#39;right&#39; &amp;&amp; $store-&gt;[ $x + $amount + $curr_tile-&gt;[1] + 10 * int($y           + $curr_tile-&gt;[2]) ];
-    +                 return if $direction eq &#39;left&#39;  &amp;&amp; $store-&gt;[ $x - $amount + $curr_tile-&gt;[1] + 10 * int($y           + $curr_tile-&gt;[2]) ];
-    +                 return if $direction eq &#39;down&#39;  &amp;&amp; $store-&gt;[ $x           + $curr_tile-&gt;[1] + 10 * int($y + $amount + $curr_tile-&gt;[2]) ];
+    +                 return if $direction eq &#39;right&#39; 
+    +                          &amp;&amp; $store-&gt;[ $x + $amount + 
+    +                                        $curr_tile-&gt;[1] + 
+    +                                        10 * int($y + $curr_tile-&gt;[2]) ];
+    +                 return if $direction eq &#39;left&#39;  
+    +                          &amp;&amp; $store-&gt;[ $x - $amount + 
+    +                                        $curr_tile-&gt;[1] + 
+    +                                        10 * int($y + $curr_tile-&gt;[2]) ];
+    +                 return if $direction eq &#39;down&#39;  
+    +                          &amp;&amp; $store-&gt;[ $x + 
+    +                                        $curr_tile-&gt;[1] 
+    +                                        + 10 * int($y + $amount + $curr_tile-&gt;[2]) ];
     +             }
     +         }
     +     }
@@ -2238,7 +2250,8 @@ is stored. Once a piece has collided with sometime we move it to
     +     for my $y (0..3) {
     +         for my $x (0..3) {
     +             if($curr_tile-&gt;[0]-&gt;[$x + 4 * $y]) {
-    +                 $grid-&gt;[ $x + $curr_tile-&gt;[1] + 10 * ($y + int($curr_tile-&gt;[2])) ] = $curr_tile-&gt;[0]-&gt;[$x + 4 * $y];
+    +                 $grid-&gt;[ $x + $curr_tile-&gt;[1] + 10 * ($y + int($curr_tile-&gt;[2])) ] 
+    +                           = $curr_tile-&gt;[0]-&gt;[$x + 4 * $y];
     +             }
     +         }
     +     }
@@ -2248,7 +2261,8 @@ is stored. Once a piece has collided with sometime we move it to
     +     for my $y (0..3) {
     +         for my $x (0..3) {
     +             if($curr_tile-&gt;[0]-&gt;[$x + 4 * $y]) {
-    +                 $store-&gt;[ $x + $curr_tile-&gt;[1] + 10 * ($y + int($curr_tile-&gt;[2])) ] = $curr_tile-&gt;[0]-&gt;[$x + 4 * $y];
+    +                 $store-&gt;[ $x + $curr_tile-&gt;[1] + 10 * ($y + int($curr_tile-&gt;[2])) ] 
+    +                           = $curr_tile-&gt;[0]-&gt;[$x + 4 * $y];
     +             }
     +         }
     +     }
@@ -2328,7 +2342,10 @@ is stored. Once a piece has collided with sometime we move it to
     +         my $y = 0;
     +         # draw the not moving tiles
     +         foreach(@{$store}) {
-    +             $piece[$_]-&gt;blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
+    +             $piece[$_]-&gt;blit( $app,
+    +                                undef, 
+    +                               [ 28 + $x%10 * 20, 28 + $y * 20 ] 
+    +                             ) if $_;
     +             $x++;
     +             $y++ unless $x % 10;
     +         }
@@ -2345,7 +2362,9 @@ is stored. Once a piece has collided with sometime we move it to
     +         for $y (0..3) {
     +             for $x (0..3) {
     +                 if($pieces{$next_tile}-&gt;[$x + 4 * $y]) {
-    +                     $piece[$next_tile_index]-&gt;blit( $app, undef, [ 264 + $x * 20, 48 + $y * 20 ] );
+    +                     $piece[$next_tile_index]-&gt;blit( $app, undef, 
+    +                                                     [ 264 + $x * 20, 48 + $y * 20 ] 
+    +                                                   );
     +                 }
     +             }
     +         }
@@ -2948,46 +2967,47 @@ would like to play the song for, where 0 is 1.</p>
 
 <h3>Code so far</h3>
 
-<pre><code>   use strict;
-   use warnings;
-   use SDL;
-   use Carp;
-   use SDL::Audio;
-   use SDL::Mixer;
-   use SDL::Mixer::Samples;
-   use SDL::Mixer::Channels;
-   use SDL::Mixer::Music;
-   SDL::init(SDL_INIT_AUDIO);
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use Carp;
+    use SDL::Audio;
+    use SDL::Mixer;
+    use SDL::Mixer::Samples;
+    use SDL::Mixer::Channels;
+    use SDL::Mixer::Music;
+    SDL::init(SDL_INIT_AUDIO);
 
-   unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
-   {
-      Carp::croak &quot;Cannot open audio: &quot;.SDL::get_error(); 
-   }
+    unless( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 )
+    {
+        Carp::croak &quot;Cannot open audio: &quot;.SDL::get_error(); 
+    }
 
 
-   my $sample = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
+    my $sample = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
 
-   unless( $sample)
-   {
-      Carp::croak &quot;Cannot load file data/sample.wav: &quot;.SDL::get_error(); 
-   }
+    unless( $sample)
+    {
+        Carp::croak &quot;Cannot load file data/sample.wav: &quot;.SDL::get_error(); 
+    }
 
-   my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
+    my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
 
-   #Load our awesome music from http://8bitcollective.com
-   my $background_music = SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
+    #Load our awesome music from http://8bitcollective.com
+    my $background_music = SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
 
-   unless( $background_music )
-   {
-      Carp::croak &quot;Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg:&quot;.SDL::get_error();
-   }
+    unless( $background_music )
+    {
+        Carp::croak &quot;Cannot load music file data/music/01-PC-Speaker-Sorrow.ogg: &quot;
+                .SDL::get_error();
+    }
 
-   SDL::Mixer::Music::play_music( $background_music,0 );
+    SDL::Mixer::Music::play_music( $background_music,0 );
 
-   sleep(2);
+    sleep(2);
 
-   SDL::Mixer::Music::halt_music();
-   SDL::Mixer::close_audio;</code></pre>
+    SDL::Mixer::Music::halt_music();
+    SDL::Mixer::close_audio;</code></pre>
 
 <h2>Sound Applications</h2>
 

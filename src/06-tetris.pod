@@ -159,11 +159,17 @@ there until a line is cleared.
     +                          && int($y + $amount + $curr_tile->[2]) > 22;
     +                 
     +                 return if $direction eq 'right' 
-    +                          && $store->[ $x + $amount + $curr_tile->[1] + 10 * int($y + $curr_tile->[2]) ];
+    +                          && $store->[ $x + $amount + 
+    +                                        $curr_tile->[1] + 
+    +                                        10 * int($y + $curr_tile->[2]) ];
     +                 return if $direction eq 'left'  
-    +                          && $store->[ $x - $amount + $curr_tile->[1] + 10 * int($y + $curr_tile->[2]) ];
+    +                          && $store->[ $x - $amount + 
+    +                                        $curr_tile->[1] + 
+    +                                        10 * int($y + $curr_tile->[2]) ];
     +                 return if $direction eq 'down'  
-    +                          && $store->[ $x + $curr_tile->[1] + 10 * int($y + $amount + $curr_tile->[2]) ];
+    +                          && $store->[ $x + 
+    +                                        $curr_tile->[1] 
+    +                                        + 10 * int($y + $amount + $curr_tile->[2]) ];
     +             }
     +         }
     +     }
@@ -280,7 +286,10 @@ there until a line is cleared.
     +         my $y = 0;
     +         # draw the not moving tiles
     +         foreach(@{$store}) {
-    +             $piece[$_]->blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
+    +             $piece[$_]->blit( $app,
+    +                                undef, 
+    +                               [ 28 + $x%10 * 20, 28 + $y * 20 ] 
+    +                             ) if $_;
     +             $x++;
     +             $y++ unless $x % 10;
     +         }
@@ -297,7 +306,9 @@ there until a line is cleared.
     +         for $y (0..3) {
     +             for $x (0..3) {
     +                 if($pieces{$next_tile}->[$x + 4 * $y]) {
-    +                     $piece[$next_tile_index]->blit( $app, undef, [ 264 + $x * 20, 48 + $y * 20 ] );
+    +                     $piece[$next_tile_index]->blit( $app, undef, 
+    +                                                     [ 264 + $x * 20, 48 + $y * 20 ] 
+    +                                                   );
     +                 }
     +             }
     +         }
