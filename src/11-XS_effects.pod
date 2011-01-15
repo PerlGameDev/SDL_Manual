@@ -1,6 +1,6 @@
 =head0 Pixel Effects
 
-In this chapter we will look at how to use pixel effects in Perl. Pixel effects are operations that are done directly on the bacnk of a C<SDL_Surface>'s pixel. These effects are used to do visual effects in games and applications, most notably by C<Frozen Bubble>.
+In this chapter we will look at how to use pixel effects in Perl. Pixel effects are operations that are done directly on the bank of a C<SDL_Surface>'s pixel. These effects are used to do visual effects in games and applications, most notably by C<Frozen Bubble>.
 
 =for figure
        \includegraphics[h!][width=0.5\textwidth]{../src/images/effects.png}
@@ -20,7 +20,7 @@ For our first pixel effect we will be doing is a ripple effect from a well known
 
 =head2 Pure Perl
 
-First lets make the effect in pure perl. To do any operations with a C<SDL::Surface> we must do C<SDL::Video::lock_surface()> call as seen below. 
+First lets make the effect in pure Perl. To do any operations with a C<SDL::Surface> we must do C<SDL::Video::lock_surface()> call as seen below. 
 Locking the surface prevents other process in SDL from accessing the surface. The surface pixels can be accessed several ways from Perl. Here we are 
 using the C<SDL::Surface::set_pixels> which takes an offset for the C<SDL_Surface> pixels array, and sets a value there for us. The actual
 pixel effect is just a time dependent (using C<SDL::get_ticks> for time) render of a function. See U<http://sol.gfxile.net/gp/ch02.html> for a deeper explanation.
@@ -75,7 +75,7 @@ screen is too much for Perl. We will need to move the intensive calculations to 
 =head2 Inline Effects
 X<Inline>
 
-In the below example we use C<Inline> to write inline C<C> code to handle the pixel effect for us. C<SDL> now provides support to work with C<Inline>.
+In the below example we use C<Inline> to write Inline C<C> code to handle the pixel effect for us. C<SDL> now provides support to work with C<Inline>.
 The C<render> callback is now moved to C<C> code, using C<Inline C>. When the program first runs it will compile the code and link it in for us.  
 
 =begin programlisting
@@ -137,8 +137,5 @@ The C<render> callback is now moved to C<C> code, using C<Inline C>. When the pr
 
 =end programlisting
 
-=head1 Modules
-
-Making it usable at least.
 
 =for vim: spell
