@@ -20,7 +20,6 @@ else
     src/07-puzz.pod \
     src/08-music_and_sound.pod \
     src/09-CPAN.pod \
-    src/10-profiling.pod \
     src/11-XS_effects.pod \
     src/12-PDL_OpenGL.pod \
 	src/13-free_resources.pod 
