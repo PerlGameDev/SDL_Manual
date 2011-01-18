@@ -172,5 +172,33 @@ The code examples in this books are provided on U<http://github.com/PerlGameDev/
 
 =head1 Acknowledgements
 
-Perl community on C<#sdl> and C<#perl>.
+To contributors and reviewers from the C<#sdl> channel 
+
+=over
+
+=item Alias
+
+=item bobross
+
+=item Blaizer
+
+=item cfedde
+
+=item FROGGS
+
+=item garu 
+
+=item jamesw
+
+=item perlpilot
+
+=item PerlJam
+
+=item waxhead
+
+=item and many more 
+
+	(apologies if I have missed you let me know I will add you) 
+
+=back 
 
