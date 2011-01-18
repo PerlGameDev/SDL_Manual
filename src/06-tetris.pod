@@ -10,8 +10,6 @@ In this chapter we work on creating the classic Tetris game using what we have l
 
 =begin sidebar
 
-=head2 Get Tetris Game
-
 Get the tetris code from U<https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip>. 
 
 =end sidebar
