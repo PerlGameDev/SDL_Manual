@@ -1,19 +1,18 @@
 =head0 Tetris 
 
-In this chapter we work on creating the classic Tetris game using what we have learned so far. 
 
 =for figure 
        \includegraphics[width=0.5\textwidth]{../src/images/tetris.png}      
         \caption{Tetris using SDLx Perl}               
          \label{fig:tetris}   
 
+=head1 Eye Candy and Code
 
-=begin sidebar
+In this chapter we work on creating the classic Tetris game using what we have learned so far. 
+Get the tetris code from U<https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip>. To run the game 
+invoke in the extracted folder.
 
-Get the tetris code from U<https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip>. 
-
-=end sidebar
-
+	perl tetris.pl
 
 =head1 The Game Window
 
