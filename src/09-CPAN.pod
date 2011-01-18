@@ -230,6 +230,7 @@ application is already done on CPAN, and all you have to do to get that
 awesome idea implemented is glue them together, worrying only about your
 application's own logic instead of boring sidework. This means faster
 development, and more fun!
+
 =head1 Author
 
 This chapter's content graciously provided by Breno G. de Oliveira (C<garu>).

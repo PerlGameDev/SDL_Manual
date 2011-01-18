@@ -11,7 +11,7 @@ These effects can be done in purely in Perl, for 1 passes and non real time appl
 
 =head1 Sol's Ripple Effect
 
-For our first pixel effect we will be doing is a ripple effect from a well known SDL resource, U<http://sol.gfxile.net/gp/ch02.html>. This effects uses C<SDL::get_ticks> to animate a ripple effect across the surface as seen at \fig{fig:ripple}.   
+For our first pixel effect we will be doing is a ripple effect from a well known SDL resource, U<http://sol.gfxile.net/gp/ch02.html>. This effects uses C<SDL::get_ticks> to animate a ripple effect across the surface as seen in the following figure.   
 
 =for figure
        \includegraphics[width=0.5\textwidth]{../src/images/xs_effects.png}
