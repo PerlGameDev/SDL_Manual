@@ -8,6 +8,15 @@ In this chapter we work on creating the classic Tetris game using what we have l
          \label{fig:tetris}   
 
 
+=begin sidebar
+
+=head2 Get Tetris Game
+
+Get the tetris code from U<https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip>. 
+
+=end sidebar
+
+
 =head1 The Game Window
 
 First we will make our window with a fixed size so we can place our art work
@@ -134,6 +143,8 @@ there until a line is cleared.
 
      $next_tile         = shuffle(keys %pieces); 
 
+To rotate a piece we apply a transformation on each element of the piece.  
+
     + sub rotate_piece {
     +     my $_piece   = shift;
     +     my $_rotated = [];
@@ -144,6 +155,8 @@ there until a line is cleared.
     +     }
     +     return $_rotated;
     + }
+
+Additionally we do a simple collision checking between the non zero elements in the pieces with the direction the user wants to move.  
 
     + sub can_move_piece {
     +     my $direction = shift;
@@ -175,6 +188,8 @@ there until a line is cleared.
     +     }
     +     return 1;
     + }
+
+Finally we move the move piece by using the collision check and overlaying the piece array into the C<@grid> for each next position. 
 
     + sub move_piece {
     +     my $direction = shift;
@@ -211,6 +226,8 @@ there until a line is cleared.
     +     }
     + }
 
+Finally we hook it into the event handler where we use the events to move the pieces in the right direction. 
+
     + sub trigger_move_event_handler {
     +     my ( $event, $app ) = @_;
     +     if( $event->type == SDL_KEYDOWN ) {
@@ -236,14 +253,21 @@ there until a line is cleared.
 
 =head2 Score and Game State
 
+Next we add the move handler to update the game state. In tetris the game state can be summarized as the grid, current piece and the score. In this move handler we update all these things .
+
     + $app->add_move_handler( sub {
     +     my ( $step, $app ) = @_;
+
+We update the current piece's state as movable or fixed.
+
     +     if(can_move_piece('down', $step / 2)) {
     +         move_piece('down', $step / 2);
     +     }
     +     else {
     +         store_piece($curr_tile); # placing the tile
     +         
+
+We update the status of the grid and see if there are lines to remove. 
     +         # checking for lines to delete
     +         my $y;
     +         my @to_delete = ();
@@ -253,17 +277,22 @@ there until a line is cleared.
     +                 push(@to_delete, $y);
     +             }
     +         }
+
+When we delete lines increment the score of the user. 
+
     +         # deleting lines
     +         foreach(@to_delete) {
     +             splice(@{$store}, $_*10, 10);
     +             $score++;
     +         }
     +         
+Next for each deleted line we clear the grid. 
     +         # adding blank rows to the top
     +         foreach(@to_delete) {
     +             splice(@{$store}, 0, 0, (0,0,0,0,0,0,0,0,0,0));
     +         }
     +         
+Finally we lauch a new current tile if needed. 
     +         # launching new tile
     +         @{$curr_tile->[0]}  = @{$pieces{$next_tile}};
     +         $curr_tile->[1]     = 4;
@@ -274,6 +303,8 @@ there until a line is cleared.
 
 
 =head2 Showing the Game
+
+In the show handler we iterate through each element in the store and grid array and place the right colored tile where needed (using the numbers). 
 
     + # renders game objects on the screen
     + $app->add_show_handler(
@@ -312,6 +343,9 @@ there until a line is cleared.
     +                 }
     +             }
     +         }
+
+Lastly we draw texts needed.
+
     +         $score_text->write_xy( $app, 248,  20, "Next Piece" );
     +         $score_text->write_xy( $app, 248, 240, "Score: $score" );
     +         # finally, we update the screen

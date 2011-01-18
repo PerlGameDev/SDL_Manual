@@ -2058,6 +2058,15 @@ we have learned so far.</p>
 
 
 
+<blockquote>
+
+<h3>Get Tetris Game</h3>
+
+<p>Get the tetris code from
+https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip.</p>
+
+</blockquote>
+
 <h2>The Game Window</h2>
 
 <p>First we will make our window with a fixed size so we can place our art
@@ -2189,9 +2198,12 @@ other. First we have the <code>$grid</code> where the piece that is moving
 is stored. Once a piece has collided with sometime we move it to
 <code>$store</code> grid and hold it there until a line is cleared.</p>
 
-<pre><code>     $next_tile         = shuffle(keys %pieces); 
+<pre><code>     $next_tile         = shuffle(keys %pieces); </code></pre>
 
-    + sub rotate_piece {
+<p>To rotate a piece we apply a transformation on each element of the
+piece.</p>
+
+<pre><code>    + sub rotate_piece {
     +     my $_piece   = shift;
     +     my $_rotated = [];
     +     my $_i = 0;
@@ -2200,9 +2212,12 @@ is stored. Once a piece has collided with sometime we move it to
     +         $_i++;
     +     }
     +     return $_rotated;
-    + }
+    + }</code></pre>
 
-    + sub can_move_piece {
+<p>Additionally we do a simple collision checking between the non zero
+elements in the pieces with the direction the user wants to move.</p>
+
+<pre><code>    + sub can_move_piece {
     +     my $direction = shift;
     +     my $amount    = shift || 1;
     +     for my $y (0..3) {
@@ -2231,9 +2246,13 @@ is stored. Once a piece has collided with sometime we move it to
     +         }
     +     }
     +     return 1;
-    + }
+    + }</code></pre>
 
-    + sub move_piece {
+<p>Finally we move the move piece by using the collision check and
+overlaying the piece array into the <code>@grid</code> for each next
+position.</p>
+
+<pre><code>    + sub move_piece {
     +     my $direction = shift;
     +     my $amount    = shift || 1;
     +     if($direction eq &#39;right&#39;) {
@@ -2266,9 +2285,12 @@ is stored. Once a piece has collided with sometime we move it to
     +             }
     +         }
     +     }
-    + }
+    + }</code></pre>
 
-    + sub trigger_move_event_handler {
+<p>Finally we hook it into the event handler where we use the events to
+move the pieces in the right direction.</p>
+
+<pre><code>    + sub trigger_move_event_handler {
     +     my ( $event, $app ) = @_;
     +     if( $event-&gt;type == SDL_KEYDOWN ) {
     +         my $key = $event-&gt;key_sym;
@@ -2293,34 +2315,43 @@ is stored. Once a piece has collided with sometime we move it to
 
 <h3>Score and Game State</h3>
 
+<p>Next we add the move handler to update the game state. In tetris the
+game state can be summarized as the grid, current piece and the score. In
+this move handler we update all these things .</p>
+
 <pre><code>    + $app-&gt;add_move_handler( sub {
-    +     my ( $step, $app ) = @_;
-    +     if(can_move_piece(&#39;down&#39;, $step / 2)) {
+    +     my ( $step, $app ) = @_;</code></pre>
+
+<p>We update the current piece's state as movable or fixed.</p>
+
+<pre><code>    +     if(can_move_piece(&#39;down&#39;, $step / 2)) {
     +         move_piece(&#39;down&#39;, $step / 2);
     +     }
     +     else {
     +         store_piece($curr_tile); # placing the tile
-    +         
-    +         # checking for lines to delete
-    +         my $y;
-    +         my @to_delete = ();
-    +         for($y = 22; $y &gt;= 0; $y--) {
-    +             # there is no space if min of this row is true (greater than zero)
-    +             if(min(@{$store}[($y*10)..((($y+1)*10)-1)])) {
-    +                 push(@to_delete, $y);
-    +             }
-    +         }
-    +         # deleting lines
+    +         </code></pre>
+
+<p>We update the status of the grid and see if there are lines to remove. +
+# checking for lines to delete + my $y; + my @to_delete = (); + for($y =
+22; $y >= 0; $y--) { + # there is no space if min of this row is true
+(greater than zero) + if(min(@{$store}[($y*10)..((($y+1)*10)-1)])) { +
+push(@to_delete, $y); + } + }</p>
+
+<p>When we delete lines increment the score of the user.</p>
+
+<pre><code>    +         # deleting lines
     +         foreach(@to_delete) {
     +             splice(@{$store}, $_*10, 10);
     +             $score++;
     +         }
     +         
+Next for each deleted line we clear the grid. 
     +         # adding blank rows to the top
     +         foreach(@to_delete) {
     +             splice(@{$store}, 0, 0, (0,0,0,0,0,0,0,0,0,0));
     +         }
     +         
+Finally we lauch a new current tile if needed. 
     +         # launching new tile
     +         @{$curr_tile-&gt;[0]}  = @{$pieces{$next_tile}};
     +         $curr_tile-&gt;[1]     = 4;
@@ -2330,6 +2361,10 @@ is stored. Once a piece has collided with sometime we move it to
     + });</code></pre>
 
 <h3>Showing the Game</h3>
+
+<p>In the show handler we iterate through each element in the store and
+grid array and place the right colored tile where needed (using the
+numbers).</p>
 
 <pre><code>    + # renders game objects on the screen
     + $app-&gt;add_show_handler(
@@ -2367,8 +2402,11 @@ is stored. Once a piece has collided with sometime we move it to
     +                                                   );
     +                 }
     +             }
-    +         }
-    +         $score_text-&gt;write_xy( $app, 248,  20, &quot;Next Piece&quot; );
+    +         }</code></pre>
+
+<p>Lastly we draw texts needed.</p>
+
+<pre><code>    +         $score_text-&gt;write_xy( $app, 248,  20, &quot;Next Piece&quot; );
     +         $score_text-&gt;write_xy( $app, 248, 240, &quot;Score: $score&quot; );
     +         # finally, we update the screen
     +         $app-&gt;update;
@@ -3710,7 +3748,7 @@ more fun! =head1 Author</p>
 <h1>Pixel Effects</h1>
 
 <p>In this chapter we will look at how to use pixel effects in Perl. Pixel
-effects are operations that are done directly on the bacnk of a
+effects are operations that are done directly on the bank of a
 <code>SDL_Surface</code>'s pixel. These effects are used to do visual
 effects in games and applications, most notably by <code>Frozen
 Bubble</code>.</p>
@@ -3739,7 +3777,7 @@ surface as seen at \fig{fig:ripple}.</p>
 
 <h3>Pure Perl</h3>
 
-<p>First lets make the effect in pure perl. To do any operations with a
+<p>First lets make the effect in pure Perl. To do any operations with a
 <code>SDL::Surface</code> we must do
 <code>SDL::Video::lock_surface()</code> call as seen below. Locking the
 surface prevents other process in SDL from accessing the surface. The
@@ -3798,7 +3836,7 @@ Perl. We will need to move the intensive calculations to
 
 <h3>Inline Effects </h3>
 
-<p>In the below example we use <code>Inline</code> to write inline
+<p>In the below example we use <code>Inline</code> to write Inline
 <code>C</code> code to handle the pixel effect for us. <code>SDL</code> now
 provides support to work with <code>Inline</code>. The <code>render</code>
 callback is now moved to <code>C</code> code, using <code>Inline C</code>.
@@ -3858,10 +3896,6 @@ us.</p>
     }
 
     END</code></pre>
-
-<h2>Modules</h2>
-
-<p>Making it usable at least.</p>
 
 <h1>Additional Modules</h1>
 
