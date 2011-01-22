@@ -3238,117 +3238,185 @@ SDL::Mixer::close_audio;</p>
 
 <h3>Completed Code</h3>
 
-<pre><code>    my $app = SDLx::App-&gt;new(
-        init  =&gt; SDL_INIT_AUDIO | SDL_INIT_VIDEO,
-        width =&gt; 250,
-        height =&gt; 75,
-        title =&gt; &quot;Sound Event Demo&quot;,
-        eoq   =&gt; 1
+<pre><code>    use strict;
+    use warnings;
+
+    use Cwd;
+    use Carp;
+    use File::Spec;
+
+    use threads;
+    use threads::shared;
+
+    use SDL;
+    use SDL::Event;
+    use SDL::Events;
+
+    use SDL::Audio;
+    use SDL::Mixer;
+    use SDL::Mixer::Music;
+    use SDL::Mixer::Effects;
+
+    use SDLx::App;
+    my $app = SDLx::App-&gt;new(
+        init   =&gt; SDL_INIT_AUDIO | SDL_INIT_VIDEO,
+        width  =&gt; 800,
+        height =&gt; 600,
+        depth  =&gt; 32,
+        title  =&gt; &quot;Music Visualizer&quot;,
+        eoq    =&gt; 1,
+        dt     =&gt; 0.2,
     );
 
     # Initialize the Audio
-    unless ( SDL::Mixer::open_audio( 44100, AUDIO_S16SYS, 2, 4096 ) == 0 ) {
+    unless ( SDL::Mixer::open_audio( 44100, AUDIO_S16, 2, 1024 ) == 0 ) {
         Carp::croak &quot;Cannot open audio: &quot; . SDL::get_error();
     }
 
-    my $channel_volume = 100;
-    my $music_volume   = 100;
-    my $laser_status   = &#39;none&#39;;
-    my $music_status   = &#39;not playing&#39;;
+    # Load our music files
+    my $data_dir = &#39;.&#39;;
+    my @songs    = glob &#39;data/music/*.ogg&#39;;
 
-    # Load our sound resources
-    my $laser = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
-    unless ($laser) {
-        Carp::croak &quot;Cannot load sound: &quot; . SDL::get_error();
+    my @stream_data : shared;
+
+    #  Music Effect to pull Stream Data
+    sub music_data {
+        my ( $channel, $samples, $position, @stream ) = @_;
+
+        {
+            lock(@stream_data);
+            push @stream_data, @stream;
+        }
+
+        return @stream;
     }
 
-    my $background_music =
-      SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
-    unless ($background_music) {
-        Carp::croak &quot;Cannot load music: &quot; . SDL::get_error();
+    sub done_music_data { }
+
+    my $music_data_effect_id =
+      SDL::Mixer::Effects::register( MIX_CHANNEL_POST, &quot;main::music_data&quot;,
+        &quot;main::done_music_data&quot;, 0 );
+
+    #  Music Playing Callbacks
+    my $current_song = 0;
+    my $lines = $ARGV[0] || 50;
+
+    my $current_music_callback = sub {
+        my ( $delta, $app ) = @_;
+
+        $app-&gt;draw_rect( [ 0, 0, $app-&gt;w(), $app-&gt;h() ], 0x000000FF );
+        $app-&gt;draw_gfx_text(
+            [ 5, $app-&gt;h() - 10 ],
+            [ 255, 0, 0, 255 ],
+            &quot;Playing Song: &quot; . $songs[ $current_song - 1 ]
+        );
+
+        my @stream;
+        {
+            lock @stream_data;
+            @stream      = @stream_data;
+            @stream_data = ();
+        }
+
+        # To show the right amount of lines we choose a cut of the stream
+        # this is purely for asthetic reasons.
+
+        my $cut = @stream / $lines;
+
+        # The width of each line is calculated to use.
+        my $l_wdt = ( $app-&gt;w() / $lines ) / 2;
+
+        for ( my $i = 0 ; $i &lt; $#stream ; $i += $cut ) {
+
+            #  In stereo mode the stream is split between two alternating streams
+            my $left  = $stream[$i];
+            my $right = $stream[ $i + 1 ];
+
+            #  For each bar we calculate a Y point and a X point
+            my $point_y = ( ( ($left) ) * $app-&gt;h() / 4 / 32000 ) + ( $app-&gt;h / 2 );
+            my $point_y_r =
+              ( ( ($right) ) * $app-&gt;h() / 4 / 32000 ) + ( $app-&gt;h / 2 );
+            my $point_x = ( $i / @stream ) * $app-&gt;w;
+
+            # Using the parameters
+            #   Surface, box coordinates and color as RGBA
+            SDL::GFX::Primitives::box_RGBA(
+                $app,
+                $point_x - $l_wdt,
+                $app-&gt;h() / 2,
+                $point_x + $l_wdt,
+                $point_y, 40, 0, 255, 128
+            );
+            SDL::GFX::Primitives::box_RGBA(
+                $app,
+                $point_x - $l_wdt,
+                $app-&gt;h() / 2,
+                $point_x + $l_wdt,
+                $point_y_r, 255, 0, 40, 128
+            );
+
+        }
+
+        $app-&gt;flip();
+
+    };
+
+    my $cms_move_callback_id;
+    my $pns_move_callback_id;
+    my $play_next_song_callback;
+
+    sub music_finished_playing {
+        SDL::Mixer::Music::halt_music();
+
+        $pns_move_callback_id = $app-&gt;add_move_handler($play_next_song_callback)
+          if ( defined $play_next_song_callback );
+
     }
 
+    $play_next_song_callback = sub {
+        return $app-&gt;stop() if $current_song &gt;= @songs;
+        my $song = SDL::Mixer::Music::load_MUS( $songs[ $current_song++ ] );
+        SDL::Mixer::Music::play_music( $song, 0 );
 
-    $app-&gt;add_show_handler(
-    sub { 
+        $app-&gt;remove_move_handler($pns_move_callback_id)
+          if defined $pns_move_callback_id;
+    };
 
-        $app-&gt;draw_rect([0,0,$app-&gt;w,$app-&gt;h], 0 );
+    $app-&gt;add_show_handler($current_music_callback);
+    $pns_move_callback_id = $app-&gt;add_move_handler($play_next_song_callback);
 
-        $app-&gt;draw_gfx_text( [10,10], [255,0,0,255], &quot;Channel Volume : $channel_volume&quot; );
-        $app-&gt;draw_gfx_text( [10,25], [255,0,0,255], &quot;Music Volume   : $music_volume&quot; );
-        $app-&gt;draw_gfx_text( [10,40], [255,0,0,255], &quot;Laser Status   : $laser_status&quot; );
-        $app-&gt;draw_gfx_text( [10,55], [255,0,0,255], &quot;Music Status   : $music_status&quot; );
+    $app-&gt;add_move_handler(
+        sub {
+            my $music_playing = SDL::Mixer::Music::playing_music();
 
-        $app-&gt;update();
+            music_finished_playing() unless $music_playing;
 
-    }
+        }
     );
 
     $app-&gt;add_event_handler(
         sub {
-            my $event = shift;
+            my ( $event, $app ) = @_;
+            if ( $event-&gt;type == SDL_KEYDOWN &amp;&amp; $event-&gt;key_sym == SDLK_DOWN ) {
 
-            if ( $event-&gt;type == SDL_KEYDOWN ) {
-                my $keysym  = $event-&gt;key_sym;
-                my $keyname = SDL::Events::get_key_name($keysym);
-
-                if ( $keyname eq &#39;space&#39; ) {
-
-                    $laser_status = &#39;PEW!&#39;;
-                    #fire lasers!
-                    SDL::Mixer::Channels::play_channel( -1, $laser, 0 );
-
-                }
-                elsif ( $keyname eq &#39;up&#39; ) {
-                    $channel_volume += 5 unless $channel_volume == 100;
-                }
-                elsif ( $keyname eq &#39;down&#39; ) {
-                    $channel_volume -= 5 unless $channel_volume == 0;
-                }
-                elsif ( $keyname eq &#39;right&#39; ) {
-                    $music_volume += 5 unless $music_volume == 100;
-                }
-                elsif ( $keyname eq &#39;left&#39; ) {
-                    $music_volume -= 5 unless $music_volume == 0;
-                }
-                elsif ( $keyname eq &#39;return&#39; ) {
-                    my $playing = SDL::Mixer::Music::playing_music();
-                    my $paused  = SDL::Mixer::Music::paused_music();
-
-                    if ( $playing == 0 &amp;&amp; $paused == 0 ) {
-                        SDL::Mixer::Music::play_music( $background_music, 1 );
-                        $music_status = &#39;playing&#39;;
-                    }
-                    elsif ( $playing &amp;&amp; !$paused ) {
-                        SDL::Mixer::Music::pause_music();
-                        $music_status = &#39;paused&#39;
-                    }
-                    elsif ( $playing &amp;&amp; $paused ) {
-                        SDL::Mixer::Music::resume_music();
-                        $music_status = &#39;resumed playing&#39;;
-                    }
-
-                }
-
-                SDL::Mixer::Channels::volume( -1, $channel_volume );
-                SDL::Mixer::Music::volume_music($music_volume);
-
+                # Indicate that we are done playing the music_finished_playing
+                music_finished_playing();
             }
-
-          }
-
+        }
     );
 
     $app-&gt;run();
 
+    SDL::Mixer::Effects::unregister( MIX_CHANNEL_POST, $music_data_effect_id );
+    SDL::Mixer::Music::hook_music_finished();
     SDL::Mixer::Music::halt_music();
-    SDL::Mixer::close_audio;</code></pre>
+    SDL::Mixer::close_audio();</code></pre>
 
 <h2>Music Visualizer</h2>
 
-<p>The final example in this section will be making a music visualizer that
-will take real time sound data and showing the wave form on our screen. It
-will look something like:</p>
+<p>The music visualizer example processes real-time sound data--data as it
+plays--and displays the wave form on the screen. It will look something
+like:</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/spectro-1.png}
 \caption{Simple Music Visualization} \label{fig:Visualization}</p>
@@ -3356,6 +3424,9 @@ will look something like:</p>
 
 
 <h3>The Code and Comments</h3>
+
+<p>The program begins with the usual boilerplate of an SDL Perl
+application:</p>
 
 <pre><code>        use strict;
         use warnings;
@@ -3378,7 +3449,7 @@ will look something like:</p>
 
         use SDLx::App;</code></pre>
 
-<p>Start the application with audio and video support.</p>
+<p>It then creates an application with both audio and video support:</p>
 
 <pre><code>        my $app = SDLx::App-&gt;new(
                 init   =&gt; SDL_INIT_AUDIO | SDL_INIT_VIDEO,
@@ -3390,135 +3461,164 @@ will look something like:</p>
                 dt     =&gt; 0.2,
         );</code></pre>
 
-<p>Initializing the Audio with a specific format that we know. Using
-<code>AUDIO_S16</code> provides us with a 16 bit signed integer array for
-the stream data.</p>
+<p>The application must initialize the audio system with a format matching
+the expected audio input. <code>AUDIO_S16</code> provides a 16-bit signed
+integer array for the stream data:</p>
 
 <pre><code>        # Initialize the Audio
         unless ( SDL::Mixer::open_audio( 44100, AUDIO_S16, 2, 1024 ) == 0 ) {
                 Carp::croak &quot;Cannot open audio: &quot; . SDL::get_error();
         }</code></pre>
 
-<p>We will load all <code>*.ogg</code> music files from our data
-directory.</p>
+<p>The music player needs the music files from the <i>data/music/</i>
+directory:</p>
 
 <pre><code>        # Load our music files
         my $data_dir = &#39;.&#39;;
         my @songs = glob &#39;data/music/*.ogg&#39;;</code></pre>
 
-<p>Next we will make a music effect to read our stream data, we need to use
-a shared lock and array.</p>
+<p>A music effect reads stream data, then serializes it to share between
+threads:</p>
 
-<pre><code>        my $stream_data :shared = &#39;&#39;;
-        my $stream_lock :shared = 0;
+<pre><code>    my @stream_data : shared;
 
-        # Music Effect to pull Stream Data 
-        sub music_data {
-                my $channel = shift;
-                my $samples = shift;
-                my $position = shift;
-                my @stream = @_;
+    #  Music Effect to pull Stream Data
+    sub music_data {
+        my ( $channel, $samples, $position, @stream ) = @_;
 
-                if( $stream_lock != 0 ) 
-                {
-                        $stream_data = join &#39;,&#39;, @stream;
-                        $stream_lock = 0;
-                }
-                return @stream;
-        }</code></pre>
+        {
+            lock(@stream_data);
+            push @stream_data, @stream;
+        }
 
-<p>We hook the callback into <code>SDL::Mixer::Effects</code>.</p>
+        return @stream;
+    }
+
+    sub done_music_data { }</code></pre>
+
+<p>... and that effect gets registered as a callback with
+<code>SDL::Mixer::Effects</code>:</p>
 
 <pre><code>        my $music_data_effect_id = 
                   SDL::Mixer::Effects::register( MIX_CHANNEL_POST, &quot;main::music_data&quot;,
                         &quot;main::done_music_data&quot;, 0 );</code></pre>
 
-<p>The drawing callback for the <code>SDLx::App</code> when a song is
-playing. We read the stream data and show it on the screen as a wave
-form.</p>
+<p>The program's single command-line option governs the number of lines to
+display in the visualizer. The default is 50.</p>
 
-<p>The number of lines to show in our visualizer.</p>
+<pre><code>    my $lines = $ARGV[0] || 50;</code></pre>
 
-<pre><code>    my $lines = $ARGV[0];
-       $lines = 50 unless $lines;
+<p>The drawing callback for the <code>SDLx::App</code> runs while a song
+plays. It reads the stream data and displays it on the screen as a wave
+form. The math behind calculating the graphics to display is more detail
+than this article intends, but the graphic code is straightforward:</p>
 
-        # Music Playing Callbacks 
-        my $current_song = 0;
+<pre><code>    #  Music Playing Callbacks
+    my $current_song = 0;
 
-        my $current_music_callback = sub { 
-                my( $delta, $app ) = @_;
+    my $current_music_callback = sub {
+        my ( $delta, $app ) = @_;
 
-                
-                if( $stream_lock == 0  ){
+        $app-&gt;draw_rect( [ 0, 0, $app-&gt;w(), $app-&gt;h() ], 0x000000FF );
+        $app-&gt;draw_gfx_text(
+            [ 5, $app-&gt;h() - 10 ],
+            [ 255, 0, 0, 255 ],
+            &quot;Playing Song: &quot; . $songs[ $current_song - 1 ]
+        );
 
-                $app-&gt;draw_rect([ 0, 0, $app-&gt;w(), $app-&gt;h()], 0x000000FF );
-                $app-&gt;draw_gfx_text([5,$app-&gt;h()-10], [255,0,0,255], &quot;Playing Song: &quot;.$songs[$current_song-1]);
+        my @stream;
+        {
+            lock @stream_data;
+            @stream      = @stream_data;
+            @stream_data = ();
+        }
 
-                                my @stream = split( &#39;,&#39;, $stream_data );
-                                $stream_data = &#39;&#39;;
-                                my @left;
-                                my @right;
-                                my $cut =  $#stream/$lines;
-                                my @x;
-                                                   
-                                my $l_wdt= ( $app-&gt;w() / $lines) /2;
-                                
-                                
-                                for ( my $i = 0 ; $i &lt; $#stream ; $i += $cut ) {
+        # To show the right amount of lines we choose a cut of the stream
+        # this is purely for asthetic reasons.
 
-                                        my $left  = $stream[$i];
-                                        my $right = $stream[ $i + 1 ];
+        my $cut = @stream / $lines;
 
-                                        my $point_y   = ( ( ($left) ) * $app-&gt;h()/4 / 32000 ) + ($app-&gt;h/2);
-                                        my $point_y_r = ( ( ($right) ) * $app-&gt;h()/4 / 32000 )+ ($app-&gt;h/2);
-                                        my $point_x   = ( $i / $#stream ) * $app-&gt;w;
-                                        
-                           
-                                        SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300,
-                                                                                                         $point_x+$l_wdt, $point_y, 
-                                                                                                         40, 0, 255, 128 );
+        # The width of each line is calculated to use.
+        my $l_wdt = ( $app-&gt;w() / $lines ) / 2;
 
-                                        SDL::GFX::Primitives::box_RGBA(  $app, $point_x-$l_wdt, 300, 
-                                                                                                         $point_x+$l_wdt, $point_y_r , 
-                                                                                                         255, 0, 40, 128 );
+        for ( my $i = 0 ; $i &lt; $#stream ; $i += $cut ) {
 
-                                }
-                        
-                
-                        $stream_lock = 1;
-                }
-                $app-&gt;flip();
-        };
-When a song is finished playing we remove the show handler and hook on another callback to switch to the
-next song gracefully. 
+            #  In stereo mode the stream is split between two alternating streams
+            my $left  = $stream[$i];
+            my $right = $stream[ $i + 1 ];
 
-        my $cms_move_callback_id;
-        my $pns_move_callback_id; 
+            #  For each bar we calculate a Y point and a X point
+            my $point_y = ( ( ($left) ) * $app-&gt;h() / 4 / 32000 ) + ( $app-&gt;h / 2 );
+            my $point_y_r =
+              ( ( ($right) ) * $app-&gt;h() / 4 / 32000 ) + ( $app-&gt;h / 2 );
+            my $point_x = ( $i / @stream ) * $app-&gt;w;
 
-        sub music_finished_playing { 
-
-                SDL::Mixer::Music::halt_music();
-                $pns_move_callback_id = $app-&gt;add_move_handler( $play_next_song_callback ); 
-                $app-&gt;remove_show_handler($cms_move_callback_id); 
+            # Using the parameters
+            #   Surface, box coordinates and color as RGBA
+            SDL::GFX::Primitives::box_RGBA(
+                $app,
+                $point_x - $l_wdt,
+                $app-&gt;h() / 2,
+                $point_x + $l_wdt,
+                $point_y, 40, 0, 255, 128
+            );
+            SDL::GFX::Primitives::box_RGBA(
+                $app,
+                $point_x - $l_wdt,
+                $app-&gt;h() / 2,
+                $point_x + $l_wdt,
+                $point_y_r, 255, 0, 40, 128
+            );
 
         }
 
-        my $play_next_song_callback = sub {
+        $app-&gt;flip();
 
-                $app-&gt;stop() if $current_song &gt; $#songs;
-                my $song = SDL::Mixer::Music::load_MUS($songs[$current_song++]);
-                
-                SDL::Mixer::Music::hook_music_finished(&#39;main::music_finished_playing&#39;);
-                SDL::Mixer::Music::play_music($song, 0 );
+    };</code></pre>
 
-                $app-&gt;remove_move_handler( $pns_move_callback_id ) if defined $pns_move_callback_id;
-                $cms_move_callback_id = $app-&gt;add_show_handler( $current_music_callback );
-        };
-Add the first callback to get our first song.
+<p>Whenever a song finishes <code>SDL::Mixer::Music::playing_music</code>
+returns <code>0</code>. We detect this change in state and call
+<code>music_finished_playing()</code> where the program attaches our
+<code>$play_next_song_callback</code> callback to switch to the next song
+gracefully:</p>
 
-        $pns_move_callback_id= $app-&gt;add_move_handler( $play_next_song_callback);</code></pre>
+<pre><code>    my $cms_move_callback_id;
+    my $pns_move_callback_id;
+    my $play_next_song_callback;
 
-<p>Add a event handler allows you to move through the songs.</p>
+    sub music_finished_playing {
+        SDL::Mixer::Music::halt_music();
+        $pns_move_callback_id = $app-&gt;add_move_handler($play_next_song_callback)
+          if ( defined $play_next_song_callback );
+
+    }
+
+    $play_next_song_callback = sub {
+        return $app-&gt;stop() if $current_song &gt;= @songs;
+        my $song = SDL::Mixer::Music::load_MUS( $songs[ $current_song++ ] );
+        SDL::Mixer::Music::play_music( $song, 0 );
+
+        $app-&gt;remove_move_handler($pns_move_callback_id)
+          if defined $pns_move_callback_id;
+    };</code></pre>
+
+<p>A move handler is attached to detect if music is playing or not:</p>
+
+<pre><code>    $app-&gt;add_move_handler(
+        sub {
+            my $music_playing = SDL::Mixer::Music::playing_music();
+            music_finished_playing() unless $music_playing;
+        }
+    )       </code></pre>
+
+<p>The first callback to trigger the <code>$play_next_song_callback</code>
+gets the first song:</p>
+
+<pre><code>        $app-&gt;add_show_handler($current_music_callback);
+    $pns_move_callback_id = $app-&gt;add_move_handler($play_next_song_callback);</code></pre>
+
+<p>... and a keyboard event handler for a keypress allows the user to move
+through songs:</p>
 
 <pre><code>        $app-&gt;add_event_handler(
         sub {
@@ -3531,16 +3631,21 @@ Add the first callback to get our first song.
                 }
 
         }
-        );
+        );</code></pre>
 
-        $app-&gt;run();</code></pre>
+<p>From there, the application is ready to run:</p>
 
-<p>Gracefully stop <code>SDL::Mixer</code>.</p>
+<pre><code>        $app-&gt;run();</code></pre>
+
+<p>... and the final code gracefully stops <code>SDL::Mixer</code>:</p>
 
 <pre><code>        SDL::Mixer::Effects::unregister( MIX_CHANNEL_POST, $music_data_effect_id );
         SDL::Mixer::Music::hook_music_finished();
         SDL::Mixer::Music::halt_music();
         SDL::Mixer::close_audio();</code></pre>
+
+<p>The result? Several dozen lines of code to glue together the SDL mixer
+and display a real-time visualization of the music.</p>
 
 <h1>CPAN</h1>
 
