@@ -163,6 +163,16 @@ libraries are required.</p>
 
 <h3>CPAN install</h3>
 
+<p>Before installing SDL you should make sure that some important modules
+are up-to-date.</p>
+
+<pre><code>    sudo cpan CPAN
+    sudo cpan YAML Module::Build
+    </code></pre>
+
+<p>After these two steps cpan will be able to find all depedencies for
+SDL.</p>
+
 <pre><code>    sudo cpan SDL</code></pre>
 
 <p>For most platforms a CPAN install will suffice. Supported and tested
@@ -226,12 +236,18 @@ http://github.com/PerlGameDev/SDL_Manual/tree/master/code_listings/ .</p>
 
 <h1>The Screen</h1>
 
-<h2>Background</h2>
+<h2>Background	  </h2>
 
-<p>SDL manages a single screen which is attached to the video device. An
-SDL application may contain one or more Surfaces of different kinds. But
-we'll leave that issue till later. The screen is typically created using
-the <code>SDLx::App</code> class.</p>
+<p>SDL manages a single screen which is attached to the video device. ,
+some examples are X11 and DirectX. An SDL application may contain one or
+more Surfaces.</p>
+
+<blockquote>
+
+</blockquote>
+
+<p>The screen is typically created using the <code>SDLx::App</code>
+class.</p>
 
 <pre><code>    use strict;
     use warnings;

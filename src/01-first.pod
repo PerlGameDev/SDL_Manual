@@ -1,8 +1,20 @@
 =head0 The Screen
 
 =head1 Background
+X<Video>
+X<Video Device>
+X<Surface>
+X<Screen>
 
-SDL manages a single screen which is attached to the video device.  An SDL application may contain one or more Surfaces of different kinds. But we'll leave that issue till later. The screen is typically created using the C<SDLx::App> class.
+SDL manages a single screen which is attached to the video device. , some examples are X11 and DirectX. An SDL application may contain one or more Surfaces.
+
+=begin sidebar 
+
+
+
+=end sidebar 
+
+The screen is typically created using the C<SDLx::App> class.
 
 =begin programlisting
 
