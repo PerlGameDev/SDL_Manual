@@ -146,6 +146,13 @@ To compile from scratch a compiler, system header packages and some libraries ar
 
 =head2 CPAN install 
 
+Before installing SDL you should make sure that some important modules are up-to-date.
+
+    sudo cpan CPAN
+    sudo cpan YAML Module::Build
+    
+After these two steps cpan will be able to find all depedencies for SDL.
+
     sudo cpan SDL
 
 For most platforms a CPAN install will suffice. Supported and tested platforms are listed at U<http://pass.cpantesters.org/distro/S/SDL.html>.  
