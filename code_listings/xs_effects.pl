@@ -32,7 +32,15 @@ void render( float delta, SDL_Surface *screen )
 	{
 		for (j = 0, ofs = yofs; j < screen->w; j++, ofs++)
 		{
-			((unsigned int*)screen->pixels)[ofs] = i * i + j * j + tick;
+
+			Uint32 value = i * i + j * j + tick;
+			Uint8 a = value >> 2;
+			Uint8 b = value >> 4;
+			Uint8 g = value >> 8;
+			Uint8 r = value >> 16;
+
+			Uint32 map_val = SDL_MapRGBA( screen->format, r, g, b, a);
+			((unsigned int*)screen->pixels)[ofs] = map_val;
 		}
 		yofs += screen->pitch / 4;
 	}
