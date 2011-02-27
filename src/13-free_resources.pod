@@ -76,9 +76,19 @@ please let us know so we can update the list.
 
 =over 4
 
+=item * U<http://www.dafont.com/>
+
+=item * U<http://www.fontsquirrel.com/>
+
+=item * U<http://www.theleagueofmoveabletype.com/>
+
+=item * U<http://openfontlibrary.org/>
+
 =item * U<http://www.acidfonts.com/>
 
 =item * U<http://www.grsites.com/archive/fonts/>
+
+=item * U<http://www.urbanfonts.com/>
 
 =back
 
