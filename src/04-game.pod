@@ -49,7 +49,7 @@ A practical example of this is a moving laser bolt.
                     {
                         $quit = 1 if $event->type == SDL_QUIT  
                     }
-                  }
+    }
 
     sub calculate_next_positions{
 	# Move the laser over
@@ -84,14 +84,14 @@ A practical example of this is a moving laser bolt.
 
 =head2 Issues
 
-This game loop works well for consoles and devices where the share of CPU clock speed is always known. The game users will be using the 
-same processor characteristics to run this code. This means that each animation and calculation will happen at the exact same time in each machine. Unfortunately this is typical not typical true for modern operating systems and hardware.
-For faster CPUs and systems with varying loads we need to regulate updates 
-so game play will be consistent in most cases.
+This game loop works well for consoles and devices where the share of CPU clock speed is always known. The game users will be using the
+same processor characteristics to run this code. This means that each animation and calculation will happen at the exact same time in each machine. Unfortunately, this is typically not true for modern operating systems and hardware.
+For faster CPUs and systems with varying loads, we need to regulate updates
+so that game play will be consistent in most cases.
 
 =head1 Fixed FPS
 
-One way to solve this problem is to regulate the "Frames Per Second" for your games updates.  A "frame" is defined as a complete redraw of the screen representing the updated game state.
+One way to solve this problem is to regulate the "Frames Per Second" for your game's updates.  A "frame" is defined as a complete redraw of the screen representing the updated game state.
 We can keep track of the number of frames we are delivering each second and control it using the technique illustrated below. 
 
 =head2 Exercise 
@@ -152,7 +152,7 @@ read on to the problems below.
 
 		my $event = SDL::Event->new();
 
-	#Pump the event queue
+		#Pump the event queue
 		SDL::Events::pump_events;
 
 		while ( SDL::Events::poll_event($event) ) {
@@ -168,13 +168,13 @@ read on to the problems below.
 
 	sub render {
 
-	#Draw the background first
+		#Draw the background first
 		$app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 );
 
-	#Draw the laser
+		#Draw the laser
 		$app->draw_rect( [ $laser, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
 
-	#Draw our FPS on the screen so we can see
+		#Draw our FPS on the screen so we can see
 		$app->draw_gfx_text( [ 10, 10 ], [ 255, 0, 255, 255 ], "FPS: $FPS" );
 
 		$app->update();
@@ -262,27 +262,27 @@ read on to the problems below.
 
 =head2 Problems
 
-Generally this method is sufficient for most computers out there. The animations will be smooth
-enough that we see the same game play on differing hardware. However there are some serious
-problems with this method. First if a computer is too slow for 60 frames for second it will skip a
-lot of rendering, and the animation will look sparse and jittery. Maybe it would be better for 30 fps
-or lower for that machine, which is hard for the developer to predict. Secondly if a CPU is fast, a 
-lot of CPU cycles are wasted in the delay. 
+Generally, this method is sufficient for most computers out there. The animations will be smooth
+enough that we see the same game play on differing hardware. However, there are some serious
+problems with this method. First, if a computer is too slow for 60 fps, it will skip a
+lot of rendering, and the animation will look sparse and jittery. Maybe it would be better for to set the fps bounds to 30 fps or lower
+for that machine. However, the developer cannot predict and hard code the best frame rate for a user. Secondly, if a CPU is fast, a
+lot of CPU cycles are wasted in the delay.
 
-Finally this method does not fix the fundamental problem that the rendering is fixed to CPU clock speed.
+Finally, this method does not fix the fundamental problem that the rendering is tied to CPU clock speed.
 
 =head2 Potential Fix: Variable FPS
 
-One way to fix the problem of a computer being consistently faster or slower for the default Frame per 
-Second set, is to change the FPS accordingly. So far a slow CPU it will jump down to 30 FPS and so on. 
+One way to fix the problem of a computer being consistently faster or slower for the default Frames per
+Second set is to change the FPS accordingly. So for a slow CPU, the fps will be limited to 30 FPS and so on.
 In our opinion, although a consistent FPS can be achieved this way, it still presents the problem of differing
-animation speeds for different CPUs and systems. 
-There are better solutions available.
+animation speeds for different CPUs and systems.
+There are better solutions available that will maintain a decent FPS across all systems.
 
 =head1 Integrating Physics
 
 The problem caused by coupling rendering to the CPU speed has a convenient solution. We can derive our rendering from a physical model based on 
-the passage of time.  Objects moving according to real world time will have consistent behavior at all CPU speeds, and smooth interpolation between frames. 
+the passage of time.  Objects moving according to real world time will have consistent behavior at all CPU speeds  and smooth interpolation between frames.
 SDLx::App provides just such features for our convenience through movement handlers and 'show' handlers.
 
 A simple physics model for our laser has a consistent horizontal velocity in pixels per time step at the window's mid-point:
@@ -301,15 +301,15 @@ Assuming a velocity of say 10, we will get points like:
 
 Note that it no longer matters at what speed this equation is processed, instead the values are coupled to the passage of real time. 
 
-The biggest problem with this sort of solution the book keeping required for many objects and callbacks.  The implementation of such complex models is non trivial,
-and will not be explored in this book.  The topic is discussed at length in the C<SDLx::Controller> module. 
+The biggest problem with this sort of solution is the required bookkeeping for the many objects and callbacks we may track.  The implementation of such complex models is non-trivial
+and will not be explored in this manual.  This topic is discussed at length in the C<SDLx::Controller> module.
 
 =head2 Laser in Real Time
 
-This version of the laser example demonstrates the use of movement, and 'show'
-handlers and the simple physics model described above.  This example
+This version of the laser example demonstrates the use of movement, 'show'
+handlers, and the simple physics model described above.  This example
 is also much simpler since SDLx::App is doing more of the book work for
-us.  It even implements the whole game loop for us.
+us.  SDLx::App even implements the whole game loop for us.
 
 =begin programlisting
 
