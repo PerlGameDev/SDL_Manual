@@ -562,9 +562,10 @@ Now we need to create the score object:
 
    + my $score = SDLx::Text->new( font => 'font.ttf', h_align => 'center' );
 
-The C<font> parameter specifies the path to a TrueType Font. Here we are
+The optional C<font> parameter specifies the path to a TrueType Font. Here we are
 loading the 'I<font.ttf>' file, so feel free to change this to whatever
-font you have in your system. The C<h_align> parameter lets us choose
+font you have in your system. Otherwise, you can leave it out and use the
+bundled default font. The C<h_align> parameter lets us choose
 a horizontal alignment for the text we put in the object. It defaults to
 'I<left>', so we make it 'I<center>' instead.
 
