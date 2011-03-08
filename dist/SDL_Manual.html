@@ -338,47 +338,6 @@ http://www.sdltutorials.com/sdl-coordinates-and-blitting/</p>
 
 
 
-<h2>Program</h2>
-
-<p>Below is the program that generates the above image.</p>
-
-<pre><code>    use SDL;
-    use SDLx::App;
-    use SDLx::Sprite;
-
-    my $app = SDLx::App-&gt;new(
-        w     =&gt; 500,
-        h     =&gt; 500,
-        d     =&gt; 32,
-        title =&gt; &#39;Pretty Flowers&#39;
-    );
-
-    # Draw Code Starts here
-
-    my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
-
-    $flower-&gt;surface-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
-
-    $flower-&gt;surface-&gt;draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
-    $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
-    $flower-&gt;surface-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
-    $flower-&gt;alpha_key(0);
-
-    $app-&gt;draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
-
-    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
-
-    foreach ( 0 .. 500 ) {
-        my $y = 425 - rand(50);
-        $flower-&gt;draw_xy( $app, rand(500) - 20, $y );
-    }
-
-    #Draw Code Ends Here
-
-    $app-&gt;update();
-
-    sleep(2);</code></pre>
-
 <h2>Drawing the Flower</h2>
 
 <p>To begin actually drawing the flower, we need to cover some theory.</p>
@@ -547,6 +506,7 @@ simple flower.</p>
     $flower-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
     $flower-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
+    # Draw flower on $app surface
     $flower-&gt;blit( $app, [ 0, 0, 50, 100 ] );
 
     $app-&gt;update();
@@ -628,9 +588,9 @@ we need for game images that move a lot. For now lets use
 
     my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
 
-    # To access the SDLx::Surface to write to we use the -&gt;surface() method
+    # To access the SDLx::Surface to write to, we use the -&gt;surface() method
 
-    # Lets make the background black
+    # Let&#39;s make the background black
     $flower-&gt;surface-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
 
     # Now for a pretty green stem
@@ -647,8 +607,8 @@ we need for game images that move a lot. For now lets use
     sleep(1);</code></pre>
 
 <p>Obviously at this point we don't want our single flower floating in the
-sky, so we will draw several of them on the ground. Delete everything
-including and after</p>
+sky, so we will draw several of them on the ground. Delete everything from
+line 34 including and after</p>
 
 <pre><code>    $flower-&gt;draw_xy($app, 0,0)</code></pre>
 
@@ -663,6 +623,47 @@ including and after</p>
     $app-&gt;update();
 
     sleep(1);  </code></pre>
+
+<h2>Program</h2>
+
+<p>The final program looks like this:</p>
+
+<pre><code>    use SDL;
+    use SDLx::App;
+    use SDLx::Sprite;
+
+    my $app = SDLx::App-&gt;new(
+        w     =&gt; 500,
+        h     =&gt; 500,
+        d     =&gt; 32,
+        title =&gt; &#39;Pretty Flowers&#39;
+    );
+
+    # Draw Code Starts here
+
+    my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
+
+    $flower-&gt;surface-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
+
+    $flower-&gt;surface-&gt;draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+    $flower-&gt;alpha_key(0);
+
+    $app-&gt;draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
+
+    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
+
+    foreach ( 0 .. 500 ) {
+        my $y = 425 - rand(50);
+        $flower-&gt;draw_xy( $app, rand(500) - 20, $y );
+    }
+
+    #Draw Code Ends Here
+
+    $app-&gt;update();
+
+    sleep(2);</code></pre>
 
 <h1>Handling Events</h1>
 
@@ -804,37 +805,11 @@ clear the screen. Pressing 'ctrl-s' will save our image to the file
 
 
 
-<h3>Keyboard</h3>
+<h3>Saving the image</h3>
 
-<p>To handle the keyboard specifications we will create another event
-callback.</p>
+<p>First, lets define the save subroutine.</p>
 
-<pre><code>    use strict;
-    use warnings;
-    use SDL;
-    use Cwd;
-    use SDL::Event;
-    use SDLx::App;
-
-    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32, title =&gt; &quot;Simple Paint&quot;);
-    sub quit_event {
-
-        my $event = shift;
-        my $controller = shift;
-        $controller-&gt;stop() if $event-&gt;type == SDL_QUIT;
-    }
-
-   
-    my @colors = (  0xFF0000FF, 0x00FF00FF,
-                    0x0000FFFF, 0xFFFF00FF,
-                    0xFF00FFFF, 0x00FFFFFF,
-                    0xCCFFCCFF, 0xFFCC33FF,
-                    0x000000FF, 0xFFFFFFFF );
-
-    my $brush_color = 0;
-
- 
-    sub save_image {
+<pre><code>    sub save_image {
 
        if( SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0 &amp;&amp; -e &#39;painted.bmp&#39;)
         {
@@ -845,8 +820,14 @@ callback.</p>
             warn &#39;Could not save painted.bmp: &#39;.SDL::get_errors();
         }
 
-    }
-   
+    }</code></pre>
+
+<h3>Keyboard</h3>
+
+<p>To handle the keyboard specifications we will create another event
+callback.</p>
+
+<pre><code>    my $brush_color = 0;
 
     sub keyboard_event
     {
@@ -872,15 +853,13 @@ callback.</p>
             $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 ) if $key_name =~ /^c$/;
             
             #Exit if we press a Q or q
-            $app-&gt;stop() if $key_name =~ /^q$/
+            $app-&gt;stop() if $key_name =~ /^q$/;
         }
         $app-&gt;update();    
     }
 
     $app-&gt;add_event_handler(\&amp;quit_event);
-    $app-&gt;add_event_handler(\&amp;keyboard_event);
-    $app-&gt;run()
-  </code></pre>
+    $app-&gt;add_event_handler(\&amp;keyboard_event);</code></pre>
 
 <blockquote>
 
@@ -940,6 +919,112 @@ point we have a simple paint application done.</p>
 <p>Another point to note is that each event_handler is called in the order
 that it was attached.</p>
 
+<h3>Program</h3>
+
+<p>The final program looks like this:</p>
+
+<pre><code>    use strict;
+    use warnings;
+    use SDL;
+    use Cwd;
+    use SDL::Event;
+    use SDLx::App;
+
+    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32,
+        title =&gt; &quot;Simple Paint&quot; );
+
+    sub quit_event {
+        my $event = shift;
+        my $controller = shift;
+        $controller-&gt;stop() if $event-&gt;type == SDL_QUIT;
+    }
+
+
+    sub save_image {
+
+       if( SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0 &amp;&amp; -e &#39;painted.bmp&#39;)
+        {
+             warn &#39;Saved painted.bmp to &#39;.cwd();
+        }
+        else
+        {
+            warn &#39;Could not save painted.bmp: &#39;.SDL::get_errors();
+        }
+
+    }
+
+    my @colors = (  0xFF0000FF, 0x00FF00FF,
+                    0x0000FFFF, 0xFFFF00FF,
+                    0xFF00FFFF, 0x00FFFFFF,
+                    0xCCFFCCFF, 0xFFCC33FF,
+                    0x000000FF, 0xFFFFFFFF );
+
+    my $brush_color = 0;
+
+    sub keyboard_event
+    {
+        my $event = shift;
+
+        #Check that our type of event press is a SDL_KEYDOWN
+        if( $event-&gt;type == SDL_KEYDOWN )
+        {
+            #Convert the key_symbol (integer) to a keyname
+            my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
+
+            #if our $key_name is a digit use it as a color
+            $brush_color = $key_name if $key_name =~ /^\d$/;
+
+            #Get the keyboard modifier perldoc SDL::Events
+            #We are using any CTRL so KMOD_CTRL is fine
+            my $mod_state = SDL::Events::get_mod_state();
+
+            #Save the image.
+            save_image if $key_name =~ /^s$/ &amp;&amp; ($mod_state &amp; KMOD_CTRL);
+
+            #Clear the screen if we pressed C or c
+            $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 ) if $key_name =~ /^c$/;
+
+            #Exit if we press a Q or q
+            $app-&gt;stop() if $key_name =~ /^q$/;
+        }
+        $app-&gt;update();
+    }
+
+    $app-&gt;add_event_handler(\&amp;keyboard_event);
+
+    #Keep track if we are drawing
+    my $drawing = 0;
+    sub mouse_event {
+
+        my $event = shift;
+
+        #We will detect Mouse Button events
+        #and check if we already started drawing
+        if($event-&gt;type == SDL_MOUSEBUTTONDOWN || $drawing)
+        {
+            # set drawing to 1
+            $drawing = 1;
+
+            # get the X and Y values of the mouse
+            my $x =  $event-&gt;button_x;
+            my $y =  $event-&gt;button_y;
+
+            # Draw a rectangle at the specified position
+            $app-&gt;draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
+
+            # Update the application
+            $app-&gt;update();
+        }
+
+        # Turn drawing off if we lift the mouse button
+        $drawing = 0 if($event-&gt;type == SDL_MOUSEBUTTONUP );
+
+    }
+
+
+    $app-&gt;add_event_handler( \&amp;mouse_event );
+    $app-&gt;run();</code></pre>
+
 <h1>The Game Loop</h1>
 
 <h2>Simplest Game Loop</h2>
@@ -988,7 +1073,7 @@ the screen and show the game to the player.</p>
                     {
                         $quit = 1 if $event-&gt;type == SDL_QUIT  
                     }
-                  }
+    }
 
     sub calculate_next_positions{
         # Move the laser over
@@ -1025,16 +1110,16 @@ the screen and show the game to the player.</p>
 CPU clock speed is always known. The game users will be using the same
 processor characteristics to run this code. This means that each animation
 and calculation will happen at the exact same time in each machine.
-Unfortunately this is typical not typical true for modern operating systems
-and hardware. For faster CPUs and systems with varying loads we need to
-regulate updates so game play will be consistent in most cases.</p>
+Unfortunately, this is typically not true for modern operating systems and
+hardware. For faster CPUs and systems with varying loads, we need to
+regulate updates so that game play will be consistent in most cases.</p>
 
 <h2>Fixed FPS</h2>
 
 <p>One way to solve this problem is to regulate the "Frames Per Second" for
-your games updates. A "frame" is defined as a complete redraw of the screen
-representing the updated game state. We can keep track of the number of
-frames we are delivering each second and control it using the technique
+your game's updates. A "frame" is defined as a complete redraw of the
+screen representing the updated game state. We can keep track of the number
+of frames we are delivering each second and control it using the technique
 illustrated below.</p>
 
 <h3>Exercise</h3>
@@ -1094,7 +1179,7 @@ However if this is not the case read on to the problems below.</p>
 
                 my $event = SDL::Event-&gt;new();
 
-        #Pump the event queue
+                #Pump the event queue
                 SDL::Events::pump_events;
 
                 while ( SDL::Events::poll_event($event) ) {
@@ -1110,13 +1195,13 @@ However if this is not the case read on to the problems below.</p>
 
         sub render {
 
-        #Draw the background first
+                #Draw the background first
                 $app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0 );
 
-        #Draw the laser
+                #Draw the laser
                 $app-&gt;draw_rect( [ $laser, $app-&gt;h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
 
-        #Draw our FPS on the screen so we can see
+                #Draw our FPS on the screen so we can see
                 $app-&gt;draw_gfx_text( [ 10, 10 ], [ 255, 0, 255, 255 ], &quot;FPS: $FPS&quot; );
 
                 $app-&gt;update();
@@ -1202,33 +1287,35 @@ However if this is not the case read on to the problems below.</p>
 
 <h3>Problems</h3>
 
-<p>Generally this method is sufficient for most computers out there. The
+<p>Generally, this method is sufficient for most computers out there. The
 animations will be smooth enough that we see the same game play on
-differing hardware. However there are some serious problems with this
-method. First if a computer is too slow for 60 frames for second it will
-skip a lot of rendering, and the animation will look sparse and jittery.
-Maybe it would be better for 30 fps or lower for that machine, which is
-hard for the developer to predict. Secondly if a CPU is fast, a lot of CPU
-cycles are wasted in the delay.</p>
+differing hardware. However, there are some serious problems with this
+method. First, if a computer is too slow for 60 fps, it will skip a lot of
+rendering, and the animation will look sparse and jittery. Maybe it would
+be better for to set the fps bounds to 30 fps or lower for that machine.
+However, the developer cannot predict and hard code the best frame rate for
+a user. Secondly, if a CPU is fast, a lot of CPU cycles are wasted in the
+delay.</p>
 
-<p>Finally this method does not fix the fundamental problem that the
-rendering is fixed to CPU clock speed.</p>
+<p>Finally, this method does not fix the fundamental problem that the
+rendering is tied to CPU clock speed.</p>
 
 <h3>Potential Fix: Variable FPS</h3>
 
 <p>One way to fix the problem of a computer being consistently faster or
-slower for the default Frame per Second set, is to change the FPS
-accordingly. So far a slow CPU it will jump down to 30 FPS and so on. In
-our opinion, although a consistent FPS can be achieved this way, it still
-presents the problem of differing animation speeds for different CPUs and
-systems. There are better solutions available.</p>
+slower for the default Frames per Second set is to change the FPS
+accordingly. So for a slow CPU, the fps will be limited to 30 FPS and so
+on. In our opinion, although a consistent FPS can be achieved this way, it
+still presents the problem of differing animation speeds for different CPUs
+and systems. There are better solutions available that will maintain a
+decent FPS across all systems.</p>
 
 <h2>Integrating Physics</h2>
 
 <p>The problem caused by coupling rendering to the CPU speed has a
 convenient solution. We can derive our rendering from a physical model
 based on the passage of time. Objects moving according to real world time
-will have consistent behavior at all CPU speeds, and smooth interpolation
+will have consistent behavior at all CPU speeds and smooth interpolation
 between frames. SDLx::App provides just such features for our convenience
 through movement handlers and 'show' handlers.</p>
 
@@ -1250,17 +1337,18 @@ velocity in pixels per time step at the window's mid-point:</p>
 <p>Note that it no longer matters at what speed this equation is processed,
 instead the values are coupled to the passage of real time.</p>
 
-<p>The biggest problem with this sort of solution the book keeping required
-for many objects and callbacks. The implementation of such complex models
-is non trivial, and will not be explored in this book. The topic is
-discussed at length in the <code>SDLx::Controller</code> module.</p>
+<p>The biggest problem with this sort of solution is the required
+bookkeeping for the many objects and callbacks we may track. The
+implementation of such complex models is non-trivial and will not be
+explored in this manual. This topic is discussed at length in the
+<code>SDLx::Controller</code> module.</p>
 
 <h3>Laser in Real Time</h3>
 
-<p>This version of the laser example demonstrates the use of movement, and
-'show' handlers and the simple physics model described above. This example
+<p>This version of the laser example demonstrates the use of movement,
+'show' handlers, and the simple physics model described above. This example
 is also much simpler since SDLx::App is doing more of the book work for us.
-It even implements the whole game loop for us.</p>
+SDLx::App even implements the whole game loop for us.</p>
 
 <pre><code>        use strict;
         use warnings;
@@ -1476,7 +1564,7 @@ object's position.</p>
 <p>It's time to let the player move the left paddle! Take a few moments to
 recap what motion is all about: changing your object's position with
 respect to time. If it's some sort of magical teleportation repositioning,
-just change the (x,y) coordinates and be gone with it. If however, we're
+just change the (x,y) coordinates and be done with it. If however, we're
 talking about real motion, we need to move at a certain speed. Our paddle
 will have constant speed, so we don't need to worry about acceleration.
 Also, since it will only move vertically, we just need to add the vertical
@@ -1589,7 +1677,7 @@ we need to load the SDL::Events module:</p>
 <p>Again, nothing new here. Whenever the user presses the up arrow key, we
 want the paddle to go up. Keep in mind our origin point (0,0) in SDL is the
 top-left corner, so a negative <code>v_y</code> will decrease the paddle's
-<code>y</code> and send us <b>up</b> the screen. Alternatively, we add a
+<code>y</code> and send it <b>up</b> the screen. Alternatively, we add a
 positive value to <code>v_y</code> whenever the user presses the down arrow
 key, so the paddle will move <b>down</b>, away from the top of the screen.
 When the user releases either the up or down arrow keys, we stop the paddle
@@ -1627,8 +1715,8 @@ speed:</p>
    + });</code></pre>
 
 <p>This is just like our paddle's motion handler: we update the ball's
-<code>x</code> and <code>y</code> positioning on the screen according to
-the current velocity. If you are paying attention, however, you probably
+<code>x</code> and <code>y</code> position on the screen according to the
+current velocity. If you are paying attention, however, you probably
 realized the code above is missing a very important piece of logic. Need a
 clue? Try running the game as it is. You'll see the ball going, going,
 and... gone!</p>
@@ -1659,11 +1747,11 @@ functionality:</p>
    +     }
      });</code></pre>
 
-<p>If the new x (<code>"left"</code>) and y (<code>"top"</code>) values
-would take the ball totally or partially off the screen, we replace it with
-the farthest position possible (making it "touch" that edge of the screen)
-and reverse <code>v_y</code>, so it will go the opposite way on the next
-cycle, bouncing back into the screen.</p>
+<p>If the new y (<code>"bottom"</code> or <code>"top"</code>) value would
+take the ball totally or partially off the screen, we replace it with the
+farthest position possible (making it "touch" that edge of the screen) and
+reverse <code>v_y</code>, so it will go the opposite way on the next cycle,
+bouncing back into the screen.</p>
 
 <h4>He shoots... and scores!!</h4>
 
@@ -1724,7 +1812,7 @@ the left and right corners:</p>
      });</code></pre>
 
 <p>If the ball's right hits the right end of the screen (the app's width),
-we increase player 1's score, call <code>reset_game()</code> and return
+we increase player 1's score, call <code>reset_game()</code>, and return
 without updating the ball's position. If the ball's left hits the left end
 of the screen, we do the same for player 2.</p>
 
@@ -1747,7 +1835,7 @@ shapes in a 2D plane are <b>not</b> intersecting if and only if we can
 place a line separating them. Since our rect objects (the ball and paddles)
 are both axis-aligned, we can simply pick one, and there will be only 4
 possible lines to test: its left, right, top and bottom. If the other
-object is completely to the other side of any of those lines, then there is
+object is completely on one side of any of those lines, then there is
 <b>no</b> collision. But if all four conditions are false, they are
 intersecting.</p>
 
@@ -1904,9 +1992,10 @@ let's add it to the beginning of our code:</p>
 
 <pre><code>   + my $score = SDLx::Text-&gt;new( font =&gt; &#39;font.ttf&#39;, h_align =&gt; &#39;center&#39; );</code></pre>
 
-<p>The <code>font</code> parameter specifies the path to a TrueType Font.
-Here we are loading the '<i>font.ttf</i>' file, so feel free to change this
-to whatever font you have in your system. The <code>h_align</code>
+<p>The optional <code>font</code> parameter specifies the path to a
+TrueType Font. Here we are loading the '<i>font.ttf</i>' file, so feel free
+to change this to whatever font you have in your system. Otherwise, you can
+leave it out and use the bundled default font. The <code>h_align</code>
 parameter lets us choose a horizontal alignment for the text we put in the
 object. It defaults to '<i>left</i>', so we make it '<i>center</i>'
 instead.</p>
