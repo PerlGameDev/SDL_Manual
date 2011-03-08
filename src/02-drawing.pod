@@ -303,9 +303,9 @@ that we need for game images that move a lot. For now lets use C<SDLx::Sprite> f
 
     my $flower = SDLx::Sprite->new( width => 50, height => 100 );
 
-    # To access the SDLx::Surface to write to we use the ->surface() method
+    # To access the SDLx::Surface to write to, we use the ->surface() method
 
-    # Lets make the background black
+    # Let's make the background black
     $flower->surface->draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
 
     # Now for a pretty green stem
@@ -324,7 +324,7 @@ that we need for game images that move a lot. For now lets use C<SDLx::Sprite> f
 =end programlisting
 
 Obviously at this point we don't want our single flower floating in the sky, so we will draw several of them 
-on the ground. Delete everything including and after 
+on the ground. Delete everything from line 34 including and after 
 
     $flower->draw_xy($app, 0,0)
 
