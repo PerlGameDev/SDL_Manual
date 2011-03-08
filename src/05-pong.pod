@@ -140,7 +140,7 @@ The result can be seen on the screenshot below:
 It's time to let the player move the left paddle! Take a few moments to
 recap what motion is all about: changing your object's position with
 respect to time. If it's some sort of magical teleportation repositioning,
-just change the (x,y) coordinates and be gone with it. If however, we're
+just change the (x,y) coordinates and be done with it. If however, we're
 talking about real motion, we need to move at a certain speed. Our paddle
 will have constant speed, so we don't need to worry about acceleration.
 Also, since it will only move vertically, we just need to add the vertical
@@ -250,7 +250,7 @@ Then we can proceed to create our event hook:
 Again, nothing new here. Whenever the user presses the up arrow key, we
 want the paddle to go up. Keep in mind our origin point (0,0) in SDL is
 the top-left corner, so a negative C<v_y> will decrease the paddle's C<y>
-and send us B<up> the screen. Alternatively, we add a positive value to
+and send it B<up> the screen. Alternatively, we add a positive value to
 C<v_y> whenever the user presses the down arrow key, so the paddle will
 move B<down>, away from the top of the screen. When the user releases
 either the up or down arrow keys, we stop the paddle by setting C<v_y> to 0.
@@ -285,7 +285,7 @@ the ball's C<x> and C<y> position according to its speed:
    + });
 
 This is just like our paddle's motion handler: we update the ball's C<x>
-and C<y> positioning on the screen according to the current velocity. If
+and C<y> position on the screen according to the current velocity. If
 you are paying attention, however, you probably realized the code above is
 missing a very important piece of logic. Need a clue? Try running the game
 as it is. You'll see the ball going, going, and... gone!
@@ -316,7 +316,7 @@ functionality:
    +     }
      });
 
-If the new x (C<"left">) and y (C<"top">) values would take the ball
+If the new y (C<"bottom"> or C<"top">) value would take the ball
 totally or partially off the screen, we replace it with the farthest
 position possible (making it "touch" that edge of the screen) and
 reverse C<v_y>, so it will go the opposite way on the next cycle,
@@ -381,7 +381,7 @@ the left and right corners:
      });
 
 If the ball's right hits the right end of the screen (the app's width),
-we increase player 1's score, call C<reset_game()> and return without
+we increase player 1's score, call C<reset_game()>, and return without
 updating the ball's position. If the ball's left hits the left end of
 the screen, we do the same for player 2.
 
@@ -405,7 +405,7 @@ two convex shapes in a 2D plane are B<not> intersecting if and only if we
 can place a line separating them. Since our rect objects (the ball and
 paddles) are both axis-aligned, we can simply pick one, and there will be
 only 4 possible lines to test: its left, right, top and bottom. If the
-other object is completely to the other side of any of those lines, then
+other object is completely on one side of any of those lines, then
 there is B<no> collision. But if all four conditions are false,
 they are intersecting.
 
