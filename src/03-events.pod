@@ -205,7 +205,7 @@ To handle the keyboard specifications we will create another event callback.
             $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/;
             
             #Exit if we press a Q or q
-            $app->stop() if $key_name =~ /^q$/
+            $app->stop() if $key_name =~ /^q$/;
         }
         $app->update();    
     }
