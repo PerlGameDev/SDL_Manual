@@ -135,38 +135,12 @@ the file 'painted.bmp'.
         \caption{Simple Paint: Smile}               
          \label{fig:Smile} 
 
+=head2 Saving the image
 
-=head2 Keyboard
-
-To handle the keyboard specifications we will create another event callback.
+First, lets define the save subroutine.
 
 =begin programlisting
 
-    use strict;
-    use warnings;
-    use SDL;
-    use Cwd;
-    use SDL::Event;
-    use SDLx::App;
-
-    my $app = SDLx::App->new( w => 200, h => 200, d => 32, title => "Simple Paint");
-    sub quit_event {
-
-        my $event = shift;
-	my $controller = shift;
-        $controller->stop() if $event->type == SDL_QUIT;
-    }
-
-   
-    my @colors = (  0xFF0000FF, 0x00FF00FF,
-                    0x0000FFFF, 0xFFFF00FF,
-                    0xFF00FFFF, 0x00FFFFFF,
-                    0xCCFFCCFF, 0xFFCC33FF,
-                    0x000000FF, 0xFFFFFFFF );
-
-    my $brush_color = 0;
-
- 
     sub save_image {
 
        if( SDL::Video::save_BMP( $app, 'painted.bmp' ) == 0 && -e 'painted.bmp')
@@ -179,7 +153,24 @@ To handle the keyboard specifications we will create another event callback.
         }
 
     }
-   
+
+=end programlisting
+
+
+
+=head2 Keyboard
+
+To handle the keyboard specifications we will create another event callback.
+
+=begin programlisting
+    # Color array
+    my @colors = (  0xFF0000FF, 0x00FF00FF,
+                    0x0000FFFF, 0xFFFF00FF,
+                    0xFF00FFFF, 0x00FFFFFF,
+                    0xCCFFCCFF, 0xFFCC33FF,
+                    0x000000FF, 0xFFFFFFFF );
+
+    my $brush_color = 0;
 
     sub keyboard_event
     {
@@ -212,8 +203,7 @@ To handle the keyboard specifications we will create another event callback.
 
     $app->add_event_handler(\&quit_event);
     $app->add_event_handler(\&keyboard_event);
-    $app->run()
-  
+
 =end programlisting
 
 =for sidebar
@@ -267,8 +257,118 @@ Now we will go about capturing our Mouse events, by inserting the following code
 =end programlisting
 
 Currently we don't make a distinction between what mouse click is done. This can be accomplished by taking a look at the
-C<button_button()> method in C<SDL::Event>. At this point we have a simple paint application done. 
+C<button_button()> method in C<SDL::Event>. At this point we have a simple paint application done.
 
 Another point to note is that each event_handler is called in the order that it was attached.
+
+=head2 Program
+
+The final program looks like this:
+
+=begin programlisting
+
+    use strict;
+    use warnings;
+    use SDL;
+    use Cwd;
+    use SDL::Event;
+    use SDLx::App;
+
+    my $app = SDLx::App->new( w => 200, h => 200, d => 32,
+        title => "Simple Paint" );
+
+    sub quit_event {
+        my $event = shift;
+        my $controller = shift;
+        $controller->stop() if $event->type == SDL_QUIT;
+    }
+
+
+    sub save_image {
+
+       if( SDL::Video::save_BMP( $app, 'painted.bmp' ) == 0 && -e 'painted.bmp')
+        {
+             warn 'Saved painted.bmp to '.cwd();
+        }
+        else
+        {
+            warn 'Could not save painted.bmp: '.SDL::get_errors();
+        }
+
+    }
+
+    my @colors = (  0xFF0000FF, 0x00FF00FF,
+                    0x0000FFFF, 0xFFFF00FF,
+                    0xFF00FFFF, 0x00FFFFFF,
+                    0xCCFFCCFF, 0xFFCC33FF,
+                    0x000000FF, 0xFFFFFFFF );
+
+    my $brush_color = 0;
+
+    sub keyboard_event
+    {
+        my $event = shift;
+
+        #Check that our type of event press is a SDL_KEYDOWN
+        if( $event->type == SDL_KEYDOWN )
+        {
+            #Convert the key_symbol (integer) to a keyname
+            my $key_name = SDL::Events::get_key_name( $event->key_sym );
+
+            #if our $key_name is a digit use it as a color
+            $brush_color = $key_name if $key_name =~ /^\d$/;
+
+            #Get the keyboard modifier perldoc SDL::Events
+            #We are using any CTRL so KMOD_CTRL is fine
+            my $mod_state = SDL::Events::get_mod_state();
+
+            #Save the image.
+            save_image if $key_name =~ /^s$/ && ($mod_state & KMOD_CTRL);
+
+            #Clear the screen if we pressed C or c
+            $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/;
+
+            #Exit if we press a Q or q
+            $app->stop() if $key_name =~ /^q$/;
+        }
+        $app->update();
+    }
+
+    $app->add_event_handler(\&keyboard_event);
+
+    #Keep track if we are drawing
+    my $drawing = 0;
+    sub mouse_event {
+
+        my $event = shift;
+
+        #We will detect Mouse Button events
+        #and check if we already started drawing
+        if($event->type == SDL_MOUSEBUTTONDOWN || $drawing)
+        {
+            # set drawing to 1
+            $drawing = 1;
+
+            # get the X and Y values of the mouse
+            my $x =  $event->button_x;
+            my $y =  $event->button_y;
+
+            # Draw a rectangle at the specified position
+            $app->draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
+
+            # Update the application
+            $app->update();
+        }
+
+        # Turn drawing off if we lift the mouse button
+        $drawing = 0 if($event->type == SDL_MOUSEBUTTONUP );
+
+    }
+
+
+    $app->add_event_handler( \&mouse_event );
+    $app->run();
+
+=end programlisting
 
 =for vim: spell
