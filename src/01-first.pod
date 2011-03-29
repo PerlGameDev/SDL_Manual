@@ -1,18 +1,15 @@
 =head0 The Screen
 
 =head1 Background
+
 X<Video>
 X<Video Device>
 X<Surface>
 X<Screen>
 
-SDL manages a single screen which is attached to the video device. , some examples are X11 and DirectX. An SDL application may contain one or more Surfaces.
-
-=begin sidebar 
-
-
-
-=end sidebar 
+SDL manages a single screen which is attached to the video device. Some
+common examples of video devices are through X11 and DirectX. An SDL
+application may contain one or more Surfaces.
 
 The screen is typically created using the C<SDLx::App> class.
 
@@ -29,7 +26,11 @@ The screen is typically created using the C<SDLx::App> class.
 
 =end programlisting
 
-The above code causes a window to appear on the desktop with nothing in it. Most current systems will fill it with a default black screen as shown. For some systems, however, a transparent window will might be shown.  It is a good idea to ensure what we intend to display is shown. So we update the C<$app> to ensure that.
+The above code causes a window to appear on the desktop with nothing in it.
+Most current systems will fill it with a default black screen.
+For some systems, however, a transparent window might be displayed instead.
+It is a good idea to ensure that what we intend to display is shown, so we
+update the C<$app> to ensure the screen is drawn black.
 
     $app->update();
 
@@ -39,18 +40,21 @@ C<SDLx::App> also allows you to specify several options for your application.
 
 =head2 Dimensions
 
-First are the physical dimensions of the screen itself. Lets make the screen a square size of 400×400. Change the initialization line to:
+First are the physical dimensions of the screen itself. Let's make the screen
+of the C<SDLx::App> window a square size of 400×400 pixels. Change the
+initialization line to:
 
     my $app = SDLx::App->new( width => 400, height => 400 );
 
 =head2 Title
 
-You will notice that the window's title is either blank or on some window managers it displays the path to the script file, depending on your operating system. Suppose we want a title for a new Pong clone game:
-
+You will notice that the window's title is either blank or on some window
+managers it displays the path to the script file, depending on your operating
+system. Suppose we want a title for a new Pong clone game:
 
     my $app = SDLx::App->new( width  => 400,
                               height => 400,
-                              title  => 'Ping - A clone' );
+                              title  => 'Pong - A clone' );
 
 At this point your screen will be:
 
@@ -63,9 +67,11 @@ At this point your screen will be:
 
 =head2 Shortcuts
 
-There are short-hand versions of the parameter names used in the call to C<new()>.  The parameters C<width>, C<height>, and C<title> may be abbreviated as C<w>, C<h> and C<t> respectively.  So, the previous example could be written like this:
-
+There are short-hand versions of the parameter names used in the call to
+C<new()>. The parameters C<width>, C<height>, and C<title> may be abbreviated
+as C<w>, C<h>, and C<t> respectively. So the previous example could also be
+written like this:
 
     my $app = SDLx::App->new( w => 400,
                               h => 400,
-                              t => 'Ping - A clone' );
+                              t => 'Pong - A clone' );
