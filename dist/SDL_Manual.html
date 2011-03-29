@@ -2,24 +2,24 @@
 
 <h2>Background</h2>
 
-<p><i>Simple DirectMedia Layer</i> (a.k.a <i>libsdl</i>) is a
+<p><i>Simple DirectMedia Layer</i> (a.k.a. <i>libsdl</i>) is a
 cross-platform C library that provides access to several input and output
 devices. Most popularly it is used for its access to the 2D video
 framebuffer and inputs for games.</p>
 
 <p>In addition to the core library there are several other libraries that
-provide useful features such as <i>Text</i>, <i>Mixers</i>, <i>Images</i>
+provide useful features such as <i>Text</i>, <i>Mixers</i>, <i>Images</i>,
 and <i>GFX</i>.</p>
 
-<p>SDL Perl binds several of these libraries together int the
-<code>SDL::*</code> namespace. Moreover, SDL Perl provides several high
-level libraries in the <code>SDLx::*</code> namespace that encapsulate
-valuable game writing abstractions.</p>
+<p>SDL Perl binds several of these libraries together in the
+<code>SDL::*</code> namespace. Moreover, SDL Perl provides several
+high-level libraries in the <code>SDLx::*</code> namespace that encapsulate
+valuable game-writing abstractions.</p>
 
 <h3>The <code>SDLx::</code> layer</h3>
 
 <p>The main purpose of the <code>SDLx::*</code> layer is to smooth out the
-drudgery of using the <code>SDL::*</code> layer directly. For example
+drudgery of using the <code>SDL::*</code> layer directly. For example,
 drawing a rectangle involves the following work.</p>
 
 <blockquote>
@@ -27,58 +27,61 @@ drawing a rectangle involves the following work.</p>
 <h5>NOTE:</h5>
 
 <p>Don't worry about understanding the code at this moment. Just compare
-the two code listings below.</p>
+the two code listings for displaying the same blue rectangle below.</p>
+
+<p>Using the <code>SDL::*</code> layer to draw a blue rectangle looks
+something like this:</p>
 
 </blockquote>
 
-<pre><code>        use SDL;
-        use SDL::Video;
-        use SDL::Surface;
-        use SDL::Rect;
+<pre><code>    use SDL;
+    use SDL::Video;
+    use SDL::Surface;
+    use SDL::Rect;
 
-        # the size of the window box or the screen resolution if fullscreen
-        my $screen_width   = 800;
-        my $screen_height  = 600;
+    # the size of the window box or the screen resolution if fullscreen
+    my $screen_width   = 800;
+    my $screen_height  = 600;
 
-        SDL::init(SDL_INIT_VIDEO);
+    SDL::init(SDL_INIT_VIDEO);
 
-        # setting video mode
-        my $screen_surface = SDL::Video::set_video_mode($screen_width, 
-                                                        $screen_height, 
-                                                        32, 
-                                                        SDL_ANYFORMAT);
+    # setting video mode
+    my $screen_surface = SDL::Video::set_video_mode($screen_width,
+                                                    $screen_height,
+                                                    32,
+                                                    SDL_ANYFORMAT);
 
-        # drawing a rectangle with the blue color
-        my $mapped_color   = SDL::Video::map_RGB($screen_surface-&gt;format(), 0, 0, 255);
-        SDL::Video::fill_rect($screen_surface,
-                              SDL::Rect-&gt;new($screen_width / 4, $screen_height / 4,
-                                             $screen_width / 2, $screen_height / 2), 
-                              $mapped_color);
+    # drawing a rectangle with the blue color
+    my $mapped_color   = SDL::Video::map_RGB($screen_surface-&gt;format(), 0, 0, 255);
+    SDL::Video::fill_rect($screen_surface,
+                          SDL::Rect-&gt;new($screen_width / 4, $screen_height / 4,
+                                         $screen_width / 2, $screen_height / 2),
+                          $mapped_color);
 
-        # update an area on the screen so its visible
-        SDL::Video::update_rect($screen_surface, 0, 0, $screen_width, $screen_height);
+    # update an area on the screen so its visible
+    SDL::Video::update_rect($screen_surface, 0, 0, $screen_width, $screen_height);
 
-        sleep(5); # just to have time to see it</code></pre>
+    sleep(5); # just to have time to see it</code></pre>
 
-<p>While drawing a blue rectangle in the <code>SDLx::*</code> layer is as
+<p>while drawing a blue rectangle in the <code>SDLx::*</code> layer is as
 simple as:</p>
 
-<pre><code>       use strict;
-       use warnings;
-       
-       use SDL;
-       use SDLx::App;
+<pre><code>   use strict;
+   use warnings;
 
-       my $app = SDLx::App-&gt;new( width=&gt; 800, height =&gt; 600 );
-       
-       $app-&gt;draw_rect([ $app-&gt;width/4, $app-&gt;height / 4, $app-&gt;width /2, $app-&gt;height / 2 ], [0,0,255,255] );
+   use SDL;
+   use SDLx::App;
 
-       $app-&gt;update();
+   my $app = SDLx::App-&gt;new( width=&gt; 800, height =&gt; 600 );
 
-       sleep(5);</code></pre>
+   $app-&gt;draw_rect([ $app-&gt;width/4, $app-&gt;height / 4, $app-&gt;width /2, $app-&gt;height / 2 ], [0,0,255,255] );
+
+   $app-&gt;update();
+
+   sleep(5);</code></pre>
 
 <p>A secondary purpose of the <code>SDLx::*</code> modules are to manage
-additional features for users, such as Layers, Game Loop handling and
+additional features for users, such as Layers, Game Loop handling, and
 more.</p>
 
 <h2>Audience</h2>
@@ -90,24 +93,24 @@ goes.</p>
 
 <h2>Format of this book</h2>
 
-<p>This book will be formated into chapters that progressively increase in
-complexity. However each chapter can be treated as a separate tutorial to
-jump to and learn.</p>
+<p>This book will be formatted into chapters that progressively increase in
+complexity. However each chapter can also be treated individually as a
+separate tutorial to jump to and learn from.</p>
 
-<p>Each chapter will have a specific goal (e.g. <i>Making Pong</i>), which
+<p>Each chapter will have a specific goal (e.g., <i>Making Pong</i>), which
 we will work towards. The source code for each chapter will be broken up
 and explained in some detail. Sources and data files are all provided on
-http://sdl.perl.org.</p>
+HTTP://SDL.Perl.Org.</p>
 
-<p>Finally the chapters will end with an exercise the reader can try
+<p>Finally chapters will end with an exercise for the reader to try
 out.</p>
 
 <h2>Purpose of this book</h2>
 
 <p>This book is intended to introduce game development to Perl programmers
 and at the same time introduce Modern Perl concepts through game
-development. The book provides a progression of simple to intermediate
-examples and provide suggestions for more advanced endeavors.</p>
+development. The book presents a progression from simple to intermediate
+examples and provides suggestions for more advanced endeavors.</p>
 
 <h2>Installing SDL Perl</h2>
 
@@ -124,24 +127,25 @@ there is no need to compile anything.</p>
 
 <h4>Packages</h4>
 
-<p>Fink has packages for SDL Perl available. However Pango is not currently
+<p>Fink has packages for SDL Perl available, however Pango is not currently
 supported.</p>
 
 <h4>Or Compiling Dependencies</h4>
 
 <p><code>Alien::SDL</code> will compile SDL dependencies from scratch with
-no problems as long some prerequisites are installed.
+no problems as long as some prerequisites are installed.
 <code>libfreetype6</code>, <code>libX11</code>, <code>libvorbis</code>,
-<code>libogg</code> and <code>libpng</code> headers will suffice for most
+<code>libogg</code>, and <code>libpng</code> headers will suffice for most
 examples in this book.</p>
 
 <h3>Linux</h3>
 
-<p>Most current linux distributions include all the parts needed for this
-tutorial in the default install and in their package management system. It
-is also always possible to install on linux using the available open source
-code from their repositories. The Alien::SDL perl module automates much of
-downloading, compiling and installing the needed libraries.</p>
+<p>Most current GNU/Linux distributions include all the parts needed for
+this tutorial in the default install and in their package management
+system. It is also always possible to install on GNU/Linux using the
+available open source code from the proper repositories. The Alien::SDL
+perl module automates much of downloading, compiling, and installing the
+needed libraries.</p>
 
 <h4>Packages</h4>
 
@@ -149,12 +153,12 @@ downloading, compiling and installing the needed libraries.</p>
 try:</p>
 
 <pre><code>    sudo apt-get install libsdl-net1.2-dev libsdl-mixer1.2-dev \
-    libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev \ 
+    libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev \
     libsdl-gfx1.2-dev libsdl-pango-dev</code></pre>
 
 <h4>Or Compiling Dependencies</h4>
 
-<p>To compile from scratch a compiler, system header packages and some
+<p>To compile from scratch, a compiler, system header packages, and some
 libraries are required.</p>
 
 <pre><code>    sudo apt-get install build-essential xorg-dev libx11-dev libxv-dev \
@@ -167,8 +171,7 @@ libraries are required.</p>
 are up-to-date.</p>
 
 <pre><code>    sudo cpan CPAN
-    sudo cpan YAML Module::Build
-    </code></pre>
+    sudo cpan YAML Module::Build</code></pre>
 
 <p>After these two steps cpan will be able to find all depedencies for
 SDL.</p>
@@ -176,35 +179,37 @@ SDL.</p>
 <pre><code>    sudo cpan SDL</code></pre>
 
 <p>For most platforms a CPAN install will suffice. Supported and tested
-platforms are listed at http://pass.cpantesters.org/distro/S/SDL.html.</p>
+platforms are listed at HTTP://Pass.CPANTesters.Org/distro/S/SDL.html.</p>
 
 <h2>Contact</h2>
 
 <p>Hopefully this book answers most of your questions. If you find you need
-assistance please contact us in one of the following methods:</p>
+additional assistance, please contact us by one of the following
+methods:</p>
 
 <h3>Internet</h3>
 
-<p>SDL Perl's homepage is at http://sdl.perl.org/.</p>
+<p>SDL Perl's homepage is at HTTP://SDL.Perl.Org/.</p>
 
 <h3>IRC</h3>
 
-<p>The	channel <code>#sdl</code> on <code>irc.perl.org</code> is very
+<p>The	channel <code>#sdl</code> on <code>IRC.Perl.Org</code> is very
 active and a great resource for help and getting involved.</p>
 
 <h3>Mailing lists</h3>
 
 <p>If you need help with SDL Perl, send an  to
-<code>sdl-devel@perl.org</code>.</p>
+<code>sdl-devel@Perl.Org</code>.</p>
 
 <h2>Examples</h2>
 
-<p>The code examples in this books are provided on
-http://github.com/PerlGameDev/SDL_Manual/tree/master/code_listings/ .</p>
+<p>The code examples in this book are provided at
+HTTP://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings/.</p>
 
 <h2>Acknowledgements</h2>
 
-<p>To contributors and reviewers from the <code>#sdl</code> channel</p>
+<p>Thanks to contributors and reviewers from the <code>#sdl</code> channel,
+including:</p>
 
 <ul>
 
@@ -226,25 +231,25 @@ http://github.com/PerlGameDev/SDL_Manual/tree/master/code_listings/ .</p>
 
 <li>PerlJam
 
+<li>Pip
+
 <li>waxhead
 
 <li>and many more
 
-<pre><code>        (apologies if I have missed you let me know I will add you) </code></pre>
+<pre><code>    (Apologies if I have missed you; let me know I will add you.)</code></pre>
 
 </ul>
 
 <h1>The Screen</h1>
 
-<h2>Background	  </h2>
+<h2>Background</h2>
 
-<p>SDL manages a single screen which is attached to the video device. ,
-some examples are X11 and DirectX. An SDL application may contain one or
-more Surfaces.</p>
+<p>   </p>
 
-<blockquote>
-
-</blockquote>
+<p>SDL manages a single screen which is attached to the video device. Some
+common examples of video devices are through X11 and DirectX. An SDL
+application may contain one or more Surfaces.</p>
 
 <p>The screen is typically created using the <code>SDLx::App</code>
 class.</p>
@@ -259,10 +264,10 @@ class.</p>
     sleep( 2 );</code></pre>
 
 <p>The above code causes a window to appear on the desktop with nothing in
-it. Most current systems will fill it with a default black screen as shown.
-For some systems, however, a transparent window will might be shown. It is
-a good idea to ensure what we intend to display is shown. So we update the
-<code>$app</code> to ensure that.</p>
+it. Most current systems will fill it with a default black screen. For some
+systems, however, a transparent window might be displayed instead. It is a
+good idea to ensure that what we intend to display is shown, so we update
+the <code>$app</code> to ensure the screen is drawn black.</p>
 
 <pre><code>    $app-&gt;update();</code></pre>
 
@@ -273,8 +278,9 @@ your application.</p>
 
 <h3>Dimensions</h3>
 
-<p>First are the physical dimensions of the screen itself. Lets make the
-screen a square size of 400×400. Change the initialization line to:</p>
+<p>First are the physical dimensions of the screen itself. Let's make the
+screen of the <code>SDLx::App</code> window a square size of 400×400
+pixels. Change the initialization line to:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( width =&gt; 400, height =&gt; 400 );</code></pre>
 
@@ -286,7 +292,7 @@ operating system. Suppose we want a title for a new Pong clone game:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( width  =&gt; 400,
                               height =&gt; 400,
-                              title  =&gt; &#39;Ping - A clone&#39; );</code></pre>
+                              title  =&gt; &#39;Pong - A clone&#39; );</code></pre>
 
 <p>At this point your screen will be:</p>
 
@@ -299,13 +305,13 @@ operating system. Suppose we want a title for a new Pong clone game:</p>
 
 <p>There are short-hand versions of the parameter names used in the call to
 <code>new()</code>. The parameters <code>width</code>, <code>height</code>,
-and <code>title</code> may be abbreviated as <code>w</code>, <code>h</code>
-and <code>t</code> respectively. So, the previous example could be written
-like this:</p>
+and <code>title</code> may be abbreviated as <code>w</code>,
+<code>h</code>, and <code>t</code> respectively. So the previous example
+could also be written like this:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( w =&gt; 400,
                               h =&gt; 400,
-                              t =&gt; &#39;Ping - A clone&#39; );</code></pre>
+                              t =&gt; &#39;Pong - A clone&#39; );</code></pre>
 
 <h1>Drawing</h1>
 
@@ -313,9 +319,9 @@ like this:</p>
 
 <p>SDL provides several ways to draw graphical elements on the screen;
 these methods can be broken down into three general categories: Primitives,
-Images and Text. Methods in each of the three categories draw a single
+Images, and Text. Methods in each of the three categories draw a single
 object on the Surface. The Surface is represented by
-<code>SDLx::Surface</code>. Even our <code>SDLx::App</code> is a
+<code>SDLx::Surface</code>. Even our <code>SDLx::App</code> is an
 <code>SDLx::Surface</code>. This means that we can draw directly on the
 <code>SDLx::App</code>, however there are several advantages to drawing on
 multiple surfaces. In this chapter we will explore these methods of
@@ -323,10 +329,10 @@ drawing, and make a pretty picture.</p>
 
 <h2>Coordinates</h2>
 
-<p>SDL surfaces coordinate system has x=0, y=0 in the upper left corner and
-work downward and to the right. The API always lists coordinates in x,y
-order. More discussion of these details can be found in the SDL library
-documentation:
+<p>SDL's surface coordinate system has x=0,y=0 in the upper left corner and
+the dimensions span to the right and downward. The API always lists
+coordinates in x,y order. More discussion of these details can be found in
+the SDL library documentation:
 http://www.sdltutorials.com/sdl-coordinates-and-blitting/</p>
 
 <h2>Objective</h2>
@@ -344,7 +350,7 @@ http://www.sdltutorials.com/sdl-coordinates-and-blitting/</p>
 
 <h3>Syntax Overview</h3>
 
-<p>Drawing in SDL are done on Surfaces. The <code>SDLx::Surface</code>
+<p>Drawing in SDL is done on Surfaces. The <code>SDLx::Surface</code>
 object provides access to methods in the form of:</p>
 
 <pre><code>    $surface-&gt;draw_{something}( .... );</code></pre>
@@ -356,19 +362,18 @@ colors.</p>
 
 <p>Some parameters are just a quick definition of the positions and
 dimensions. For a rectangle that will be placed at <code>(20, 20)</code>
-pixel units on the screen, and a dimension of <code>40x40</code> pixel
-units the following would suffice.</p>
+pixel units on the screen, which has dimensions of <code>40x40</code> pixel
+units, the following would suffice.</p>
 
 <pre><code>    my $rect = [20, 20, 40, 40];</code></pre>
 
 <h4>Color</h4>
 
 <p> in SDL is described by 4 numbers. The first three numbers define the
-Red, Blue, Green intensity of the color. The final number defines the
+Red, Green, and Blue intensity of the Color. The final number defines the
 transparency of the Color.</p>
 
-<pre><code>    my $color = [255, 255, 255, 255];
-    </code></pre>
+<pre><code>    my $color = [255, 255, 255, 255];</code></pre>
 
 <p>Color can also be defined as hexadecimal values:</p>
 
@@ -376,7 +381,7 @@ transparency of the Color.</p>
 
 <p>The values of the numbers range from 0-255 for 32 bit depth in RGBA
 format. Alternately color can be described as a 4 byte hexadecimal value,
-each two digit byte encoding the same RGBA vaues as above:</p>
+each two digit byte encoding the same RGBA values as above:</p>
 
 <pre><code>    my $goldenrod = 0xDAA520FF;</code></pre>
 
@@ -387,9 +392,9 @@ each two digit byte encoding the same RGBA vaues as above:</p>
 <p>The bits of the surface are set when the <code>SDLx::Surface</code> or
 <code>SDLx::App</code> is made.</p>
 
-<pre><code>    my $app = SDLx::App-&gt;new(  depth =&gt; 32 ); </code></pre>
+<pre><code>    my $app = SDLx::App-&gt;new( depth =&gt; 32 );</code></pre>
 
-<p>Other options are 24,16 and 8. 32 is the default bit depth.</p>
+<p>Other options are 24, 16, and 8. 32 is the default bit depth.</p>
 
 </blockquote>
 
@@ -401,21 +406,21 @@ written to via a tied array interface.</p>
 <pre><code>    $app-&gt;[$x][$y] = $color;</code></pre>
 
 <p>The <code>$color</code> is defined as an unsigned integer value which is
-construct in the following format, <code>0xRRBBGGAA</code>. This is a
-hexadecimal number. Here are some examples:</p>
+constructed in the following hexadecimal format, <code>0xRRGGBBAA</code>.
+Here are some examples:</p>
 
 <pre><code>    $white = 0xFFFFFFFF;
     $black = 0x000000FF;
     $red   = 0xFF0000FF;
-    $blue  = 0x00FF00FF;
-    $green = 0x0000FFFF;</code></pre>
+    $green = 0x00FF00FF;
+    $blue  = 0x0000FFFF;</code></pre>
 
-<p>Pixels can also be defined as anonymous arrays as before <code>[$red,
-$blue, $green, $alpha]</code>.</p>
+<p>Pixels can also be defined as anonymous arrays as before with
+<code>[$red, $green, $blue, $alpha]</code>.</p>
 
 <h3>Primitives</h3>
 
-<p>Drawing  are usually simples shapes that can be used for creating
+<p>Drawing  are usually simple shapes that can be used for creating
 graphics dynamically.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/draw-1.png}
@@ -427,8 +432,8 @@ graphics dynamically.</p>
 
 <pre><code>    $app-&gt;draw_line( [200,20], [20,200], [255, 255, 0, 255] );</code></pre>
 
-<p>This will draw a yellow line from positions <code> (200,20) </code> to
-<code> (20,200) </code>.</p>
+<p>This will draw a yellow line from positions <code>(200,20)</code> to
+<code>(20,200)</code>.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/draw-2.png}
 \caption{Drawing a Rectangle} \label{fig:draw_rect}</p>
@@ -437,8 +442,8 @@ graphics dynamically.</p>
 
 <h4>Rectangles</h4>
 
-<p>Rectangles are a common building blocks for games. In SDL, rectangles
-are the most cost effective of the primitives to draw.</p>
+<p>Rectangles are a common building block for games. In SDL, rectangles are
+the most cost effective of the primitives to draw.</p>
 
 <pre><code>    $app-&gt;draw_rect( [10,20, 40, 40 ], [255, 255, 255,255] );</code></pre>
 
@@ -459,11 +464,11 @@ screen at the position <code>(10,20)</code>.</p>
 
 <p>Circles are drawn similarly either filled or unfilled.</p>
 
-<pre><code>    $app-&gt;draw_circle( [100,100], 20, [255,0,0,255] );
+<pre><code>    $app-&gt;draw_circle(        [100,100], 20, [255,0,0,255] );
     $app-&gt;draw_circle_filled( [100,100], 19, [0,0,255,255] );</code></pre>
 
-<p>Now we will have a filled circle, colored blue and unfilled circle,
-colored as red.</p>
+<p>Now we will have an unfilled circle colored red and a filled circle
+colored blue.</p>
 
 <h4>More Primitives</h4>
 
@@ -472,8 +477,8 @@ colored as red.</p>
 
 <h3>Application: Primitives</h3>
 
-<p>Using our knowledge of Primitives in SDL, lets draw our field, sky and a
-simple flower.</p>
+<p>Using our knowledge of Primitives in SDL, let's draw our field, sky, and
+a simple flower.</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -488,23 +493,23 @@ simple flower.</p>
     );
 
     #Adding the blue skies
-    $app-&gt;draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
+    $app-&gt;draw_rect( [ 0,   0, 500, 500 ], [ 20,  50, 170, 255 ] );
 
     #Draw our green field
-    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
+    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170,  20, 100 ] );
 
     # Make a surface 50x100 pixels
     my $flower = SDLx::Surface-&gt;new( width =&gt; 50, height =&gt; 100 );
 
     # Lets make the background black
-    $flower-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
+    $flower-&gt;draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
 
     # Now for a pretty green stem
-    $flower-&gt;draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+    $flower-&gt;draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
 
     # And the simple flower bud
     $flower-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
-    $flower-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+    $flower-&gt;draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
     # Draw flower on $app surface
     $flower-&gt;blit( $app, [ 0, 0, 50, 100 ] );
@@ -525,16 +530,17 @@ simple flower.</p>
 <p>So far we have been drawing only on one surface, the display. In SDL it
 is possible to write on several surfaces that are in memory. These surfaces
 can later on be added on to the display to show them. The Surface is
-defined as a <code>SDLx::Surface</code> type in SDL Perl.</p>
+defined as an <code>SDLx::Surface</code> type in SDL Perl.</p>
 
 <h4>Creating Surfaces</h4>
 
-<p>There are several ways to create <code>SDLx::Surface</code> for use.</p>
+<p>There are several ways to create an <code>SDLx::Surface</code> for
+use.</p>
 
 <h4>Raw Surfaces</h4>
 
-<p>For the purposes of preparing surfaces using only draw functions ( as
-mentioned above ) we can create a surface using the
+<p>For the purposes of preparing surfaces using only draw functions (as
+mentioned above) we can create a surface using the
 <code>SDLx::Surface</code>'s constructor.</p>
 
 <pre><code>    $surface = SDLx::Surface-&gt;new( width =&gt; $width, height =&gt; $height );</code></pre>
@@ -548,12 +554,13 @@ to be compiled with the right library.</p>
 
 <pre><code>    $surface = SDL::Image::load( &#39;picture.png&#39; );</code></pre>
 
-<p>In case the <code>SDL_Image</code> library is unavailable we can use the
-build in support for the <code>.bmp</code> format.</p>
+<p>In the event that the desired <code>SDL_image</code> library is
+unavailable, we can fall-back on the built-in support for the
+<code>.bmp</code> format.</p>
 
 <pre><code>    $surface = SDL::Video::load_BMP( &#39;picture.bmp&#39; );</code></pre>
 
-<p>Generally however the <code>SDLx::Sprite</code> module is used.</p>
+<p>Generally, however, the <code>SDLx::Sprite</code> module is used.</p>
 
 <h2>Lots of Flowers but One Seed</h2>
 
@@ -561,10 +568,10 @@ build in support for the <code>.bmp</code> format.</p>
 
 <p>You might have noticed that putting another <code>SDLx::Surface</code>
 on the <code>$app</code> requires the usage of a <code>blit( )</code>
-function, which may not clarify as to what is going on there. Fortunately a
-<code>SDLx::Sprite</code> can be used to make our flower. Besides making
+function, which may not clarify as to what is going on there. Fortunately
+an <code>SDLx::Sprite</code> can be used to make our flower. Besides making
 drawing simpler, <code>SDLx::Sprite</code> adds several other features that
-we need for game images that move a lot. For now lets use
+we need for game images that move a lot. For now let's use
 <code>SDLx::Sprite</code> for our flowers.</p>
 
 <pre><code>    use strict;
@@ -581,7 +588,7 @@ we need for game images that move a lot. For now lets use
     );
 
     #Adding the blue skies
-    $app-&gt;draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
+    $app-&gt;draw_rect( [ 0,   0, 500, 500 ], [ 20, 50, 170, 255 ] );
 
     #Draw our green field
     $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
@@ -591,14 +598,14 @@ we need for game images that move a lot. For now lets use
     # To access the SDLx::Surface to write to, we use the -&gt;surface() method
 
     # Let&#39;s make the background black
-    $flower-&gt;surface-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
+    $flower-&gt;surface-&gt;draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
 
     # Now for a pretty green stem
-    $flower-&gt;surface-&gt;draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
 
     # And the simple flower bud
     $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
-    $flower-&gt;surface-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
     $flower-&gt;draw_xy( $app, 0, 0 );
 
@@ -610,19 +617,18 @@ we need for game images that move a lot. For now lets use
 sky, so we will draw several of them on the ground. Delete everything from
 line 34 including and after</p>
 
-<pre><code>    $flower-&gt;draw_xy($app, 0,0)</code></pre>
+<pre><code>    $flower-&gt;draw_xy( $app, 0, 0 );</code></pre>
 
-<p>and insert the below code to get a field of flowers.</p>
+<p>and insert the code below to get a field of flowers.</p>
 
-<pre><code>    foreach( 0..500 )
-    {
-            my $y =  425 - rand( 50 );
-            $flower-&gt;draw_xy( $app, rand(500)-20, $y );
+<pre><code>    for(0..500){
+        my $y =           425 - rand( 50);
+        $flower-&gt;draw_xy( $app, rand(500)-20, $y );
     }
 
     $app-&gt;update();
 
-    sleep(1);  </code></pre>
+    sleep(1);</code></pre>
 
 <h2>Program</h2>
 
@@ -640,25 +646,21 @@ line 34 including and after</p>
     );
 
     # Draw Code Starts here
-
     my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
 
-    $flower-&gt;surface-&gt;draw_rect( [ 0, 0, 50, 100 ], [ 0, 0, 0, 0 ] );
-
-    $flower-&gt;surface-&gt;draw_rect( [ 23, 30, 4, 100 ], [ 0, 255, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
+    $flower-&gt;surface-&gt;draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
     $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
-    $flower-&gt;surface-&gt;draw_circle( [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
+    $flower-&gt;surface-&gt;draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
     $flower-&gt;alpha_key(0);
 
-    $app-&gt;draw_rect( [ 0, 0, 500, 500 ], [ 20, 50, 170, 255 ] );
+    $app-&gt;draw_rect( [ 0,   0, 500, 500 ], [ 20,  50, 170, 255 ] );
+    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170,  20, 100 ] );
 
-    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
-
-    foreach ( 0 .. 500 ) {
-        my $y = 425 - rand(50);
+    for(0..500){
+        my $y =           425 - rand( 50);
         $flower-&gt;draw_xy( $app, rand(500) - 20, $y );
     }
-
     #Draw Code Ends Here
 
     $app-&gt;update();
