@@ -67,19 +67,19 @@ while drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
 
 =begin programlisting
 
-   use strict;
-   use warnings;
+    use strict;
+    use warnings;
 
-   use SDL;
-   use SDLx::App;
+    use SDL;
+    use SDLx::App;
 
-   my $app = SDLx::App->new( width=> 800, height => 600 );
+    my $app = SDLx::App->new( width=> 800, height => 600 );
 
-   $app->draw_rect([ $app->width/4, $app->height / 4, $app->width /2, $app->height / 2 ], [0,0,255,255] );
+    $app->draw_rect([ $app->width/4, $app->height / 4, $app->width /2, $app->height / 2 ], [0,0,255,255] );
 
-   $app->update();
+    $app->update();
 
-   sleep(5);
+    sleep(5);
 
 =end programlisting
 
@@ -200,8 +200,9 @@ If you need help with SDL Perl, send an X<e-mail> to C<sdl-devel@Perl.Org>.
 
 =head1 Examples
 
-The code examples in this book are provided at
-L<HTTP://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings/>.
+The code examples in this book are provided at:
+
+L<HTTP://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings/>
 
 =head1 Acknowledgements
 
@@ -233,7 +234,6 @@ Thanks to contributors and reviewers from the C<#sdl> channel, including:
 
 =item and many more
 
-    (Apologies if I have missed you; let me know I will add you.)
+    (Apologies if I have missed you; let me know and I will add you.)
 
 =back
-
