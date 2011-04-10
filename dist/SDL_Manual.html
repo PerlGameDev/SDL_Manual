@@ -29,10 +29,10 @@ drawing a rectangle involves the following work.</p>
 <p>Don't worry about understanding the code at this moment. Just compare
 the two code listings for displaying the same blue rectangle below.</p>
 
+</blockquote>
+
 <p>Using the <code>SDL::*</code> layer to draw a blue rectangle looks
 something like this:</p>
-
-</blockquote>
 
 <pre><code>    use SDL;
     use SDL::Video;
@@ -138,7 +138,7 @@ no problems as long as some prerequisites are installed.
 <code>libogg</code>, and <code>libpng</code> headers will suffice for most
 examples in this book.</p>
 
-<h3>Linux</h3>
+<h3>GNU/Linux</h3>
 
 <p>Most current GNU/Linux distributions include all the parts needed for
 this tutorial in the default install and in their package management
@@ -189,7 +189,7 @@ methods:</p>
 
 <h3>Internet</h3>
 
-<p>SDL Perl's homepage is at HTTP://SDL.Perl.Org/.</p>
+<p>SDL Perl's homepage is at HTTP://SDL.Perl.Org.</p>
 
 <h3>IRC</h3>
 
@@ -205,7 +205,7 @@ active and a great resource for help and getting involved.</p>
 
 <p>The code examples in this book are provided at:</p>
 
-<p>HTTP://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings/</p>
+<p>HTTPS://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings</p>
 
 <h2>Acknowledgements</h2>
 
@@ -334,7 +334,7 @@ drawing, and make a pretty picture.</p>
 the dimensions span to the right and downward. The API always lists
 coordinates in x,y order. More discussion of these details can be found in
 the SDL library documentation:
-http://www.sdltutorials.com/sdl-coordinates-and-blitting/</p>
+HTTP://SDLTutorials.Com/sdl-coordinates-and-blitting</p>
 
 <h2>Objective</h2>
 
@@ -1418,7 +1418,7 @@ SDLx::App even implements the whole game loop for us.</p>
 
 <p>To learn more about this topic please, see an excellent blog post by
 <b>GafferOnGames.com</b>:
-http://gafferongames.com/game-physics/fix-your-timestep/.</p>
+HTTP://GafferOnGames.Com/game-physics/fix-your-timestep.</p>
 
 <h1>Pong!</h1>
 
@@ -2195,7 +2195,7 @@ referenced by <code>colour</code>, instead of the previously hardcoded red
 
 <p>In this chapter we work on creating the classic Tetris game using what
 we have learned so far. Get the tetris code from
-https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip. To
+HTTPS://GitHub.Com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip. To
 run the game invoke in the extracted folder.</p>
 
 <pre><code>        perl tetris.pl</code></pre>
@@ -3054,7 +3054,7 @@ we will be doing the following:</p>
 
 <pre><code>   +use SDL::Mixer::Samples;
 
-   +#Brillant Lazer Sound from http://www.freesound.org/samplesViewSingle.php?id=30935
+   +#Brillant Lazer Sound from HTTP://FreeSound.Org/samplesViewSingle.php?id=30935
    +my $sample = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
 
    +unless($sample)
@@ -3097,7 +3097,7 @@ music to our script here.</p>
 <pre><code>    use SDL::Mixer::Channels;
     +use SDL::Mixer::Music;
 
-    +#Load our awesome music from http://8bitcollective.com
+    +#Load our awesome music from HTTP://8BitCollective.Com
     +my $background_music = 
         +         SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
 
@@ -3164,7 +3164,7 @@ would like to play the song for, where 0 is 1.</p>
 
     my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
 
-    #Load our awesome music from http://8bitcollective.com
+    #Load our awesome music from HTTP://8BitCollective.Com
     my $background_music = SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
 
     unless( $background_music )
@@ -3820,7 +3820,7 @@ might find the <i>Games::Word</i> module useful.</p>
 <h2>Picking Modules</h2>
 
 <p>So, you thought of a nice game, identified your needs, typed some
-keywords in http://seach.cpan.org, and got tons of results. What now? How
+keywords in HTTP://Search.CPAN.Org, and got tons of results. What now? How
 to avoid vaporware and find the perfect solution for your needs?</p>
 
 <h3>Documentation</h3>
@@ -3839,27 +3839,27 @@ extendable?</p>
 <h3>License</h3>
 
 <p>It's useless to find a module you can't legally use. Most (if not all)
-modules in CPAN are free and open source software, but even so each needs a
-license telling developers what they can and cannot do with it. A lot of
-CPAN modules are released <i>"under the same terms as Perl itself"</i>, and
-this means you can pick between the Artistic License or the GPL (version
-1).</p>
+modules in HTTP://Search.CPAN.Org are free and open source software, but
+even so each needs a license telling developers what they can and cannot do
+with it. A lot of CPAN modules are released <i>"under the same terms as
+Perl itself"</i>, and this means you can pick between the Artistic License
+or the GPL (version 1).</p>
 
 <p>Below is a short and incomplete list of some popular license choices by
 CPAN developers:</p>
 
 <ul>
 
-<li>Artistic License - http://dev.perl.org/licenses/artistic.html</li>
+<li>Artistic License - HTTP://Dev.Perl.Org/licenses/artistic.html</li>
 
-<li>GPL (all versions and variations) - http://www.gnu.org/licenses</li>
+<li>GPL (all versions and variations) - HTTP://GNU.Org/licenses</li>
 
-<li>MIT License - http://www.opensource.org/licenses/mit-license.php</li>
+<li>MIT License - HTTP://OpenSource.Org/licenses/mit-license.php</li>
 
 </ul>
 
-<p>See http://www.opensource.org/licenses/alphabetical for a comprehensive
-list with each license's full documentation.</p>
+<p>See HTTP://OpenSource.Org/licenses/alphabetical for a comprehensive list
+with each license's full documentation.</p>
 
 <p>You should be able to find the module's license by going to a "LICENSE
 AND COPYRIGHT" section, usually available at the bottom of the
@@ -3890,7 +3890,7 @@ module depends on several others - code reusability is a good thing.</p>
 
 <p>You may, however, be interested in <b>which</b> modules it depends on,
 or, more practically, in the likelihood of a clean installation by your
-users. For that, you can browse to http://deps.cpantesters.org and input
+users. For that, you can browse to HTTP://Deps.CPANTesters.Org and input
 the module's name on the search box.</p>
 
 <p>The CPAN Testers is a collaborative matrix designed to help developers
@@ -3917,14 +3917,14 @@ module that only fails on those conditions?</p>
 How can you tell if that module will run in your target machine according
 to architecture, operating system and perl version?</p>
 
-<p>The CPAN Testers website at http://www.cpantesters.org offers a direct
+<p>The CPAN Testers website at HTTP://CPANTesters.Org offers a direct
 search for distributions by name or author. To see the results for the SDL
 module, for instance, you can go to
-http://www.cpantesters.org/distro/S/SDL.html. You can also find a test
-report summary directly on CPAN, by selecting the distribution and looking
-at the <i>"CPAN Testers"</i> line. If you click on the <i>"View
-Reports"</i> link, you'll be redirected to the proper CPAN Testers page,
-like the one shown above.</p>
+HTTP://CPANTesters.Org/distro/S/SDL.html. You can also find a test report
+summary directly on CPAN, by selecting the distribution and looking at the
+<i>"CPAN Testers"</i> line. If you click on the <i>"View Reports"</i> link,
+you'll be redirected to the proper CPAN Testers page, like the one shown
+above.</p>
 
 <p>The first chart is a PASS summary, containing information about the most
 recent version of that module with at least one <i>PASS</i> report
@@ -4006,7 +4006,7 @@ done in C via XS. This chapter will show two methods of doing this.</p>
 <h2>Sol's Ripple Effect</h2>
 
 <p>For our first pixel effect we will be doing is a ripple effect from a
-well known SDL resource, http://sol.gfxile.net/gp/ch02.html. This effects
+well known SDL resource, HTTP://Sol.Gfxile.Net/gp/ch02.html. This effects
 uses <code>SDL::get_ticks</code> to animate a ripple effect across the
 surface as seen in the following figure.</p>
 
@@ -4026,7 +4026,7 @@ the <code>SDL::Surface::set_pixels</code> which takes an offset for the
 <code>SDL_Surface</code> pixels array, and sets a value there for us. The
 actual pixel effect is just a time dependent (using
 <code>SDL::get_ticks</code> for time) render of a function. See
-http://sol.gfxile.net/gp/ch02.html for a deeper explanation.</p>
+HTTP://Sol.Gfxile.Net/gp/ch02.html for a deeper explanation.</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -4521,35 +4521,35 @@ know so we can update the list.</p>
 
 <ul>
 
-<li>http://www.cgtextures.com</li>
+<li>HTTP://CGTextures.Com</li>
 
-<li>http://www.mayang.com/textures/</li>
+<li>HTTP://Mayang.Com/textures</li>
 
-<li>http://www.pixelpoke.com/</li>
+<li>HTTP://GRSites.Com/archive/textures</li>
 
-<li>http://www.flyingyogi.com/fun/spritelib.html</li>
+<li>HTTP://ImageAfter.Com</li>
 
-<li>http://www.grsites.com/archive/textures/</li>
+<li>HTTP://AbsoluteCross.Com/graphics/textures</li>
 
-<li>http://www.imageafter.com/</li>
+<li>HTTP://FreeFoto.Com</li>
 
-<li>http://www.absolutecross.com/graphics/textures/</li>
+<li>HTTP://Noctua-Graphics.De</li>
 
-<li>http://www.freefoto.com/</li>
+<li>HTTP://M3Corp.Com/a/download/3d_textures/pages</li>
 
-<li>http://www.noctua-graphics.de</li>
+<li>HTTP://ReinersTileSet.4Players.De/englisch.html</li>
 
-<li>http://www.m3corp.com/a/download/3d_textures/pages/index.htm</li>
+<li>HTTP://VirtualWorlds.Wikia.Com</li>
 
-<li>http://reinerstileset.4players.de/englisch.html</li>
+<li>HTTP://Lunar.LostGarden.Com/labels/free%20game%20graphics.html</li>
 
-<li>http://virtualworlds.wikia.com/</li>
+<li>HTTP://PDGameResources.WordPress.Com</li>
 
-<li>http://lunar.lostgarden.com/labels/free%20game%20graphics.html</li>
+<li>HTTP://GamingGroundZero.Com</li>
 
-<li>http://pdgameresources.wordpress.com/</li>
+<li>HTTP://FlyingYogi.Com/fun/spritelib.html</li>
 
-<li>http://gaminggroundzero.com</li>
+<li>HTTP://PixelPoke.Com</li>
 
 </ul>
 
@@ -4557,19 +4557,19 @@ know so we can update the list.</p>
 
 <ul>
 
-<li>http://www.freesound.org</li>
+<li>HTTP://FreeSound.Org</li>
 
-<li>http://www.ccmixter.org</li>
+<li>HTTP://CCMixter.Org</li>
 
-<li>http://www.jamendo.com</li>
+<li>HTTP://Jamendo.Com</li>
 
-<li>http://8bc.org</li>
+<li>HTTP://8BC.Org</li>
 
-<li>http://www.sakari-infinity.net</li>
+<li>HTTP://Sakari-Infinity.Net</li>
 
-<li>http://www.findsounds.com</li>
+<li>HTTP://FindSounds.Com</li>
 
-<li>http://www.grsites.com/archive/sounds/</li>
+<li>HTTP://GRSites.Com/archive/sounds</li>
 
 </ul>
 
@@ -4577,25 +4577,25 @@ know so we can update the list.</p>
 
 <ul>
 
-<li>http://www.dafont.com/</li>
+<li>HTTP://DAFont.Com</li>
 
-<li>http://www.fontsquirrel.com/</li>
+<li>HTTP://FontSquirrel.Com</li>
 
-<li>http://www.theleagueofmoveabletype.com/</li>
+<li>HTTP://TheLeagueOfMoveableType.Com</li>
 
-<li>http://openfontlibrary.org/</li>
+<li>HTTP://OpenFontLibrary.Org</li>
 
-<li>http://www.acidfonts.com/</li>
+<li>HTTP://AcidFonts.Com</li>
 
-<li>http://www.grsites.com/archive/fonts/</li>
+<li>HTTP://GRSites.Com/archive/fonts</li>
 
-<li>http://www.urbanfonts.com/</li>
+<li>HTTP://UrbanFonts.Com</li>
 
 </ul>
 
 <h2>DIY</h2>
 
-<p>http://www.gamesounddesign.com/ has several tips on making game music,
+<p>HTTP://GameSoundDesign.Com has several tips on making game music,
 including several sources for inspiration.</p>
 
 <p>If you want to create 3D models, either for cutscenes or to integrate
@@ -4603,11 +4603,11 @@ into your game via OpenGL, there are several nice libraries out there for
 you:</p>
 
 <p><b>Blender</b> - A free 3D graphics application for modeling, texturing,
-water and smoke simulations, rendering, etc. http://blender.org</p>
+water and smoke simulations, rendering, etc. HTTP://Blender.Org</p>
 
 <p><b>OGRE</b> - An open-source graphics rendering engine, used in a large
 number of production projects. It can be easily integrated via Scott
-Lanning's <i>Ogre</i> Perl bindings, on CPAN. http://www.ogre3d.org</p>
+Lanning's <i>Ogre</i> Perl bindings, on CPAN. HTTP://Ogre3D.Org</p>
 
 <h2>Author</h2>
 
