@@ -26,9 +26,9 @@ For example, drawing a rectangle involves the following work.
 Don't worry about understanding the code at this moment. Just compare the two
 code listings for displaying the same blue rectangle below.
 
-Using the C<SDL::*> layer to draw a blue rectangle looks something like this:
-
 =end sidebar
+
+Using the C<SDL::*> layer to draw a blue rectangle looks something like this:
 
 =begin programlisting
 
@@ -139,7 +139,7 @@ long as some prerequisites are installed. C<libfreetype6>, C<libX11>,
 C<libvorbis>, C<libogg>, and C<libpng> headers will suffice for most
 examples in this book.
 
-=head2 Linux
+=head2 GNU/Linux
 
 Most current GNU/Linux distributions include all the parts needed for this
 tutorial in the default install and in their package management system.
