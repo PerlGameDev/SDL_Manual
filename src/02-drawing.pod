@@ -52,7 +52,7 @@ which has dimensions of C<40x40> pixel units, the following would suffice.
 
 =head3 Color
 
-X<Color> in SDL is described by 4 numbers. The first three numbers define the
+Color in SDL is described by 4 numbers. The first three numbers define the
 Red, Green, and Blue intensity of the Color. The final number defines the
 transparency of the Color.
 
@@ -103,7 +103,7 @@ C<[$red, $green, $blue, $alpha]>.
 
 =head2 Primitives
 
-Drawing X<Primitives> are usually simple shapes that can be used for creating
+Drawing Primitives are usually simple shapes that can be used for creating
 graphics dynamically.
 
 =for figure

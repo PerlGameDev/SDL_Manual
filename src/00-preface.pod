@@ -191,12 +191,12 @@ SDL Perl's homepage is at U<HTTP://SDL.Perl.Org>.
 
 =head2 IRC
 
-The X<IRC> channel C<#sdl> on C<IRC.Perl.Org> is very active and a great
+The IRC channel C<#sdl> on C<IRC.Perl.Org> is very active and a great
 resource for help and getting involved.
 
 =head2 Mailing lists
 
-If you need help with SDL Perl, send an X<e-mail> to C<sdl-devel@Perl.Org>.
+If you need help with SDL Perl, send an e-mail to C<sdl-devel@Perl.Org>.
 
 =head1 Examples
 
