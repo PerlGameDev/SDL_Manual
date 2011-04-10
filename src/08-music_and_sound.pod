@@ -37,7 +37,7 @@ Samples run on one of the 2 channels that we opened up, while the other channel 
 
    +use SDL::Mixer::Samples;
 
-   +#Brillant Lazer Sound from U<http://www.freesound.org/samplesViewSingle.php?id=30935>
+   +#Brillant Lazer Sound from U<HTTP://FreeSound.Org/samplesViewSingle.php?id=30935>
    +my $sample = SDL::Mixer::Samples::load_WAV('data/sample.wav');
 
    +unless($sample)
@@ -74,7 +74,7 @@ Next we will use C<SDL::Mixer::Music> to add a background music to our script he
     use SDL::Mixer::Channels;
     +use SDL::Mixer::Music;
 
-    +#Load our awesome music from U<http://8bitcollective.com>
+    +#Load our awesome music from U<HTTP://8BitCollective.Com>
     +my $background_music = 
 	+         SDL::Mixer::Music::load_MUS('data/music/01-PC-Speaker-Sorrow.ogg');
 
@@ -140,7 +140,7 @@ Volumes can be set at anytime and range from C<1-100>.
 
     my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
 
-    #Load our awesome music from U<http://8bitcollective.com>
+    #Load our awesome music from U<HTTP://8BitCollective.Com>
     my $background_music = SDL::Mixer::Music::load_MUS('data/music/01-PC-Speaker-Sorrow.ogg');
 
     unless( $background_music )

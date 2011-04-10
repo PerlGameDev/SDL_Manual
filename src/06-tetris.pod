@@ -9,7 +9,7 @@
 =head1 Eye Candy and Code
 
 In this chapter we work on creating the classic Tetris game using what we have learned so far. 
-Get the tetris code from U<https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip>. To run the game 
+Get the tetris code from U<HTTPS://GitHub.Com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip>. To run the game 
 invoke in the extracted folder.
 
 	perl tetris.pl

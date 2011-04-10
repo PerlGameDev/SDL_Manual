@@ -63,7 +63,7 @@ case you might find the I<Games::Word> module useful.
 =head1 Picking Modules
 
 So, you thought of a nice game, identified your needs, typed some
-keywords in L<http://seach.cpan.org>, and got tons of results. What now?
+keywords in U<HTTP://Search.CPAN.Org>, and got tons of results. What now?
 How to avoid vaporware and find the perfect solution for your needs?
 
 =head2 Documentation
@@ -82,7 +82,7 @@ easily extendable?
 =head2 License
 
 It's useless to find a module you can't legally use. Most (if not all)
-modules in L<CPAN|http://search.cpan.org> are free and open source
+modules in U<HTTP://Search.CPAN.Org> are free and open source
 software, but even so each needs a license telling developers what
 they can and cannot do with it. A lot of CPAN modules are released
 I<"under the same terms as Perl itself">, and this means you can
@@ -93,15 +93,15 @@ by CPAN developers:
 
 =over 4
 
-=item * Artistic License - L<http://dev.perl.org/licenses/artistic.html>
+=item * Artistic License - U<HTTP://Dev.Perl.Org/licenses/artistic.html>
 
-=item * GPL (all versions and variations) - L<http://www.gnu.org/licenses> 
+=item * GPL (all versions and variations) - U<HTTP://GNU.Org/licenses>
 
-=item * MIT License - L<http://www.opensource.org/licenses/mit-license.php>
+=item * MIT License - U<HTTP://OpenSource.Org/licenses/mit-license.php>
 
 =back
 
-See L<http://www.opensource.org/licenses/alphabetical> for a
+See U<HTTP://OpenSource.Org/licenses/alphabetical> for a
 comprehensive list with each license's full documentation.
 
 You should be able to find the module's license by going to a
@@ -136,7 +136,7 @@ thing.
 
 You may, however, be interested in B<which> modules it depends on,
 or, more practically, in the likelihood of a clean installation by your
-users. For that, you can browse to L<http://deps.cpantesters.org> and
+users. For that, you can browse to U<HTTP://Deps.CPANTesters.Org> and
 input the module's name on the search box.
 
 The CPAN Testers is a collaborative matrix designed to help developers
@@ -164,10 +164,10 @@ So, how do you know the actual test results for a module on the CPAN? How
 can you tell if that module will run in your target machine according to
 architecture, operating system and perl version?
 
-The CPAN Testers website at L<http://www.cpantesters.org> offers a direct
+The CPAN Testers website at U<HTTP://CPANTesters.Org> offers a direct
 search for distributions by name or author. To see the results for the
 SDL module, for instance, you can go to
-L<http://www.cpantesters.org/distro/S/SDL.html>. You can also find a
+U<HTTP://CPANTesters.Org/distro/S/SDL.html>. You can also find a
 test report summary directly on CPAN, by selecting the distribution
 and looking at the I<< "CPAN Testers" >> line. If you click on the 
 I<< "View Reports" >> link, you'll be redirected to the proper CPAN

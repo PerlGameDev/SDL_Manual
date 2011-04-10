@@ -7,7 +7,7 @@ to profile the code for production use. However the key step is to first write c
 =head1 Preparing a Game for Profiling
 
 We will begin by profiling a simple collisions demo script. The script is provided 
-for you in the C<code_listings/profile_0.pl> on U<http://github.com/PerlGameDev/SDL_Manual/> 
+for you in the C<code_listings/profile_0.pl> on U<HTTPS://GitHub.Com/PerlGameDev/SDL_Manual>
 site. Get the repository, extract it and run:
 
     perl code_listings/profile_0.pl

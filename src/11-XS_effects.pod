@@ -11,7 +11,7 @@ These effects can be done in purely in Perl, for 1 passes and non real time appl
 
 =head1 Sol's Ripple Effect
 
-For our first pixel effect we will be doing is a ripple effect from a well known SDL resource, U<http://sol.gfxile.net/gp/ch02.html>. This effects uses C<SDL::get_ticks> to animate a ripple effect across the surface as seen in the following figure.   
+For our first pixel effect we will be doing is a ripple effect from a well known SDL resource, U<HTTP://Sol.Gfxile.Net/gp/ch02.html>. This effects uses C<SDL::get_ticks> to animate a ripple effect across the surface as seen in the following figure.
 
 =for figure
        \includegraphics[width=0.5\textwidth]{../src/images/xs_effects.png}
@@ -23,7 +23,7 @@ For our first pixel effect we will be doing is a ripple effect from a well known
 First lets make the effect in pure Perl. To do any operations with a C<SDL::Surface> we must do C<SDL::Video::lock_surface()> call as seen below. 
 Locking the surface prevents other process in SDL from accessing the surface. The surface pixels can be accessed several ways from Perl. Here we are 
 using the C<SDL::Surface::set_pixels> which takes an offset for the C<SDL_Surface> pixels array, and sets a value there for us. The actual
-pixel effect is just a time dependent (using C<SDL::get_ticks> for time) render of a function. See U<http://sol.gfxile.net/gp/ch02.html> for a deeper explanation.
+pixel effect is just a time dependent (using C<SDL::get_ticks> for time) render of a function. See U<HTTP://Sol.Gfxile.Net/gp/ch02.html> for a deeper explanation.
 
 =begin programlisting
 

@@ -102,7 +102,7 @@ separate tutorial to jump to and learn from.
 Each chapter will have a specific goal (e.g., I<Making Pong>), which we will
 work towards. The source code for each chapter will be broken up and
 explained in some detail. Sources and data files are all provided on
-L<HTTP://SDL.Perl.Org>.
+U<HTTP://SDL.Perl.Org>.
 
 Finally chapters will end with an exercise for the reader to try out.
 
@@ -178,7 +178,7 @@ After these two steps cpan will be able to find all depedencies for SDL.
     sudo cpan SDL
 
 For most platforms a CPAN install will suffice. Supported and tested
-platforms are listed at L<HTTP://Pass.CPANTesters.Org/distro/S/SDL.html>.
+platforms are listed at U<HTTP://Pass.CPANTesters.Org/distro/S/SDL.html>.
 
 =head1 Contact
 
@@ -187,7 +187,7 @@ additional assistance, please contact us by one of the following methods:
 
 =head2 Internet
 
-SDL Perl's homepage is at L<HTTP://SDL.Perl.Org/>.
+SDL Perl's homepage is at U<HTTP://SDL.Perl.Org>.
 
 =head2 IRC
 
@@ -202,7 +202,7 @@ If you need help with SDL Perl, send an X<e-mail> to C<sdl-devel@Perl.Org>.
 
 The code examples in this book are provided at:
 
-L<HTTP://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings/>
+U<HTTPS://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings>
 
 =head1 Acknowledgements
 

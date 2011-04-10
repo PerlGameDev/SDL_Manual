@@ -18,35 +18,35 @@ please let us know so we can update the list.
 
 =over 4
 
-=item * U<http://www.cgtextures.com>
+=item * U<HTTP://CGTextures.Com>
 
-=item * U<http://www.mayang.com/textures/>
+=item * U<HTTP://Mayang.Com/textures>
 
-=item * U<http://www.pixelpoke.com/>
+=item * U<HTTP://GRSites.Com/archive/textures>
 
-=item * U<http://www.flyingyogi.com/fun/spritelib.html>
+=item * U<HTTP://ImageAfter.Com>
 
-=item * U<http://www.grsites.com/archive/textures/>
+=item * U<HTTP://AbsoluteCross.Com/graphics/textures>
 
-=item * U<http://www.imageafter.com/>
+=item * U<HTTP://FreeFoto.Com>
 
-=item * U<http://www.absolutecross.com/graphics/textures/>
+=item * U<HTTP://Noctua-Graphics.De>
 
-=item * U<http://www.freefoto.com/>
+=item * U<HTTP://M3Corp.Com/a/download/3d_textures/pages>
 
-=item * U<http://www.noctua-graphics.de>
+=item * U<HTTP://ReinersTileSet.4Players.De/englisch.html>
 
-=item * U<http://www.m3corp.com/a/download/3d_textures/pages/index.htm>
+=item * U<HTTP://VirtualWorlds.Wikia.Com>
 
-=item * U<http://reinerstileset.4players.de/englisch.html>
+=item * U<HTTP://Lunar.LostGarden.Com/labels/free%20game%20graphics.html>
 
-=item * U<http://virtualworlds.wikia.com/>
+=item * U<HTTP://PDGameResources.WordPress.Com>
 
-=item * U<http://lunar.lostgarden.com/labels/free%20game%20graphics.html>
+=item * U<HTTP://GamingGroundZero.Com>
 
-=item * U<http://pdgameresources.wordpress.com/>
+=item * U<HTTP://FlyingYogi.Com/fun/spritelib.html>
 
-=item * U<http://gaminggroundzero.com>
+=item * U<HTTP://PixelPoke.Com>
 
 =back
 
@@ -55,19 +55,19 @@ please let us know so we can update the list.
 
 =over 4
 
-=item * U<http://www.freesound.org>
+=item * U<HTTP://FreeSound.Org>
 
-=item * U<http://www.ccmixter.org>
+=item * U<HTTP://CCMixter.Org>
 
-=item * U<http://www.jamendo.com>
+=item * U<HTTP://Jamendo.Com>
 
-=item * U<http://8bc.org>
+=item * U<HTTP://8BC.Org>
 
-=item * U<http://www.sakari-infinity.net>
+=item * U<HTTP://Sakari-Infinity.Net>
 
-=item * U<http://www.findsounds.com>
+=item * U<HTTP://FindSounds.Com>
 
-=item * U<http://www.grsites.com/archive/sounds/>
+=item * U<HTTP://GRSites.Com/archive/sounds>
 
 =back
 
@@ -76,26 +76,26 @@ please let us know so we can update the list.
 
 =over 4
 
-=item * U<http://www.dafont.com/>
+=item * U<HTTP://DAFont.Com>
 
-=item * U<http://www.fontsquirrel.com/>
+=item * U<HTTP://FontSquirrel.Com>
 
-=item * U<http://www.theleagueofmoveabletype.com/>
+=item * U<HTTP://TheLeagueOfMoveableType.Com>
 
-=item * U<http://openfontlibrary.org/>
+=item * U<HTTP://OpenFontLibrary.Org>
 
-=item * U<http://www.acidfonts.com/>
+=item * U<HTTP://AcidFonts.Com>
 
-=item * U<http://www.grsites.com/archive/fonts/>
+=item * U<HTTP://GRSites.Com/archive/fonts>
 
-=item * U<http://www.urbanfonts.com/>
+=item * U<HTTP://UrbanFonts.Com>
 
 =back
 
 
 =head1 DIY
 
-U<http://www.gamesounddesign.com/> has several tips on making game
+U<HTTP://GameSoundDesign.Com> has several tips on making game
 music, including several sources for inspiration.
 
 If you want to create 3D models, either for cutscenes or to integrate
@@ -103,11 +103,11 @@ into your game via OpenGL, there are several nice libraries out there
 for you:
 
 B<Blender> - A free 3D graphics application for modeling, texturing,
-water and smoke simulations, rendering, etc. U<http://blender.org>
+water and smoke simulations, rendering, etc. U<HTTP://Blender.Org>
 
 B<OGRE> - An open-source graphics rendering engine, used in a large number
 of production projects. It can be easily integrated via Scott Lanning's
-I<Ogre> Perl bindings, on CPAN. U<http://www.ogre3d.org>
+I<Ogre> Perl bindings, on CPAN. U<HTTP://Ogre3D.Org>
 
 =head1 Author
 

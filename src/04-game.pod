@@ -378,6 +378,6 @@ us.  SDLx::App even implements the whole game loop for us.
 
 =head1 Learn More
 
-To learn more about this topic please, see an excellent blog post by B<GafferOnGames.com>: L<http://gafferongames.com/game-physics/fix-your-timestep/>.
+To learn more about this topic please, see an excellent blog post by B<GafferOnGames.com>: U<HTTP://GafferOnGames.Com/game-physics/fix-your-timestep>.
 
 =for vim: spell

@@ -1,4 +1,3 @@
-
 =head0 Drawing
 
 =head1 Preview
@@ -18,7 +17,7 @@ SDL's surface coordinate system has x=0,y=0 in the upper left corner and the
 dimensions span to the right and downward. The API always lists coordinates in
 x,y order.
 More discussion of these details can be found in the SDL library documentation:
-U<http://www.sdltutorials.com/sdl-coordinates-and-blitting/>
+U<HTTP://SDLTutorials.Com/sdl-coordinates-and-blitting>
 
 =head1 Objective
 
