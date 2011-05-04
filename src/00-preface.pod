@@ -1,34 +1,28 @@
 =head0 Preface
 
-=head1 Background
-
-I<Simple DirectMedia Layer> (a.k.a. I<libsdl>) is a cross-platform C library
-that provides access to several input and output devices. Most popularly it is
-used for its access to the 2D video framebuffer and inputs for games.
-
-In addition to the core library there are several other libraries that provide
-useful features such as I<Text>, I<Mixers>, I<Images>, and I<GFX>.
+I<Simple DirectMedia Layer> (or I<libsdl>) is a cross-platform C library that
+provides access to several input and output devices. Its most popular usage is
+to provide access to the video framebuffer and input devices for games. SDL
+also has several extension libraries to provide features such as text display,
+sound mixing, image handling, and graphics effects.
 
 SDL Perl binds several of these libraries together in the C<SDL::*> namespace.
 Moreover, SDL Perl provides several high-level libraries in the C<SDLx::*>
 namespace that encapsulate valuable game-writing abstractions.
 
-=head2 The C<SDLx::> layer
+=head1 C<SDL> and C<SDLx>
 
-The main purpose of the C<SDLx::*> layer is to smooth out the drudgery of
-using the C<SDL::*> layer directly.
-For example, drawing a rectangle involves the following work.
+The main purpose of the C<SDLx::*> layer is to smooth out the drudgery of using
+the C<SDL::*> layer directly.
 
 =for sidebar
 
-=head4 NOTE:
-
-Don't worry about understanding the code at this moment. Just compare the two
-code listings for displaying the same blue rectangle below.
+Don't worry about understanding the details of this code right now. Compare the
+complexity and size of the code listings.
 
 =end sidebar
 
-Using the C<SDL::*> layer to draw a blue rectangle looks something like this:
+Using the C<SDL::*> layer to draw a blue rectangle looks something like:
 
 =begin programlisting
 
@@ -50,20 +44,23 @@ Using the C<SDL::*> layer to draw a blue rectangle looks something like this:
                                                     SDL_ANYFORMAT);
 
     # drawing a rectangle with the blue color
-    my $mapped_color   = SDL::Video::map_RGB($screen_surface->format(), 0, 0, 255);
+    my $mapped_color   = SDL::Video::map_RGB($screen_surface->format(),
+                                              0, 0, 255);
     SDL::Video::fill_rect($screen_surface,
                           SDL::Rect->new($screen_width / 4, $screen_height / 4,
                                          $screen_width / 2, $screen_height / 2),
                           $mapped_color);
 
-    # update an area on the screen so its visible
-    SDL::Video::update_rect($screen_surface, 0, 0, $screen_width, $screen_height);
+    # update an area on the screen so it's visible
+    SDL::Video::update_rect($screen_surface, 0, 0,
+                            $screen_width, $screen_height);
 
-    sleep(5); # just to have time to see it
+    # just to have time to see it
+    sleep(5);
 
 =end programlisting
 
-while drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
+... while drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
 
 =begin programlisting
 
@@ -75,7 +72,9 @@ while drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
 
     my $app = SDLx::App->new( width=> 800, height => 600 );
 
-    $app->draw_rect([ $app->width/4, $app->height / 4, $app->width /2, $app->height / 2 ], [0,0,255,255] );
+    $app->draw_rect([ $app->width / 4, $app->height / 4,
+                      $app->width / 2, $app->height / 2, ],
+                      [ 0, 0, 255, 255] );
 
     $app->update();
 
@@ -83,126 +82,100 @@ while drawing a blue rectangle in the C<SDLx::*> layer is as simple as:
 
 =end programlisting
 
-A secondary purpose of the C<SDLx::*> modules are to manage additional
-features for users, such as Layers, Game Loop handling, and more.
+The C<SDLx::*> modules also provide and manage higher-level concerns for users, such as layers and game loops.
 
-=head1 Audience
+=head1 About the Book
 
-This book is written for new users of SDL Perl who have some experience
-with Perl, but not much experience with SDL. It is not necessary for
-the audience to be aware of SDL internals, as this book covers most
-areas as it goes.
+This book has a two-fold purpose: first, to introduce game development to Perl
+programmers, and second, to introduce Modern Perl concepts through game
+development.  While the examples assume some experience with Perl, no
+experience with SDL in Perl or as C<libsdl> itself is necessary.
 
-=head1 Format of this book
-
-This book will be formatted into chapters that progressively increase in
-complexity. However each chapter can also be treated individually as a
-separate tutorial to jump to and learn from.
-
-Each chapter will have a specific goal (e.g., I<Making Pong>), which we will
-work towards. The source code for each chapter will be broken up and
-explained in some detail. Sources and data files are all provided on
-U<HTTP://SDL.Perl.Org>.
-
-Finally chapters will end with an exercise for the reader to try out.
-
-=head1 Purpose of this book
-
-This book is intended to introduce game development to Perl programmers and
-at the same time introduce Modern Perl concepts through game development.
 The book presents a progression from simple to intermediate examples and
-provides suggestions for more advanced endeavors.
+provides suggestions for more advanced endeavors. The chapters of this book
+increase progressively in complexity, but each chapter has a singular goal
+(such as chapter five's I<Making Pong>) which stands alone as an individual
+tutorial.  Sources and data files are all available from
+U<http://sdl.perl.org/>.
 
 =head1 Installing SDL Perl
 
-We assume that a recent perl language and supporting packages have been
-installed on your system.
-Depending on your platform you may need some dependencies. Then we can do
-a final CPAN install.
+We assume the presence of a recent version of the Perl language (at least Perl
+5.10) and supporting packages. We also assume that you can install packages
+from the CPAN, including SDL Perl itself.
 
 =head2 Windows
 
 C<Alien::SDL> will install binaries for 32bit and 64bit so there is no need
 to compile anything.
 
-=head2 MacOSX
+=head2 Mac OS X
 
-=head3 Packages
+Fink has packages for SDL Perl available. However, they do not support Pango, a
+library which provides internalization support for text handling.
 
-Fink has packages for SDL Perl available, however Pango is not currently
-supported.
-
-=head3 Or Compiling Dependencies
-
-C<Alien::SDL> will compile SDL dependencies from scratch with no problems as
-long as some prerequisites are installed. C<libfreetype6>, C<libX11>,
-C<libvorbis>, C<libogg>, and C<libpng> headers will suffice for most
-examples in this book.
+Installing C<Alien::SDL> from the CPAN will compile SDL and its dependencies,
+provided you have installed severan necessary dependencies. We recommend that
+you install C<libfreetype6>, C<libX11>, C<libvorbis>, C<libogg>, C<libpng>, and
+their headers.
 
 =head2 GNU/Linux
 
 Most current GNU/Linux distributions include all the parts needed for this
-tutorial in the default install and in their package management system.
-It is also always possible to install on GNU/Linux using the available open
-source code from the proper repositories. The Alien::SDL perl module
-automates much of downloading, compiling, and installing the needed
-libraries.
-
-=head3 Packages
+tutorial in the default install and in their package management system.  It is
+also always possible to install on GNU/Linux using the available open source
+code from the proper repositories. The C<Alien::SDL> perl module automates much
+of downloading, compiling, and installing the needed libraries.
 
 You can probably use your distribution's packages. On Ubuntu and Debian try:
 
-    sudo apt-get install libsdl-net1.2-dev libsdl-mixer1.2-dev \
+    $ sudo apt-get install libsdl-net1.2-dev libsdl-mixer1.2-dev \
     libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev \
     libsdl-gfx1.2-dev libsdl-pango-dev
 
-=head3 Or Compiling Dependencies
+To compile from scratch, you must install a compiler, system header packages,
+and some libraries are required.
 
-To compile from scratch, a compiler, system header packages, and some
-libraries are required.
-
-    sudo apt-get install build-essential xorg-dev libx11-dev libxv-dev \
+    $ sudo apt-get install build-essential xorg-dev libx11-dev libxv-dev \
     libpango1.0-dev libfreetype6-dev libvorbis-dev libpng12-dev \
     libogg-dev
 
 =head2 CPAN install
 
-Before installing SDL you should make sure that some important modules are
-up-to-date.
+Before installing SDL Perl, ensure that you have the most recent versions of
+the modules necessary to build SDL:
 
-    sudo cpan CPAN
-    sudo cpan YAML Module::Build
+    $ sudo cpan CPAN
+    $ sudo cpan YAML Module::Build
 
-After these two steps cpan will be able to find all depedencies for SDL.
+After these two steps CPAN will be able to install SDL:
 
-    sudo cpan SDL
+    $ sudo cpan SDL
 
 For most platforms a CPAN install will suffice. Supported and tested
-platforms are listed at U<HTTP://Pass.CPANTesters.Org/distro/S/SDL.html>.
+platforms are listed at U<http://pass.cpantesters.org/distro/S/SDL.html>.
 
 =head1 Contact
 
-Hopefully this book answers most of your questions. If you find you need
-additional assistance, please contact us by one of the following methods:
+Hopefully this book answers most of your questions. For additional assistance,
+contact the project via:
 
-=head2 Internet
+=over 4
 
-SDL Perl's homepage is at U<HTTP://SDL.Perl.Org>.
+=item * I<the web>, by visiting the SDL Perl homepage at
+U<http://sdl.perl.org/>.
 
-=head2 IRC
+=item * I<IRC>, in the C<#sdl> channel on C<irc.perl.org>. This is a very
+active and helpful resource.
 
-The X<IRC> channel C<#sdl> on C<IRC.Perl.Org> is very active and a great
-resource for help and getting involved.
+=item * I<email>, through the C<sdl-devel@perl.org> mailing list.
 
-=head2 Mailing lists
-
-If you need help with SDL Perl, send an X<e-mail> to C<sdl-devel@Perl.Org>.
+=back
 
 =head1 Examples
 
-The code examples in this book are provided at:
-
-U<HTTPS://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings>
+The code examples in this book are available from
+U<https://github.com/PerlGameDev/SDL_Manual/tree/master/code_listings>.
 
 =head1 Acknowledgements
 
@@ -217,6 +190,8 @@ Thanks to contributors and reviewers from the C<#sdl> channel, including:
 =item Blaizer
 
 =item cfedde
+
+=item chromatic
 
 =item FROGGS
 
