@@ -219,16 +219,13 @@ including:</p>
 
 <h1>The Screen</h1>
 
-<h2>Background</h2>
-
 <p>   </p>
 
-<p>SDL manages a single screen which is attached to the video device. Some
-common examples of video devices are through X11 and DirectX. An SDL
-application may contain one or more Surfaces.</p>
-
-<p>The screen is typically created using the <code>SDLx::App</code>
-class.</p>
+<p>SDL's primary purpose is to display graphics. It does so by providing an
+abstraction called a <i>screen</i>, which represents a <i>video device</i>.
+This video device is an interface provided by your operating system, such
+as X11 or DirectX. Before you can display anything, you must create a
+screen. The <code>SDLx::App</code> class does so for you:</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -239,32 +236,27 @@ class.</p>
 
     sleep( 2 );</code></pre>
 
-<p>The above code causes a window to appear on the desktop with nothing in
-it. Most current systems will fill it with a default black screen. For some
-systems, however, a transparent window might be displayed instead. It is a
-good idea to ensure that what we intend to display is shown, so we update
-the <code>$app</code> to ensure the screen is drawn black.</p>
+<p>This example causes an empty window to appear on the desktop. Most
+systems will fill that window with the color black. Other systems might
+display a transparent window. SDL's default behavior is to fill the screen
+with black. To enforce this behavior on all systems, you must
+<code>update()</code> the app to draw to the window:</p>
 
 <pre><code>    $app-&gt;update();</code></pre>
 
 <h2><code>SDLx::App</code> Options</h2>
 
-<p><code>SDLx::App</code> also allows you to specify several options for
-your application.</p>
-
-<h3>Dimensions</h3>
-
-<p>First are the physical dimensions of the screen itself. Let's make the
-screen of the <code>SDLx::App</code> window a square size of 400×400
-pixels. Change the initialization line to:</p>
+<p><code>SDLx::App</code> allows you to specify several options for the
+screen and your application. First are the physical dimensions of the
+screen itself. To make the screen of the <code>SDLx::App</code> window a
+400×400 pixel square, change the initialization line to:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( width =&gt; 400, height =&gt; 400 );</code></pre>
 
-<h3>Title</h3>
-
-<p>You will notice that the window's title is either blank or on some
-window managers it displays the path to the script file, depending on your
-operating system. Suppose we want a title for a new Pong clone game:</p>
+<p>Another important option is the window's title. Some systems display the
+path to the running program. Others leave the title blank. You can change
+the displayed title with another argument to the <code>SDLx::App</code>
+constructor:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( width  =&gt; 400,
                               height =&gt; 400,
@@ -279,11 +271,10 @@ operating system. Suppose we want a title for a new Pong clone game:</p>
 
 <h3>Shortcuts</h3>
 
-<p>There are short-hand versions of the parameter names used in the call to
-<code>new()</code>. The parameters <code>width</code>, <code>height</code>,
-and <code>title</code> may be abbreviated as <code>w</code>,
-<code>h</code>, and <code>t</code> respectively. So the previous example
-could also be written like this:</p>
+<p>Abbreviations for these parameters are available. Instead of
+<code>width</code>, <code>height</code>, and <code>title</code>, you may
+use <code>w</code>, <code>h</code>, and <code>t</code> respectively. The
+previous example could also be written:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( w =&gt; 400,
                               h =&gt; 400,
@@ -291,73 +282,83 @@ could also be written like this:</p>
 
 <h1>Drawing</h1>
 
-<h2>Preview</h2>
-
-<p>SDL provides several ways to draw graphical elements on the screen;
-these methods can be broken down into three general categories: Primitives,
-Images, and Text. Methods in each of the three categories draw a single
-object on the Surface. The Surface is represented by
-<code>SDLx::Surface</code>. Even our <code>SDLx::App</code> is an
-<code>SDLx::Surface</code>. This means that we can draw directly on the
-<code>SDLx::App</code>, however there are several advantages to drawing on
-multiple surfaces. In this chapter we will explore these methods of
-drawing, and make a pretty picture.</p>
+<p>SDL provides several ways to draw graphical elements on the screen in
+three general categories: primitives, images, and text. All drawing occurs
+on a surface, represented by the <code>SDLx::Surface</code> class. Even the
+<code>SDLx::App</code> is an <code>SDLx::Surface</code>. Though this means
+it's possible to draw directly to the app's surface, there are several
+advantages to drawing on multiple surfaces.</p>
 
 <h2>Coordinates</h2>
 
-<p>SDL's surface coordinate system has x=0,y=0 in the upper left corner and
-the dimensions span to the right and downward. The API always lists
-coordinates in x,y order. More discussion of these details can be found in
-the SDL library documentation:
-HTTP://SDLTutorials.Com/sdl-coordinates-and-blitting</p>
+<p>SDL's surface coordinate system has its origin (where both the x and y
+coordinates have the value of zero) in the upper left corner. As the value
+of x increases, the position moves to the right of the origin. As the value
+of y increases, the position moves downward from the origin. The API always
+lists coordinates in x, y order.</p>
 
-<h2>Objective</h2>
+<blockquote>
 
-<p>Using SDL we will try to construct the following image.</p>
+<p>The SDL library documentation has an extended discussion on coordinates:
+http://sdltutorials.com/sdl-coordinates-and-blitting.</p>
+
+</blockquote>
+
+<h2>Drawing with SDL</h2>
+
+<p>You can produce original pictures knowing little more than how to draw
+to a surface with SDL:</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/flower.png}
 \caption{A field of flowers} \label{fig:flowers}</p>
 
 
 
-<h2>Drawing the Flower</h2>
+<h3>Surface Drawing Methods</h3>
 
-<p>To begin actually drawing the flower, we need to cover some theory.</p>
-
-<h3>Syntax Overview</h3>
-
-<p>Drawing in SDL is done on Surfaces. The <code>SDLx::Surface</code>
-object provides access to methods in the form of:</p>
+<p>As mentioned earlier, all drawing in SDL requires a surface. The
+<code>SDLx::Surface</code> object provides access to methods in the form
+of:</p>
 
 <pre><code>    $surface-&gt;draw_{something}( .... );</code></pre>
 
-<p>Parameters are usually provided as array references, to define areas and
-colors.</p>
+<p>Parameters to these methods are generally coordinates and colors,
+provided as array references.</p>
 
 <h4>Rectangular Parameters</h4>
 
-<p>Some parameters are just a quick definition of the positions and
-dimensions. For a rectangle that will be placed at <code>(20, 20)</code>
-pixel units on the screen, which has dimensions of <code>40x40</code> pixel
-units, the following would suffice.</p>
+<p>Some parameters are sets of coordinate positions and dimensions. For
+example, parameters to describe a rectangle of <code>40x40</code> pixels
+placed at <code>(20, 20)</code> pixel units on the screen make a
+four-element array reference of x, y, width, height:</p>
 
 <pre><code>    my $rect = [20, 20, 40, 40];</code></pre>
 
 <h4>Color</h4>
 
-<p> in SDL is described by 4 numbers. The first three numbers define the
-Red, Green, and Blue intensity of the Color. The final number defines the
-transparency of the Color.</p>
+<p></p>
+
+<p>Need to document what the magnitude of the color and transparency values
+mean.</p>
+
+<p>SDL color parameters require four-element array references. The first
+three numbers define the Red, Green, and Blue intensity of the color. The
+final number defines the transparency of the color.</p>
 
 <pre><code>    my $color = [255, 255, 255, 255];</code></pre>
 
-<p>Color can also be defined as hexadecimal values:</p>
+<p>You may also represent a color as hexadecimal values, where the values
+of the numbers range from 0-255 for 32 bit depth in RGBA format:</p>
 
-<pre><code>    my $color = 0xFFFFFFFF;</code></pre>
+<pre><code>    my $color = 0xFFFFFFFF;
+    my $white = 0xFFFFFFFF;
+    my $black = 0x000000FF;
+    my $red   = 0xFF0000FF;
+    my $green = 0x00FF00FF;
+    my $blue  = 0x0000FFFF;</code></pre>
 
-<p>The values of the numbers range from 0-255 for 32 bit depth in RGBA
-format. Alternately color can be described as a 4 byte hexadecimal value,
-each two digit byte encoding the same RGBA values as above:</p>
+<p>... or as four-byte hexadecimal values, where each two-digit byte
+encodes the same RGBA values:</p>
 
 <pre><code>    my $goldenrod = 0xDAA520FF;</code></pre>
 
@@ -365,39 +366,34 @@ each two digit byte encoding the same RGBA values as above:</p>
 
 <h5>NOTE: Depth of Surface</h5>
 
-<p>The bits of the surface are set when the <code>SDLx::Surface</code> or
-<code>SDLx::App</code> is made.</p>
+<p>The color depth of the surface--how many bits are available to describe
+colors--is a property of the relevant <code>SDLx::Surface</code> or
+<code>SDLx::App</code>. Set it in its constructor:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( depth =&gt; 32 );</code></pre>
 
-<p>Other options are 24, 16, and 8. 32 is the default bit depth.</p>
+<p>The default bit depth is 32, such that each color component has 256
+possible values. Other options are 24, 16, and 8.</p>
 
 </blockquote>
 
 <h3>Pixels</h3>
 
-<p>All <code>SDLx::Surface</code>s are made of pixels that can be read and
-written to via a tied array interface.</p>
+<p>All <code>SDLx::Surface</code>s are collections of pixels. You can read
+from and write to these pixels by treating the surface as an array
+reference:</p>
 
 <pre><code>    $app-&gt;[$x][$y] = $color;</code></pre>
 
-<p>The <code>$color</code> is defined as an unsigned integer value which is
-constructed in the following hexadecimal format, <code>0xRRGGBBAA</code>.
-Here are some examples:</p>
-
-<pre><code>    $white = 0xFFFFFFFF;
-    $black = 0x000000FF;
-    $red   = 0xFF0000FF;
-    $green = 0x00FF00FF;
-    $blue  = 0x0000FFFF;</code></pre>
-
-<p>Pixels can also be defined as anonymous arrays as before with
-<code>[$red, $green, $blue, $alpha]</code>.</p>
+<p>... where <code>$color</code> is an unsigned integer value using the
+hexadecimal format (<code>0xRRGGBBAA</code>) <i>or</i> an anonymous array
+of the form <code>[$red, $green, $blue, $alpha]</code>.</p>
 
 <h3>Primitives</h3>
 
-<p>Drawing  are usually simple shapes that can be used for creating
-graphics dynamically.</p>
+<p></p>
+
+<p>Drawing primitives are simple shapes that SDL supports natively.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/draw-1.png}
 \caption{Drawing a line} \label{fig:draw_line}</p>
@@ -406,10 +402,13 @@ graphics dynamically.</p>
 
 <h4>Lines</h4>
 
-<pre><code>    $app-&gt;draw_line( [200,20], [20,200], [255, 255, 0, 255] );</code></pre>
+<p>A line is a series of contiguous pixels between two points. The
+<code>draw_line</code> method causes SDL to draw a line to a surface:</p>
 
-<p>This will draw a yellow line from positions <code>(200,20)</code> to
-<code>(20,200)</code>.</p>
+<pre><code>    $app-&gt;draw_line( [200, 20], [20, 200], [255, 255, 0, 255] );</code></pre>
+
+<p>This will draw a yellow line from positions <code>(200, 20)</code> to
+<code>(20, 200)</code>.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/draw-2.png}
 \caption{Drawing a Rectangle} \label{fig:draw_rect}</p>
@@ -418,13 +417,17 @@ graphics dynamically.</p>
 
 <h4>Rectangles</h4>
 
-<p>Rectangles are a common building block for games. In SDL, rectangles are
-the most cost effective of the primitives to draw.</p>
+<p></p>
 
-<pre><code>    $app-&gt;draw_rect( [10,20, 40, 40 ], [255, 255, 255,255] );</code></pre>
+<p>A rectangle is a four-sided, filled polygon. Rectangles are a common
+building block for games. In SDL, rectangles are the most cost effective of
+the primitives to draw. The <code>draw_rect</code> method draws a rectangle
+on a surface:</p>
 
-<p>The above will add a white square of size <code>40x40</code> onto the
-screen at the position <code>(10,20)</code>.</p>
+<pre><code>    $app-&gt;draw_rect( [10, 20, 40, 40 ], [255, 255, 255,255] );</code></pre>
+
+<p>This draws a white square of size <code>40x40</code> onto the screen at
+the position <code>(10,20)</code>.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/draw-3.png}
 \caption{Drawing a Circle} \label{fig:draw_circle}</p>
@@ -438,23 +441,24 @@ screen at the position <code>(10,20)</code>.</p>
 
 <h4>Circles</h4>
 
-<p>Circles are drawn similarly either filled or unfilled.</p>
+<p></p>
 
-<pre><code>    $app-&gt;draw_circle(        [100,100], 20, [255,0,0,255] );
-    $app-&gt;draw_circle_filled( [100,100], 19, [0,0,255,255] );</code></pre>
+<p>A circle is a primitive a fixed radius around a given point. Circles may
+be filled or unfilled. The <code>draw_circle</code> and
+<code>draw_circle_filled</code> methods draw these to a surface:</p>
 
-<p>Now we will have an unfilled circle colored red and a filled circle
-colored blue.</p>
+<pre><code>    $app-&gt;draw_circle(        [100, 100], 20, [255, 0,   0, 255] );
+    $app-&gt;draw_circle_filled( [100, 100], 19, [0,   0, 255, 255] );</code></pre>
 
-<h4>More Primitives</h4>
+<p>These draw an unfilled red circle and a filled blue circle.</p>
 
-<p>For more complex drawing functions have a look at
+<p>SDL provides more complex primitives in
 <code>SDL::GFX::Primitives</code>.</p>
 
-<h3>Application: Primitives</h3>
+<h3>Drawing with Primitives</h3>
 
-<p>Using our knowledge of Primitives in SDL, let's draw our field, sky, and
-a simple flower.</p>
+<p>It's easy to combine several primitives to draw an interesting
+images.</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -468,26 +472,26 @@ a simple flower.</p>
         title =&gt; &#39;Pretty Flowers&#39;
     );
 
-    #Adding the blue skies
+    # Add the blue skies
     $app-&gt;draw_rect( [ 0,   0, 500, 500 ], [ 20,  50, 170, 255 ] );
 
-    #Draw our green field
+    # Draw a green field
     $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170,  20, 100 ] );
 
-    # Make a surface 50x100 pixels
+    # Make a surface for the flower
     my $flower = SDLx::Surface-&gt;new( width =&gt; 50, height =&gt; 100 );
 
-    # Lets make the background black
+    # With a black background
     $flower-&gt;draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
 
-    # Now for a pretty green stem
+    # Draw a pretty green stem
     $flower-&gt;draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
 
-    # And the simple flower bud
+    # And a simple flower bud
     $flower-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
     $flower-&gt;draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
-    # Draw flower on $app surface
+    # Draw flower on $app
     $flower-&gt;blit( $app, [ 0, 0, 50, 100 ] );
 
     $app-&gt;update();
@@ -499,56 +503,45 @@ a simple flower.</p>
 
 
 
-<h2>Drawing a Field of Flowers</h2>
+<h2>Drawing on Multiple Surfaces</h2>
 
-<h3>Multiple Surfaces</h3>
+<p>The examples so far have drawn on only a single surface, the display.
+SDL makes it possible to write on multiple surfaces. These other surfaces
+exist only in memory until you draw them to the display.</p>
 
-<p>So far we have been drawing only on one surface, the display. In SDL it
-is possible to write on several surfaces that are in memory. These surfaces
-can later on be added on to the display to show them. The Surface is
-defined as an <code>SDLx::Surface</code> type in SDL Perl.</p>
+<h3>Creating Surfaces</h3>
 
-<h4>Creating Surfaces</h4>
-
-<p>There are several ways to create an <code>SDLx::Surface</code> for
-use.</p>
-
-<h4>Raw Surfaces</h4>
-
-<p>For the purposes of preparing surfaces using only draw functions (as
-mentioned above) we can create a surface using the
-<code>SDLx::Surface</code>'s constructor.</p>
+<p>There are several ways to create an <code>SDLx::Surface</code> for use.
+The most common is to create one manually with a constructor call:</p>
 
 <pre><code>    $surface = SDLx::Surface-&gt;new( width =&gt; $width, height =&gt; $height );</code></pre>
 
-<h4>Images in SDL</h4>
-
-<p>Using <code>SDL::Image</code> and <code>SDL::Video</code> we can load
-images as surfaces too. <code>SDL::Image</code> provides support for all
-types of images, however it requires <code>SDL_image</code> library support
-to be compiled with the right library.</p>
+<p><code>SDL::Image</code> and <code>SDL::Video</code> can load images as
+surfaces too. <code>SDL::Image</code> provides support for all types of
+images, provided that the underlying <code>SDL_image</code> library
+supports the image type you want to load. For example,
+<code>SDL_image</code> must support PNG images to use:</p>
 
 <pre><code>    $surface = SDL::Image::load( &#39;picture.png&#39; );</code></pre>
 
 <p>In the event that the desired <code>SDL_image</code> library is
-unavailable, we can fall-back on the built-in support for the
+unavailable, you can fallback to the built-in support for the
 <code>.bmp</code> format.</p>
 
 <pre><code>    $surface = SDL::Video::load_BMP( &#39;picture.bmp&#39; );</code></pre>
 
-<p>Generally, however, the <code>SDLx::Sprite</code> module is used.</p>
+<p>The <code>SDLx::Sprite</code> module provides another option to
+manipulate surfaces.</p>
 
 <h2>Lots of Flowers but One Seed</h2>
 
-<h3>Sprites</h3>
-
-<p>You might have noticed that putting another <code>SDLx::Surface</code>
-on the <code>$app</code> requires the usage of a <code>blit( )</code>
-function, which may not clarify as to what is going on there. Fortunately
-an <code>SDLx::Sprite</code> can be used to make our flower. Besides making
-drawing simpler, <code>SDLx::Sprite</code> adds several other features that
-we need for game images that move a lot. For now let's use
-<code>SDLx::Sprite</code> for our flowers.</p>
+<p>The flower example used a method called <code>blit</code> to draw a
+surface to the display. This method copies data from one surface to
+another. It's a fundamental operation, but it's a low level operation.
+<code>SDLx::Sprite</code> provides higher level options. Besides making
+drawing simpler, <code>SDLx::Sprite</code> adds several other features
+useful for moving images. Here's a revised example using
+<code>SDLx::Sprite</code> for flowers:</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -563,23 +556,23 @@ we need for game images that move a lot. For now let's use
         title =&gt; &#39;Pretty Flowers&#39;
     );
 
-    #Adding the blue skies
+    # Adding blue skies
     $app-&gt;draw_rect( [ 0,   0, 500, 500 ], [ 20, 50, 170, 255 ] );
 
-    #Draw our green field
+    # Draw a green field
     $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
 
     my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
 
-    # To access the SDLx::Surface to write to, we use the -&gt;surface() method
+    # Use -&gt;surface() to access a sprite&#39;s SDLx::Surface
 
-    # Let&#39;s make the background black
+    # Make the background black
     $flower-&gt;surface-&gt;draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
 
     # Now for a pretty green stem
     $flower-&gt;surface-&gt;draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
 
-    # And the simple flower bud
+    # Add the simple flower bud
     $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
     $flower-&gt;surface-&gt;draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
@@ -589,22 +582,26 @@ we need for game images that move a lot. For now let's use
 
     sleep(1);</code></pre>
 
-<p>Obviously at this point we don't want our single flower floating in the
-sky, so we will draw several of them on the ground. Delete everything from
-line 34 including and after</p>
+<p>Flowers usually don't grow in the sky. Flowers make more sense on the
+ground. It's easy to insert plenty of identical flowers from a single
+sprite. Replace the line:</p>
 
 <pre><code>    $flower-&gt;draw_xy( $app, 0, 0 );</code></pre>
 
-<p>and insert the code below to get a field of flowers.</p>
+<p>... with:</p>
 
-<pre><code>    for(0..500){
+<pre><code>    for (0 .. 500) {
         my $y =           425 - rand( 50);
-        $flower-&gt;draw_xy( $app, rand(500)-20, $y );
+        $flower-&gt;draw_xy( $app, rand(500) - 20, $y );
     }
 
     $app-&gt;update();
 
     sleep(1);</code></pre>
+
+<p>... to make an entire field of flowers.</p>
+
+<p>Probably don't need this.</p>
 
 <h2>Program</h2>
 
@@ -645,15 +642,19 @@ line 34 including and after</p>
 
 <h1>Handling Events</h1>
 
-<h2>The SDL Queue and Events</h2>
+<p></p>
 
-<p>SDL process events using a queue. The event queue holds all events that
-occur until they are removed. Events are any inputs such as: key presses,
-mouse movements and clicks, window focuses, and joystick presses. Every
-time the window sees one of these events, it puts it on the event queue
-once. The queue holds SDL events, which can be read via an
-<code>SDL::Event</code> object. We can process the Event Queue manually by
-pumping and polling the queue, constantly.</p>
+<p>The cornerstone of an SDL application is event handling. The user
+presses a key or moves the mouse. The operating system switches the focus
+of the active window. The user selects the quit option from the menu or the
+operating system. These are all events. How do you handle them?</p>
+
+<p> </p>
+
+<p>SDL provides an event queue which holds all events that occur until they
+are removed. Every time an event occurs, SDL places it into the queue. The
+<code>SDL::Event</code> object represents this queue in Perl, allowing you
+to add and remove events constantly:</p>
 
 <pre><code>        use strict;
         use warnings;
@@ -662,37 +663,50 @@ pumping and polling the queue, constantly.</p>
         use SDL::Events;
         use SDLx::App;
 
-        my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200 );
-
+        my $app   = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200 );
         my $event = SDL::Event-&gt;new();
         
-        my $quit = 0;
+        my $quit  = 0;
 
         while (!$quit) {
-                SDL::Events::pump_events();    #Updates the queue to recent events
+        # Updates the queue to recent events
+        SDL::Events::pump_events();
 
-                #Process all events that are available
+                # process all available events
                 while ( SDL::Events::poll_event($event) ) {
 
-                        #Check by Event type
+                        # check by Event type
                         do_key() if $event-&gt;type == SDL_KEYDOWN;
                 }
         }
 
-
         sub do_key { $quit = 1 }</code></pre>
 
-<p><code>SDLx::Controller</code> via the <code>SDLx::App</code> handles
-this loop by accepting Event Callbacks. Every application loop, each event
-callback is called repetitively with each event in the queue. This chapter
-will go through some examples of how to process various events for common
-usage.</p>
+<p>Add other types of events.</p>
+
+<p> </p>
+
+<p>Every event has an associated type which represents the category of the
+event. The previous example looks for a keypress event (footnote: SDL
+separates the event of pressing a key from the event of releasing a key,
+which allows you to identify combinations of keypresses, such as Ctrl + P
+to print.). The SDL library defines several types of events, and SDL_perl
+makes them available as constants with names such as
+<code>SDL_KEYDOWN</code> and <code>SDL_QUIT</code>. See <code>perldoc
+SDL::Events</code> for a list of all event types.</p>
+
+<p></p>
+
+<p>Checking for every possible event type within that event loop can be
+tedious. The <code>SDLx::Controller</code> available from the
+<code>SDLx::App</code> offers the use of event callbacks with which to
+handle events. Processing events is a matter of setting up the appropriate
+callbacks and letting SDL do the heavy work.</p>
 
 <h2>Quitting with Grace</h2>
 
-<p>So far we have not been exiting an <code>SDLx::App</code> in a graceful
-manner. Using the built in <code>SDLx::Controller</code> in the
-<code>$app</code> we can handle events using callbacks.</p>
+<p>The example applications so far have not exited cleanly. Handling quit
+events is much better:</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -700,83 +714,62 @@ manner. Using the built in <code>SDLx::Controller</code> in the
     use SDL::Event;
     use SDLx::App;
 
-    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32, title =&gt; &quot;Quit Events&quot; );
+    my $app = SDLx::App-&gt;new(
+        w     =&gt; 200,
+        h     =&gt; 200,
+        d     =&gt;  32,
+        title =&gt; &quot;Quit Events&quot;
+    );
 
-    #We can add an event handler 
     $app-&gt;add_event_handler( \&amp;quit_event );
-
-    #Then we will run the app
-    #which will start a loop for keeping the app alive
     $app-&gt;run();
 
     sub quit_event
     {
-        #The callback is provided a SDL::Event to use
+        # the callback receives the appropriate SDL::Event
             my $event = shift;
 
-        #Each event handler also returns you back the Controller call it
+            # ... as well as the calling SDLx::Controller
             my $controller = shift;
 
-        #Stopping the controller for us will exit $app-&gt;run() for us
+        # stopping the controller will exit $app-&gt;run() for us
             $controller-&gt;stop if $event-&gt;type == SDL_QUIT;
     }</code></pre>
 
 <p><code>SDLx::App</code> calls the event_handlers, from an internal
-<code>SDLx::Controller</code>, until a
-<code>SDLx::Controller::stop()</code> is called. <code>SDLx::App</code>
-will exit gracefully once it is stopped.</p>
-
-<h3>Event Type Defines</h3>
-
-<p>In the above sample <code>SDL_QUIT</code> was used to define the type of
-event we have. SDL uses a lot of integers to define different types of
-objects and states. Fortunately these integers are wrapped in constant
-functions like <code>SDL_QUIT</code>. More defines are explained in the
-<code>SDL::Events</code> documentation. Have a look at the perldoc for
-<code>SDL::Events</code>.</p>
-
-<pre><code>    perldoc SDL::Events </code></pre>
-
-<blockquote>
-
-<p>Events can also be processed without using callbacks from
-<code>SDLx::App</code>. Chapter 5 goes more in detail for this topic. The
-perldoc for <code>SDL::Events</code> will also show how do the
-processing.</p>
-
-</blockquote>
+<code>SDLx::Controller</code>. When this event handler receives a quit
+event, it calls <code>SDLx::Controller::stop()</code> which causes
+<code>SDLx::App</code> to exit gracefully.</p>
 
 <h3>Exit on Quit</h3>
 
-<p>Exiting when the <code>SDL_QUIT</code> event is call is a common
-callback so <code>SDLx::App</code> provides it for you, as a constructor
-option.</p>
+<p>Exiting on receiving the <code>SDL_QUIT</code> event is such a common
+operation that <code>SDLx::App</code> provides it as a constructor
+option:</p>
 
 <pre><code>    use strict;
     use warnings;
     use SDL;
     use SDLx::App;
 
-    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32, 
-                              title =&gt; &quot;Quit Events&quot;, 
-                             exit_on_quit =&gt; 1); 
+    my $app = SDLx::App-&gt;new(
+        w            =&gt; 200,
+        h            =&gt; 200,
+        d            =&gt;  32,
+        title        =&gt; &quot;Quit Events&quot;,
+        exit_on_quit =&gt; 1
+    );
 
-        #exit_on_quit option exits when SDL_QUIT is processed
-
-    #Then we will run the app
-    #which will start a loop for keeping the app alive
-    $app-&gt;run();
-  </code></pre>
+    $app-&gt;run();</code></pre>
 
 <h2>Small Paint: Input Devices</h2>
 
-<p>SDL events also allow us to handle input from various devices. To
-demonstrate two of the common devices, lets make a simple paint program. It
-will provide a small black window where you can draw with the mouse.
-Moreover when you press the number keys 0-10 it will pick different colors.
-By pressing 'q' or 'Q' we will exit. Similarity pressing 'c' or 'C' will
-clear the screen. Pressing 'ctrl-s' will save our image to the file
-'painted.bmp'.</p>
+<p>SDL events also allow input handling. Consider a simple paint program.
+It will provide a small black window. Moving the mouse draws on this
+window. Pressing a number key chooses a paint color. Pressing
+<code>q</code> or <code>Q</code> exits the program. Pressing <code>c</code>
+or <code>C</code> clears the screen. Pressing <code>Ctrl-S</code> saves the
+image to a file named <i>painted.bmp</i>.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/painted.png}
 \caption{Simple Paint: Smile} \label{fig:Smile}</p>
@@ -785,55 +778,54 @@ clear the screen. Pressing 'ctrl-s' will save our image to the file
 
 <h3>Saving the image</h3>
 
-<p>First, lets define the save subroutine.</p>
+<p>Start by defining the saving function:</p>
 
 <pre><code>    sub save_image {
-
-       if( SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0 &amp;&amp; -e &#39;painted.bmp&#39;)
+        if (SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0
+        &amp;&amp; -e &#39;painted.bmp&#39;)
         {
-             warn &#39;Saved painted.bmp to &#39;.cwd();
+             warn &#39;Saved painted.bmp to &#39; . cwd();
         }
-        else 
+        else
         {
-            warn &#39;Could not save painted.bmp: &#39;.SDL::get_errors();
+            warn &#39;Could not save painted.bmp: &#39; . SDL::get_errors();
         }
-
     }</code></pre>
 
 <h3>Keyboard</h3>
 
-<p>To handle the keyboard specifications we will create another event
-callback.</p>
+<p>Keyboard handling requires some color data as well as a keypress
+callback:</p>
 
 <pre><code>    my $brush_color = 0;
 
     sub keyboard_event
     {
         my $event = shift;
-        
-        #Check that our type of event press is a SDL_KEYDOWN
-        if( $event-&gt;type == SDL_KEYDOWN )
-        {
-            #Convert the key_symbol (integer) to a keyname
-            my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
-            
-            #if our $key_name is a digit use it as a color
-            $brush_color = $key_name if $key_name =~ /^\d$/;
-           
-            #Get the keyboard modifier perldoc SDL::Events
-            #We are using any CTRL so KMOD_CTRL is fine
-            my $mod_state = SDL::Events::get_mod_state();
-            
-            #Save the image.         
-            save_image if $key_name =~ /^s$/ &amp;&amp; ($mod_state &amp; KMOD_CTRL); 
 
-            #Clear the screen if we pressed C or c
-            $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 ) if $key_name =~ /^c$/;
-            
-            #Exit if we press a Q or q
+        if ( $event-&gt;type == SDL_KEYDOWN )
+        {
+            # convert the key_symbol (integer) to a keyname
+            my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
+
+            # if $key_name is a digit, use it as a color
+            $brush_color = $key_name if $key_name =~ /^\d$/;
+
+            # get the keyboard modifier (see perldoc SDL::Events)
+            my $mod_state = SDL::Events::get_mod_state();
+
+            # we are using any CTRL so KMOD_CTRL is fine
+            save_image() if $key_name =~ /^s$/ &amp;&amp; ($mod_state &amp; KMOD_CTRL);
+
+            # clear the screen
+            $app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0 )
+                if $key_name =~ /^c$/;
+
+            # exit
             $app-&gt;stop() if $key_name =~ /^q$/;
         }
-        $app-&gt;update();    
+
+        $app-&gt;update();
     }
 
     $app-&gt;add_event_handler(\&amp;quit_event);
@@ -841,167 +833,71 @@ callback.</p>
 
 <blockquote>
 
-<h5>NOTE: Globals and Callbacks</h5>
-
-<p>When adding a callback to <code>SDLx::App</code> which uses globals (
-<code>$brush_color</code> and <code>@colors</code> in this case ), be sure
-to define them before declaring the subroutine. Also add it to the
-<code>SDLx::App</code> after the subroutine is defined. The reason for this
-is so that <code>SDLx::App</code> is aware of the globals before it calls
-the callback internally.</p>
+<p><b>NOTE: </b> When adding a callback to <code>SDLx::App</code> which
+uses variables declared outside of the function (<code>$brush_color</code>
+and <code>@colors</code> in this case), be sure to define them before
+declaring the subroutine. Normal Perl scoping and initialization rules
+apply.</p>
 
 </blockquote>
 
 <h3>Mouse</h3>
 
-<p>Now we will go about capturing our Mouse events, by inserting the
-following code after the <code>keyboard_event</code> subroutine.</p>
+<p>Handling mouse events is almost as straightforward as keyboard events:
+=begin programlisting</p>
 
-<pre><code>    #Keep track if we are drawing 
+<pre><code>    # track the drawing status
     my $drawing = 0;
+
     sub mouse_event {
-
-        my $event = shift;
-        
-        #We will detect Mouse Button events
-        #and check if we already started drawing
-        if($event-&gt;type == SDL_MOUSEBUTTONDOWN || $drawing)
-        {
-            # set drawing to 1 
-            $drawing = 1;
-
-            # get the X and Y values of the mouse
-            my $x =  $event-&gt;button_x;
-            my $y =  $event-&gt;button_y;
-            
-            # Draw a rectangle at the specified position
-            $app-&gt;draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
-    
-            # Update the application
-            $app-&gt;update();
-        }
-
-        # Turn drawing off if we lift the mouse button
-        $drawing = 0 if($event-&gt;type == SDL_MOUSEBUTTONUP );
-     
-    }
-
-
-    $app-&gt;add_event_handler( \&amp;mouse_event );</code></pre>
-
-<p>Currently we don't make a distinction between what mouse click is done.
-This can be accomplished by taking a look at the
-<code>button_button()</code> method in <code>SDL::Event</code>. At this
-point we have a simple paint application done.</p>
-
-<p>Another point to note is that each event_handler is called in the order
-that it was attached.</p>
-
-<h3>Program</h3>
-
-<p>The final program looks like this:</p>
-
-<pre><code>    use strict;
-    use warnings;
-    use SDL;
-    use Cwd;
-    use SDL::Event;
-    use SDLx::App;
-
-    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32,
-        title =&gt; &quot;Simple Paint&quot; );
-
-    sub quit_event {
-        my $event = shift;
-        my $controller = shift;
-        $controller-&gt;stop() if $event-&gt;type == SDL_QUIT;
-    }
-
-
-    sub save_image {
-
-       if( SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0 &amp;&amp; -e &#39;painted.bmp&#39;)
-        {
-             warn &#39;Saved painted.bmp to &#39;.cwd();
-        }
-        else
-        {
-            warn &#39;Could not save painted.bmp: &#39;.SDL::get_errors();
-        }
-
-    }
-
-    my @colors = (  0xFF0000FF, 0x00FF00FF,
-                    0x0000FFFF, 0xFFFF00FF,
-                    0xFF00FFFF, 0x00FFFFFF,
-                    0xCCFFCCFF, 0xFFCC33FF,
-                    0x000000FF, 0xFFFFFFFF );
-
-    my $brush_color = 0;
-
-    sub keyboard_event
-    {
         my $event = shift;
 
-        #Check that our type of event press is a SDL_KEYDOWN
-        if( $event-&gt;type == SDL_KEYDOWN )
-        {
-            #Convert the key_symbol (integer) to a keyname
-            my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
-
-            #if our $key_name is a digit use it as a color
-            $brush_color = $key_name if $key_name =~ /^\d$/;
-
-            #Get the keyboard modifier perldoc SDL::Events
-            #We are using any CTRL so KMOD_CTRL is fine
-            my $mod_state = SDL::Events::get_mod_state();
-
-            #Save the image.
-            save_image if $key_name =~ /^s$/ &amp;&amp; ($mod_state &amp; KMOD_CTRL);
-
-            #Clear the screen if we pressed C or c
-            $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 ) if $key_name =~ /^c$/;
-
-            #Exit if we press a Q or q
-            $app-&gt;stop() if $key_name =~ /^q$/;
-        }
-        $app-&gt;update();
-    }
-
-    $app-&gt;add_event_handler(\&amp;keyboard_event);
-
-    #Keep track if we are drawing
-    my $drawing = 0;
-    sub mouse_event {
-
-        my $event = shift;
-
-        #We will detect Mouse Button events
-        #and check if we already started drawing
-        if($event-&gt;type == SDL_MOUSEBUTTONDOWN || $drawing)
+        # detect Mouse Button events and check if user is currently drawing
+        if ($event-&gt;type == SDL_MOUSEBUTTONDOWN || $drawing)
         {
             # set drawing to 1
             $drawing = 1;
 
             # get the X and Y values of the mouse
-            my $x =  $event-&gt;button_x;
-            my $y =  $event-&gt;button_y;
+            my $x = $event-&gt;button_x;
+            my $y = $event-&gt;button_y;
 
-            # Draw a rectangle at the specified position
-            $app-&gt;draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
+            # draw a rectangle at the specified position
+            $app-&gt;draw_rect( [ $x, $y, 2, 2 ], $colors[$brush_color] );
 
-            # Update the application
             $app-&gt;update();
         }
 
-        # Turn drawing off if we lift the mouse button
-        $drawing = 0 if($event-&gt;type == SDL_MOUSEBUTTONUP );
-
+        # disable drawing when user releases mouse button
+        $drawing = 0 if ($event-&gt;type == SDL_MOUSEBUTTONUP );
     }
 
+    $app-&gt;add_event_handler( \&amp;mouse_event );</code></pre>
 
-    $app-&gt;add_event_handler( \&amp;mouse_event );
-    $app-&gt;run();</code></pre>
+<p>This is all of the code necessary to make a simple drawing
+application.</p>
+
+<p>Take note of two things. First, SDL_perl invokes the event handlers in
+the order of attachment. If the user presses <code>Q</code> and then moves
+the mouse, the application will quit before processing the mouse
+movement.</p>
+
+<p>Second, the application makes no distinction between right, middle, or
+left mouse clicks. SDL provides this information. See the
+<code>button_button()</code> method in <code>SDL::Event</code>.</p>
+
+<h2>POD ERRORS</h2>
+
+<p>Hey! <b>The above document had some coding errors, which are explained
+below:</b></p>
+
+<ul>
+
+<li>Around line 259:
+
+<p>=end programlisting without matching =begin.  (Stack: [empty])</p>
+
+</ul>
 
 <h1>The Game Loop</h1>
 
