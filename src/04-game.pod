@@ -1,12 +1,13 @@
-=head0 The Game Loop 
+=head0 The Game Loop
 
-=head1 Simplest Game Loop
+X<game loop>
 
-The simplest game loop can be boiled down to the following. 
+Just as an interactive SDL app builds around an event loop, a game builds
+around a game loop. The simplest game loop is something like:
 
 =begin programlisting
 
-    while(!$quit)
+    while (!$quit)
     {
        get_events();
        calculate_next_positions();
@@ -15,10 +16,19 @@ The simplest game loop can be boiled down to the following.
 
 =end programlisting
 
-In C<get_events()> we get events from what input devices that we need. It is important to process events first to prevent lag.
-In C<calculate_next_positions> we update the game state according to animations and the events captured. In C<render()> we will update the screen and show the game to the player. 
+The names of the functions called in this loop hint at their purposes, but the
+subtleties of even this simple code are important.  C<get_events()> obviously
+processes events from the relevant input devices (keyboard, mouse, joystick).
+Processing events at the start of every game loop iteration helps to prevent
+lag.
 
-A practical example of this is a moving laser bolt. 
+C<calculate_next_positions> updates the game state according to user input as
+well as any active animations (a player walking, an explosion, a cut scene).
+C<render()> finally updates and displays the screen.
+
+=head1 A Practical Game Loop
+
+Consider a game with a moving laser bolt:
 
 =begin programlisting
 
@@ -28,52 +38,48 @@ A practical example of this is a moving laser bolt.
     use SDL::Event;
     use SDL::Events;
     use SDLx::App;
-    
-    my $app = SDLx::App->new( 
-                             width=> 200, height => 200,
-                             title=> 'Pew Pew'
-                            );
 
-    #Don't need to quit yet
+    my $app = SDLx::App->new(
+        width  => 200,
+        height => 200,
+        title  => 'Pew Pew'
+    );
+
     my $quit = 0;
-    #Start laser on the left
+
+    # start laser on the left
     my $laser = 0;
-    sub get_events{ 
 
-                    my $event = SDL::Event->new();
-                    
-                    #Pump the event queue
-                    SDL::Events::pump_events;
+    sub get_events {
+        my $event = SDL::Event->new();
 
-                    while( SDL::Events::poll_event($event) )
-                    {
-                        $quit = 1 if $event->type == SDL_QUIT  
-                    }
+        SDL::Events::pump_events;
+
+        while( SDL::Events::poll_event($event) )
+        {
+            $quit = 1 if $event->type == SDL_QUIT
+        }
     }
 
-    sub calculate_next_positions{
-	# Move the laser over
+    sub calculate_next_positions {
+	    # move the laser
         $laser++;
-	# If the laser goes off the screen bring it back
-	$laser = 0 if $laser > $app->w();
 
+	    # if the laser goes off the screen, bring it back
+        $laser = 0 if $laser > $app->w();
     }
-    
-    sub render { 
-        
-        #Draw the background first
-        $app->draw_rect( [0,0,$app->w, $app->h], 0 );
 
-        #Draw the laser, in the middle height of the screen
-        $app->draw_rect( [$laser, $app->h/2, 10, 2], [255,0,0,255]);
+    sub render {
+        # draw the background first
+        $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 );
+
+        # draw the laser halfway up the screen
+        $app->draw_rect( [ $laser, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ]);
 
         $app->update();
-
     }
 
-
-    # Until we quit stay looping 
-    while(!$quit)
+    while (!$quit)
     {
          get_events();
          calculate_next_positions();
@@ -82,39 +88,45 @@ A practical example of this is a moving laser bolt.
 
 =end programlisting
 
-=head2 Issues
+This game loop works very well for consoles and other devices where you know
+exactly how much CPU time the game will get for every loop iteration. That
+hardware stability is easy to predict: each animation and calculation will
+happen at the same time for each machine.  Unfortunately, this is I<not> true
+for modern operating systems and general purpose computing hardware. CPU speeds
+and workloads vary, so for this game to play consistently across multiple
+machines and myriad configurations, the game loop itself needs to regulate its
+updates.
 
-This game loop works well for consoles and devices where the share of CPU clock speed is always known. The game users will be using the
-same processor characteristics to run this code. This means that each animation and calculation will happen at the exact same time in each machine. Unfortunately, this is typically not true for modern operating systems and hardware.
-For faster CPUs and systems with varying loads, we need to regulate updates
-so that game play will be consistent in most cases.
+=head2 Fixed FPS
 
-=head1 Fixed FPS
+X<FPS>
+X<frame>
 
-One way to solve this problem is to regulate the "Frames Per Second" for your game's updates.  A "frame" is defined as a complete redraw of the screen representing the updated game state.
-We can keep track of the number of frames we are delivering each second and control it using the technique illustrated below. 
+One way to solve this problem is to regulate the number of frames per second
+the game will produce. A I<frame> is a complete redraw of the screen
+representing the updated game state. If each iteration of the game loop draws
+one frame, the more frames per second, the faster the game is running. If the
+game loop limits the number of frames per second, the game will perform
+consistently on all machines fast enough to draw that many frames per second.
 
-=head2 Exercise 
+You can see this with the example program F<game_fixed.pl>. When run with no
+arguments:
 
-First run the below script with no fps fixing:
+    $ B<perl game_fixed.pl>
 
-    perl game_fixed.pl
+.... the FPS rate will be erratic. The laser seems to change its speed
+randomly. When run with a single argument, the game sets an upper bound on the
+number of frames per second:
 
-You will see that the FPS is erratic, and the laser seems to speed up and slow down randomly.
+    $ B<perl game_fixed.pl 1>
 
-Next fix the upper bounds of the FPS
+This will prevent the laser from going faster than 60 frames per second. When
+run with a second argument, the game will set a lower bound of frames per
+second:
 
-    perl game_fixed.pl 1
+    $ B<perl game_fixed.pl 1 1>
 
-This will prevent the laser from going too fast, in this case faster then 60 frames per second.
-
-Finally fix the lower bounds of the FPS
-
-    perl game_fixed.pl 1 1
-
-At this point the FPS should be at a steady 60 frames per second. However if this is not the case
-read on to the problems below.
-
+At this point the FPS should hold steady at 60 frames per second.
 
 =begin programlisting
 
@@ -129,30 +141,24 @@ read on to the problems below.
 			width  => 200,
 			height => 200,
 			title  => 'Pew Pew'
-			);
+	);
 
-	# Variables 
-	# to save our start/end and delta times for each frame
-	# to save our frames and FPS 
 	my ( $start, $end, $delta_time, $FPS, $frames ) = ( 0, 0, 0, 0, 0 );
 
-	# We will aim for a rate of 60 frames per second 
+	# aim for a rate of 60 frames per second
 	my $fixed_rate = 60;
 
-	# Our times are in micro second, so we will compensate for it
-	my $fps_check = (1000/ $fixed_rate );
+	# compensate for times stored in microseconds
+	my $fps_check = (1000 / $fixed_rate );
 
-	#Don't need to quit yet
 	my $quit = 0;
 
-	#Start laser on the left
+	# start laser on the left
 	my $laser = 0;
 
 	sub get_events {
-
 		my $event = SDL::Event->new();
 
-		#Pump the event queue
 		SDL::Events::pump_events;
 
 		while ( SDL::Events::poll_event($event) ) {
@@ -167,149 +173,148 @@ read on to the problems below.
 	}
 
 	sub render {
-
-		#Draw the background first
+		# draw the background first
 		$app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 );
 
-		#Draw the laser
+		# draw the laser
 		$app->draw_rect( [ $laser, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
 
-		#Draw our FPS on the screen so we can see
+		# draw the FPS
 		$app->draw_gfx_text( [ 10, 10 ], [ 255, 0, 255, 255 ], "FPS: $FPS" );
 
 		$app->update();
 	}
 
-
 	# Called at the end of each frame, whether we draw or not
 	sub calculate_fps_at_frame_end
 	{
-
 		# Ticks are microseconds since load time
 		$end = SDL::get_ticks();
 
-		# We will average our frame rate over 10 frames, to give less erratic rates
+        # smooth the frame rate by averaging over 10 frames
 		if ( $frames < 10 ) {
-			
-			#Count a frame
 			$frames++;
-			
-			#Calculate how long it took from the start 
 			$delta_time += $end - $start;
 		}
 		else {
+			# frame rate is Frames * 100 / Time Elapsed in us
+            $FPS        = int( ( $frames * 100 ) / $delta_time )
+                        if $delta_time != 0;
 
-			# Our frame rate is our  Frames * 100 / Time Elapsed in us
-			$FPS        = int( ( $frames * 100 ) / $delta_time ) if $delta_time != 0;
-
-			# Reset our metrics
+			# reset metrics
 			$frames     = 0;
 			$delta_time = 0;
 		}
-
-
-
 	}
 
 	while ( !$quit ) {
-
-
 		# Get the time for the starting of the frame
 		$start = SDL::get_ticks();
 
 		get_events();
 
-		# If we are fixing the lower bounds of the frame rate
+		# if fixing the lower bounds of the frame rate
 		if( $ARGV[1] )
 		{
-
-			# And our delta time is going too slow for frame check
+			# if delta time is going too slow for frame check
 			if ( $delta_time > $fps_check ) {
 
-				# Calculate our FPS from this 
 				calculate_fps_at_frame_end();
 
-				# Skip rendering and collision detections 
-				# The heavy functions in the game loop
-				next;		  
-
+                # skip rendering and collision detections
+                # (heavy functions in the game loop)
+				next;
 			}
-
 		}
-
 
 		calculate_next_positions();
 		render();
 
-		# A normal frame with rendering actually performed
+		# a normal frame with rendering actually performed
 		calculate_fps_at_frame_end();
 
-		# if we are fixing the upper bounds of the frame rate
+		# if fixing the upper bounds of the frame rate
 		if ( $ARGV[0] ) {
 			
-			# and our delta time is going too fast compared to the frame check
+			# if delta time is going too fast compared to the frame check
 			if ( $delta_time < $fps_check ) {
 
 				# delay for the difference
 				SDL::delay( $fps_check - $delta_time );
 			}
 		}
-
-
 	}
 
 =end programlisting
 
-=head2 Problems
+This method is generally sufficient for most computers. The animations will be
+smooth enough to provide the same gameplay even on machines with different
+hardware.
 
-Generally, this method is sufficient for most computers out there. The animations will be smooth
-enough that we see the same game play on differing hardware. However, there are some serious
-problems with this method. First, if a computer is too slow for 60 fps, it will skip a
-lot of rendering, and the animation will look sparse and jittery. Maybe it would be better for to set the fps bounds to 30 fps or lower
-for that machine. However, the developer cannot predict and hard code the best frame rate for a user. Secondly, if a CPU is fast, a
-lot of CPU cycles are wasted in the delay.
+However, this method still has some serious problems. First, if a computer is
+too slow to sustain a rate of 60 FPS, the game will skip rendering some frames,
+leading to sparse and jittery animation.it will skip a lot of rendering, and
+the animation will look sparse and jittery. It might be better to set a lower
+bounds of 30 FPS, though it's difficult to predict the best frame rate for a
+user.
 
-Finally, this method does not fix the fundamental problem that the rendering is tied to CPU clock speed.
+The worst problem is that this technique still ties rendering speed to the CPU
+speed: a very fast computer will waste CPU cycles delaying.
 
-=head2 Potential Fix: Variable FPS
+=head2 Variable FPS
 
-One way to fix the problem of a computer being consistently faster or slower for the default Frames per
-Second set is to change the FPS accordingly. So for a slow CPU, the fps will be limited to 30 FPS and so on.
-In our opinion, although a consistent FPS can be achieved this way, it still presents the problem of differing
-animation speeds for different CPUs and systems.
-There are better solutions available that will maintain a decent FPS across all systems.
+To fix the problem of a computer being consistently too fast or too slow for
+the hard-coded FPS rate is to adjust the FPS rate accordingly. A slow CPU may
+limit itself to 30 FPS, while a fast CPU might run at 300 FPS. Although you may
+achieve a consistent rate this way (consistent for any one particular
+computer), this technique still presents the problem of differing animation
+speeds between different computers.
+
+Better solutions are available.
 
 =head1 Integrating Physics
 
-The problem caused by coupling rendering to the CPU speed has a convenient solution. We can derive our rendering from a physical model based on 
-the passage of time.  Objects moving according to real world time will have consistent behavior at all CPU speeds  and smooth interpolation between frames.
-SDLx::App provides just such features for our convenience through movement handlers and 'show' handlers.
+=for author
 
-A simple physics model for our laser has a consistent horizontal velocity in pixels per time step at the window's mid-point:
+Describe movement and show handlers.
+
+=end for
+
+The problem caused by coupling rendering to the CPU speed has a convenient
+solution. Instead of updating object positions based on how fast the computer
+can get through the game loop, derive their positions from a physical model
+based on the passage of time. Objects moving according to real world time will
+have consistent behavior at all CPU speeds  and smooth interpolation between
+frames. SDLx::App provides this behavior through movement and show handlers.
+
+A simple physics model for the laser has a consistent horizontal velocity in
+pixels per time step at the window's mid-point:
 
     X = Velocity * time step,
     Y = 100
 
-Assuming a velocity of say 10, we will get points like:
+Assuming a velocity of 10, the laser will pass through the coordinates:
 
-    0,100
-    10,100
-    20,100
-    30,100
+      0, 100
+     10, 100
+     20, 100
+     30, 100
     ...
-    200,100
+    200, 100
 
-Note that it no longer matters at what speed this equation is processed, instead the values are coupled to the passage of real time. 
+Note that the speed of processing the game loop no longer matters. The position
+of the laser depends instead on the passage of real time.
 
-The biggest problem with this sort of solution is the required bookkeeping for the many objects and callbacks we may track.  The implementation of such complex models is non-trivial
-and will not be explored in this manual.  This topic is discussed at length in the C<SDLx::Controller> module.
+The biggest problem with this approach is the required bookkeeping for the many
+objects and callbacks. The implementation of such complex models is
+non-trivial; see the lengthy discussion in the documentation of the
+C<SDLx::Controller> module.
 
 =head2 Laser in Real Time
 
-This version of the laser example demonstrates the use of movement, 'show'
-handlers, and the simple physics model described above.  This example
-is also much simpler since SDLx::App is doing more of the book work for
-us.  SDLx::App even implements the whole game loop for us.
+This version of the laser example demonstrates the use of movement, show
+handlers, and a simple physics model. This example also shows how C<SDLx::App>
+can do more of the work, even providing the entire game loop:
 
 =begin programlisting
 
@@ -328,11 +333,10 @@ us.  SDLx::App even implements the whole game loop for us.
 	my $laser    = 0;
 	my $velocity = 10;
 
-	#We can add an event handler
 	$app->add_event_handler( \&quit_event );
 
-	#We tell app to handle the appropriate times to
-	#call both rendering and physics calculation
+	# tell app to handle the appropriate times to
+	# call both rendering and physics calculation
 
 	$app->add_move_handler( \&calculate_laser );
 	$app->add_show_handler( \&render_laser );
@@ -340,21 +344,15 @@ us.  SDLx::App even implements the whole game loop for us.
 	$app->run();
 
 	sub quit_event {
-
-	    #The callback is provided a SDL::Event to use
-	    my $event = shift;
-
-	    #Each event handler also returns you back the Controller call it
+	    my $event      = shift;
 	    my $controller = shift;
 
-	    #Stopping the controller for us will exit $app->run() for us
 	    $controller->stop if $event->type == SDL_QUIT;
 	}
 
 	sub calculate_laser {
 
-	    # The step is the difference in Time calculated for the
-	    # next jump
+	    # The step is the difference in Time calculated for the next jump
 	    my ( $step, $app, $t ) = @_;
 	    $laser += $velocity * $step;
 	    $laser = 0 if $laser > $app->w;
@@ -365,18 +363,15 @@ us.  SDLx::App even implements the whole game loop for us.
 
 	    # The delta can be used to render blurred frames
 
-	    #Draw the background first
+	    # draw the background first
 	    $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 );
 
-	    #Draw the laser
+	    # draw the laser
 	    $app->draw_rect( [ $laser, $app->h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
 	    $app->update();
-
 	}
 
 =end programlisting
-
-=head1 Learn More
 
 To learn more about this topic please, see an excellent blog post by B<GafferOnGames.com>: U<HTTP://GafferOnGames.Com/game-physics/fix-your-timestep>.
 
