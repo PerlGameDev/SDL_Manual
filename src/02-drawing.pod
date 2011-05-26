@@ -54,7 +54,7 @@ height:
 
 X<color>
 
-=for author
+=for editor
 
 Need to document what the magnitude of the color and transparency values mean.
 
@@ -65,6 +65,19 @@ numbers define the Red, Green, and Blue intensity of the color. The final
 number defines the transparency of the color.
 
     my $color = [255, 255, 255, 255];
+
+The magnitude of each color value determines how much of that color component
+will be mixed into the resulting color. A 0 value specifies that none of the
+color channel should be used while 255 specifies a maximum intensity for a
+particular channel. The first value corresponds with the Red channel, so a
+higher number there means more red will be mixed into the resulting color.
+It is a common practice to achieve a grayscale of varying intensity by
+specifying the same value for each of the Red, Green, and Blue color
+channels. The fourth and final value designates the transparency (or Alpha
+channel) where a 0 value makes the resulting color fully transparent and
+255 makes it entirely opaque. A transparency value somewhere in between
+will allow underlying colors to be blended with the specified RGB values
+into the final color output.
 
 You may also represent a color as hexadecimal values, where the values of the
 numbers range from 0-255 for 32 bit depth in RGBA format:
@@ -312,59 +325,14 @@ the line:
         $flower->draw_xy( $app, rand(500) - 20, $y );
     }
 
-    $app->update();
-
-    sleep(1);
-
 =end programlisting
 
 ... to make an entire field of flowers.
 
-=for author
+=for editor
 
 Probably don't need this.
 
 =end for
-
-=head1 Program
-
-The final program looks like this:
-
-=begin programlisting
-
-    use SDL;
-    use SDLx::App;
-    use SDLx::Sprite;
-
-    my $app = SDLx::App->new(
-        w     => 500,
-        h     => 500,
-        d     => 32,
-        title => 'Pretty Flowers'
-    );
-
-    # Draw Code Starts here
-    my $flower = SDLx::Sprite->new( width => 50, height => 100 );
-
-    $flower->surface->draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
-    $flower->surface->draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
-    $flower->surface->draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
-    $flower->surface->draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
-    $flower->alpha_key(0);
-
-    $app->draw_rect( [ 0,   0, 500, 500 ], [ 20,  50, 170, 255 ] );
-    $app->draw_rect( [ 0, 400, 500, 100 ], [ 50, 170,  20, 100 ] );
-
-    for(0..500){
-        my $y =           425 - rand( 50);
-        $flower->draw_xy( $app, rand(500) - 20, $y );
-    }
-    #Draw Code Ends Here
-
-    $app->update();
-
-    sleep(2);
-
-=end programlisting
 
 =for vim: spell

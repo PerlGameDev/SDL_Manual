@@ -44,14 +44,29 @@ remove events constantly:
 
 =end programlisting
 
-=for author
+=for editor
 
 Add other types of events.
 
 =end for
 
+X<C<SDL_ACTIVEEVENT>>
 X<C<SDL_KEYDOWN>>
+X<C<SDL_KEYUP>>
+X<C<SDL_MOUSEMOTION>>
+X<C<SDL_MOUSEBUTTONDOWN>>
+X<C<SDL_MOUSEBUTTONUP>>
+X<C<SDL_JOYAXISMOTION>>
+X<C<SDL_JOYBALLMOTION>>
+X<C<SDL_JOYHATMOTION>>
+X<C<SDL_JOYBUTTONDOWN>>
+X<C<SDL_JOYBUTTONUP>>
 X<C<SDL_QUIT>>
+X<C<SDL_SYSWMEVENT>>
+X<C<SDL_VIDEORESIZE>>
+X<C<SDL_VIDEOEXPOSE>>
+X<C<SDL_USEREVENT>>
+X<C<SDL_NUMEVENTS>>
 
 Every event has an associated type which represents the category of the event.
 The previous example looks for a keypress eventN<SDL separates the event of
