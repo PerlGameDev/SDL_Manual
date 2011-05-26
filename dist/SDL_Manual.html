@@ -1,38 +1,31 @@
 <h1>Preface</h1>
 
-<h2>Background</h2>
-
-<p><i>Simple DirectMedia Layer</i> (a.k.a. <i>libsdl</i>) is a
-cross-platform C library that provides access to several input and output
-devices. Most popularly it is used for its access to the 2D video
-framebuffer and inputs for games.</p>
-
-<p>In addition to the core library there are several other libraries that
-provide useful features such as <i>Text</i>, <i>Mixers</i>, <i>Images</i>,
-and <i>GFX</i>.</p>
+<p><i>Simple DirectMedia Layer</i> (or <i>libsdl</i>) is a cross-platform C
+library that provides access to several input and output devices. Its most
+popular usage is to provide access to the video framebuffer and input
+devices for games. SDL also has several extension libraries to provide
+features such as text display, sound mixing, image handling, and graphics
+effects.</p>
 
 <p>SDL Perl binds several of these libraries together in the
 <code>SDL::*</code> namespace. Moreover, SDL Perl provides several
 high-level libraries in the <code>SDLx::*</code> namespace that encapsulate
 valuable game-writing abstractions.</p>
 
-<h3>The <code>SDLx::</code> layer</h3>
+<h2><code>SDL</code> and <code>SDLx</code></h2>
 
 <p>The main purpose of the <code>SDLx::*</code> layer is to smooth out the
-drudgery of using the <code>SDL::*</code> layer directly. For example,
-drawing a rectangle involves the following work.</p>
+drudgery of using the <code>SDL::*</code> layer directly.</p>
 
 <blockquote>
 
-<h5>NOTE:</h5>
-
-<p>Don't worry about understanding the code at this moment. Just compare
-the two code listings for displaying the same blue rectangle below.</p>
-
-<p>Using the <code>SDL::*</code> layer to draw a blue rectangle looks
-something like this:</p>
+<p>Don't worry about understanding the details of this code right now.
+Compare the complexity and size of the code listings.</p>
 
 </blockquote>
+
+<p>Using the <code>SDL::*</code> layer to draw a blue rectangle looks
+something like:</p>
 
 <pre><code>    use SDL;
     use SDL::Video;
@@ -52,19 +45,22 @@ something like this:</p>
                                                     SDL_ANYFORMAT);
 
     # drawing a rectangle with the blue color
-    my $mapped_color   = SDL::Video::map_RGB($screen_surface-&gt;format(), 0, 0, 255);
+    my $mapped_color   = SDL::Video::map_RGB($screen_surface-&gt;format(),
+                                              0, 0, 255);
     SDL::Video::fill_rect($screen_surface,
                           SDL::Rect-&gt;new($screen_width / 4, $screen_height / 4,
                                          $screen_width / 2, $screen_height / 2),
                           $mapped_color);
 
-    # update an area on the screen so its visible
-    SDL::Video::update_rect($screen_surface, 0, 0, $screen_width, $screen_height);
+    # update an area on the screen so it&#39;s visible
+    SDL::Video::update_rect($screen_surface, 0, 0,
+                            $screen_width, $screen_height);
 
-    sleep(5); # just to have time to see it</code></pre>
+    # just to have time to see it
+    sleep(5);</code></pre>
 
-<p>while drawing a blue rectangle in the <code>SDLx::*</code> layer is as
-simple as:</p>
+<p>... while drawing a blue rectangle in the <code>SDLx::*</code> layer is
+as simple as:</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -74,138 +70,115 @@ simple as:</p>
 
     my $app = SDLx::App-&gt;new( width=&gt; 800, height =&gt; 600 );
 
-    $app-&gt;draw_rect([ $app-&gt;width/4, $app-&gt;height / 4, $app-&gt;width /2, $app-&gt;height / 2 ], [0,0,255,255] );
+    $app-&gt;draw_rect([ $app-&gt;width / 4, $app-&gt;height / 4,
+                      $app-&gt;width / 2, $app-&gt;height / 2, ],
+                      [ 0, 0, 255, 255] );
 
     $app-&gt;update();
 
     sleep(5);</code></pre>
 
-<p>A secondary purpose of the <code>SDLx::*</code> modules are to manage
-additional features for users, such as Layers, Game Loop handling, and
-more.</p>
+<p>The <code>SDLx::*</code> modules also provide and manage higher-level
+concerns for users, such as layers and game loops.</p>
 
-<h2>Audience</h2>
+<h2>About the Book</h2>
 
-<p>This book is written for new users of SDL Perl who have some experience
-with Perl, but not much experience with SDL. It is not necessary for the
-audience to be aware of SDL internals, as this book covers most areas as it
-goes.</p>
+<p>This book has a two-fold purpose: first, to introduce game development
+to Perl programmers, and second, to introduce Modern Perl concepts through
+game development. While the examples assume some experience with Perl, no
+experience with SDL in Perl or as <code>libsdl</code> itself is
+necessary.</p>
 
-<h2>Format of this book</h2>
-
-<p>This book will be formatted into chapters that progressively increase in
-complexity. However each chapter can also be treated individually as a
-separate tutorial to jump to and learn from.</p>
-
-<p>Each chapter will have a specific goal (e.g., <i>Making Pong</i>), which
-we will work towards. The source code for each chapter will be broken up
-and explained in some detail. Sources and data files are all provided on
-HTTP://SDL.Perl.Org.</p>
-
-<p>Finally chapters will end with an exercise for the reader to try
-out.</p>
-
-<h2>Purpose of this book</h2>
-
-<p>This book is intended to introduce game development to Perl programmers
-and at the same time introduce Modern Perl concepts through game
-development. The book presents a progression from simple to intermediate
-examples and provides suggestions for more advanced endeavors.</p>
+<p>The book presents a progression from simple to intermediate examples and
+provides suggestions for more advanced endeavors. The chapters of this book
+increase progressively in complexity, but each chapter has a singular goal
+(such as chapter five's <i>Making Pong</i>) which stands alone as an
+individual tutorial. Sources and data files are all available from
+http://sdl.perl.org/.</p>
 
 <h2>Installing SDL Perl</h2>
 
-<p>We assume that a recent perl language and supporting packages have been
-installed on your system. Depending on your platform you may need some
-dependencies. Then we can do a final CPAN install.</p>
+<p>We assume the presence of a recent version of the Perl language (at
+least Perl 5.10) and supporting packages. We also assume that you can
+install packages from the CPAN, including SDL Perl itself.</p>
 
 <h3>Windows</h3>
 
 <p><code>Alien::SDL</code> will install binaries for 32bit and 64bit so
 there is no need to compile anything.</p>
 
-<h3>MacOSX</h3>
+<h3>Mac OS X</h3>
 
-<h4>Packages</h4>
+<p>Fink has packages for SDL Perl available. However, they do not support
+Pango, a library which provides internalization support for text
+handling.</p>
 
-<p>Fink has packages for SDL Perl available, however Pango is not currently
-supported.</p>
+<p>Installing <code>Alien::SDL</code> from the CPAN will compile SDL and
+its dependencies, provided you have installed severan necessary
+dependencies. We recommend that you install <code>libfreetype6</code>,
+<code>libX11</code>, <code>libvorbis</code>, <code>libogg</code>,
+<code>libpng</code>, and their headers.</p>
 
-<h4>Or Compiling Dependencies</h4>
-
-<p><code>Alien::SDL</code> will compile SDL dependencies from scratch with
-no problems as long as some prerequisites are installed.
-<code>libfreetype6</code>, <code>libX11</code>, <code>libvorbis</code>,
-<code>libogg</code>, and <code>libpng</code> headers will suffice for most
-examples in this book.</p>
-
-<h3>Linux</h3>
+<h3>GNU/Linux</h3>
 
 <p>Most current GNU/Linux distributions include all the parts needed for
 this tutorial in the default install and in their package management
 system. It is also always possible to install on GNU/Linux using the
-available open source code from the proper repositories. The Alien::SDL
-perl module automates much of downloading, compiling, and installing the
-needed libraries.</p>
-
-<h4>Packages</h4>
+available open source code from the proper repositories. The
+<code>Alien::SDL</code> perl module automates much of downloading,
+compiling, and installing the needed libraries.</p>
 
 <p>You can probably use your distribution's packages. On Ubuntu and Debian
 try:</p>
 
-<pre><code>    sudo apt-get install libsdl-net1.2-dev libsdl-mixer1.2-dev \
+<pre><code>    $ sudo apt-get install libsdl-net1.2-dev libsdl-mixer1.2-dev \
     libsdl1.2-dev libsdl-image1.2-dev libsdl-ttf2.0-dev \
     libsdl-gfx1.2-dev libsdl-pango-dev</code></pre>
 
-<h4>Or Compiling Dependencies</h4>
+<p>To compile from scratch, you must install a compiler, system header
+packages, and some libraries are required.</p>
 
-<p>To compile from scratch, a compiler, system header packages, and some
-libraries are required.</p>
-
-<pre><code>    sudo apt-get install build-essential xorg-dev libx11-dev libxv-dev \
+<pre><code>    $ sudo apt-get install build-essential xorg-dev libx11-dev libxv-dev \
     libpango1.0-dev libfreetype6-dev libvorbis-dev libpng12-dev \
     libogg-dev</code></pre>
 
 <h3>CPAN install</h3>
 
-<p>Before installing SDL you should make sure that some important modules
-are up-to-date.</p>
+<p>Before installing SDL Perl, ensure that you have the most recent
+versions of the modules necessary to build SDL:</p>
 
-<pre><code>    sudo cpan CPAN
-    sudo cpan YAML Module::Build</code></pre>
+<pre><code>    $ sudo cpan CPAN
+    $ sudo cpan YAML Module::Build</code></pre>
 
-<p>After these two steps cpan will be able to find all depedencies for
-SDL.</p>
+<p>After these two steps CPAN will be able to install SDL:</p>
 
-<pre><code>    sudo cpan SDL</code></pre>
+<pre><code>    $ sudo cpan SDL</code></pre>
 
 <p>For most platforms a CPAN install will suffice. Supported and tested
-platforms are listed at HTTP://Pass.CPANTesters.Org/distro/S/SDL.html.</p>
+platforms are listed at http://pass.cpantesters.org/distro/S/SDL.html.</p>
 
 <h2>Contact</h2>
 
-<p>Hopefully this book answers most of your questions. If you find you need
-additional assistance, please contact us by one of the following
-methods:</p>
+<p>Hopefully this book answers most of your questions. For additional
+assistance, contact the project via:</p>
 
-<h3>Internet</h3>
+<ul>
 
-<p>SDL Perl's homepage is at HTTP://SDL.Perl.Org/.</p>
+<li><i>the web</i>, by visiting the SDL Perl homepage at
+http://sdl.perl.org/.</li>
 
-<h3>IRC</h3>
+<li><i>IRC</i>, in the <code>#sdl</code> channel on
+<code>irc.perl.org</code>. This is a very active and helpful resource.</li>
 
-<p>The	channel <code>#sdl</code> on <code>IRC.Perl.Org</code> is very
-active and a great resource for help and getting involved.</p>
+<li><i>email</i>, through the <code>sdl-devel@perl.org</code> mailing
+list.</li>
 
-<h3>Mailing lists</h3>
-
-<p>If you need help with SDL Perl, send an  to
-<code>sdl-devel@Perl.Org</code>.</p>
+</ul>
 
 <h2>Examples</h2>
 
-<p>The code examples in this book are provided at:</p>
-
-<p>HTTP://GitHub.Com/PerlGameDev/SDL_Manual/tree/master/code_listings/</p>
+<p>The code examples in this book are available from
+https://github.com/PerlGameDev/SDL_Manual/tree/master/code_listings.</p>
 
 <h2>Acknowledgements</h2>
 
@@ -221,6 +194,8 @@ including:</p>
 <li>Blaizer
 
 <li>cfedde
+
+<li>chromatic
 
 <li>FROGGS
 
@@ -244,16 +219,13 @@ including:</p>
 
 <h1>The Screen</h1>
 
-<h2>Background</h2>
-
 <p>   </p>
 
-<p>SDL manages a single screen which is attached to the video device. Some
-common examples of video devices are through X11 and DirectX. An SDL
-application may contain one or more Surfaces.</p>
-
-<p>The screen is typically created using the <code>SDLx::App</code>
-class.</p>
+<p>SDL's primary purpose is to display graphics. It does so by providing an
+abstraction called a <i>screen</i>, which represents a <i>video device</i>.
+This video device is an interface provided by your operating system, such
+as X11 or DirectX. Before you can display anything, you must create a
+screen. The <code>SDLx::App</code> class does so for you:</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -264,32 +236,27 @@ class.</p>
 
     sleep( 2 );</code></pre>
 
-<p>The above code causes a window to appear on the desktop with nothing in
-it. Most current systems will fill it with a default black screen. For some
-systems, however, a transparent window might be displayed instead. It is a
-good idea to ensure that what we intend to display is shown, so we update
-the <code>$app</code> to ensure the screen is drawn black.</p>
+<p>This example causes an empty window to appear on the desktop. Most
+systems will fill that window with the color black. Other systems might
+display a transparent window. SDL's default behavior is to fill the screen
+with black. To enforce this behavior on all systems, you must
+<code>update()</code> the app to draw to the window:</p>
 
 <pre><code>    $app-&gt;update();</code></pre>
 
 <h2><code>SDLx::App</code> Options</h2>
 
-<p><code>SDLx::App</code> also allows you to specify several options for
-your application.</p>
-
-<h3>Dimensions</h3>
-
-<p>First are the physical dimensions of the screen itself. Let's make the
-screen of the <code>SDLx::App</code> window a square size of 400×400
-pixels. Change the initialization line to:</p>
+<p><code>SDLx::App</code> allows you to specify several options for the
+screen and your application. First are the physical dimensions of the
+screen itself. To make the screen of the <code>SDLx::App</code> window a
+400×400 pixel square, change the initialization line to:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( width =&gt; 400, height =&gt; 400 );</code></pre>
 
-<h3>Title</h3>
-
-<p>You will notice that the window's title is either blank or on some
-window managers it displays the path to the script file, depending on your
-operating system. Suppose we want a title for a new Pong clone game:</p>
+<p>Another important option is the window's title. Some systems display the
+path to the running program. Others leave the title blank. You can change
+the displayed title with another argument to the <code>SDLx::App</code>
+constructor:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( width  =&gt; 400,
                               height =&gt; 400,
@@ -304,11 +271,10 @@ operating system. Suppose we want a title for a new Pong clone game:</p>
 
 <h3>Shortcuts</h3>
 
-<p>There are short-hand versions of the parameter names used in the call to
-<code>new()</code>. The parameters <code>width</code>, <code>height</code>,
-and <code>title</code> may be abbreviated as <code>w</code>,
-<code>h</code>, and <code>t</code> respectively. So the previous example
-could also be written like this:</p>
+<p>Abbreviations for these parameters are available. Instead of
+<code>width</code>, <code>height</code>, and <code>title</code>, you may
+use <code>w</code>, <code>h</code>, and <code>t</code> respectively. The
+previous example could also be written:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( w =&gt; 400,
                               h =&gt; 400,
@@ -316,73 +282,83 @@ could also be written like this:</p>
 
 <h1>Drawing</h1>
 
-<h2>Preview</h2>
-
-<p>SDL provides several ways to draw graphical elements on the screen;
-these methods can be broken down into three general categories: Primitives,
-Images, and Text. Methods in each of the three categories draw a single
-object on the Surface. The Surface is represented by
-<code>SDLx::Surface</code>. Even our <code>SDLx::App</code> is an
-<code>SDLx::Surface</code>. This means that we can draw directly on the
-<code>SDLx::App</code>, however there are several advantages to drawing on
-multiple surfaces. In this chapter we will explore these methods of
-drawing, and make a pretty picture.</p>
+<p>SDL provides several ways to draw graphical elements on the screen in
+three general categories: primitives, images, and text. All drawing occurs
+on a surface, represented by the <code>SDLx::Surface</code> class. Even the
+<code>SDLx::App</code> is an <code>SDLx::Surface</code>. Though this means
+it's possible to draw directly to the app's surface, there are several
+advantages to drawing on multiple surfaces.</p>
 
 <h2>Coordinates</h2>
 
-<p>SDL's surface coordinate system has x=0,y=0 in the upper left corner and
-the dimensions span to the right and downward. The API always lists
-coordinates in x,y order. More discussion of these details can be found in
-the SDL library documentation:
-http://www.sdltutorials.com/sdl-coordinates-and-blitting/</p>
+<p>SDL's surface coordinate system has its origin (where both the x and y
+coordinates have the value of zero) in the upper left corner. As the value
+of x increases, the position moves to the right of the origin. As the value
+of y increases, the position moves downward from the origin. The API always
+lists coordinates in x, y order.</p>
 
-<h2>Objective</h2>
+<blockquote>
 
-<p>Using SDL we will try to construct the following image.</p>
+<p>The SDL library documentation has an extended discussion on coordinates:
+http://sdltutorials.com/sdl-coordinates-and-blitting.</p>
+
+</blockquote>
+
+<h2>Drawing with SDL</h2>
+
+<p>You can produce original pictures knowing little more than how to draw
+to a surface with SDL:</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/flower.png}
 \caption{A field of flowers} \label{fig:flowers}</p>
 
 
 
-<h2>Drawing the Flower</h2>
+<h3>Surface Drawing Methods</h3>
 
-<p>To begin actually drawing the flower, we need to cover some theory.</p>
-
-<h3>Syntax Overview</h3>
-
-<p>Drawing in SDL is done on Surfaces. The <code>SDLx::Surface</code>
-object provides access to methods in the form of:</p>
+<p>As mentioned earlier, all drawing in SDL requires a surface. The
+<code>SDLx::Surface</code> object provides access to methods in the form
+of:</p>
 
 <pre><code>    $surface-&gt;draw_{something}( .... );</code></pre>
 
-<p>Parameters are usually provided as array references, to define areas and
-colors.</p>
+<p>Parameters to these methods are generally coordinates and colors,
+provided as array references.</p>
 
 <h4>Rectangular Parameters</h4>
 
-<p>Some parameters are just a quick definition of the positions and
-dimensions. For a rectangle that will be placed at <code>(20, 20)</code>
-pixel units on the screen, which has dimensions of <code>40x40</code> pixel
-units, the following would suffice.</p>
+<p>Some parameters are sets of coordinate positions and dimensions. For
+example, parameters to describe a rectangle of <code>40x40</code> pixels
+placed at <code>(20, 20)</code> pixel units on the screen make a
+four-element array reference of x, y, width, height:</p>
 
 <pre><code>    my $rect = [20, 20, 40, 40];</code></pre>
 
 <h4>Color</h4>
 
-<p> in SDL is described by 4 numbers. The first three numbers define the
-Red, Green, and Blue intensity of the Color. The final number defines the
-transparency of the Color.</p>
+<p></p>
+
+<p>Need to document what the magnitude of the color and transparency values
+mean.</p>
+
+<p>SDL color parameters require four-element array references. The first
+three numbers define the Red, Green, and Blue intensity of the color. The
+final number defines the transparency of the color.</p>
 
 <pre><code>    my $color = [255, 255, 255, 255];</code></pre>
 
-<p>Color can also be defined as hexadecimal values:</p>
+<p>You may also represent a color as hexadecimal values, where the values
+of the numbers range from 0-255 for 32 bit depth in RGBA format:</p>
 
-<pre><code>    my $color = 0xFFFFFFFF;</code></pre>
+<pre><code>    my $color = 0xFFFFFFFF;
+    my $white = 0xFFFFFFFF;
+    my $black = 0x000000FF;
+    my $red   = 0xFF0000FF;
+    my $green = 0x00FF00FF;
+    my $blue  = 0x0000FFFF;</code></pre>
 
-<p>The values of the numbers range from 0-255 for 32 bit depth in RGBA
-format. Alternately color can be described as a 4 byte hexadecimal value,
-each two digit byte encoding the same RGBA values as above:</p>
+<p>... or as four-byte hexadecimal values, where each two-digit byte
+encodes the same RGBA values:</p>
 
 <pre><code>    my $goldenrod = 0xDAA520FF;</code></pre>
 
@@ -390,39 +366,34 @@ each two digit byte encoding the same RGBA values as above:</p>
 
 <h5>NOTE: Depth of Surface</h5>
 
-<p>The bits of the surface are set when the <code>SDLx::Surface</code> or
-<code>SDLx::App</code> is made.</p>
+<p>The color depth of the surface--how many bits are available to describe
+colors--is a property of the relevant <code>SDLx::Surface</code> or
+<code>SDLx::App</code>. Set it in its constructor:</p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( depth =&gt; 32 );</code></pre>
 
-<p>Other options are 24, 16, and 8. 32 is the default bit depth.</p>
+<p>The default bit depth is 32, such that each color component has 256
+possible values. Other options are 24, 16, and 8.</p>
 
 </blockquote>
 
 <h3>Pixels</h3>
 
-<p>All <code>SDLx::Surface</code>s are made of pixels that can be read and
-written to via a tied array interface.</p>
+<p>All <code>SDLx::Surface</code>s are collections of pixels. You can read
+from and write to these pixels by treating the surface as an array
+reference:</p>
 
 <pre><code>    $app-&gt;[$x][$y] = $color;</code></pre>
 
-<p>The <code>$color</code> is defined as an unsigned integer value which is
-constructed in the following hexadecimal format, <code>0xRRGGBBAA</code>.
-Here are some examples:</p>
-
-<pre><code>    $white = 0xFFFFFFFF;
-    $black = 0x000000FF;
-    $red   = 0xFF0000FF;
-    $green = 0x00FF00FF;
-    $blue  = 0x0000FFFF;</code></pre>
-
-<p>Pixels can also be defined as anonymous arrays as before with
-<code>[$red, $green, $blue, $alpha]</code>.</p>
+<p>... where <code>$color</code> is an unsigned integer value using the
+hexadecimal format (<code>0xRRGGBBAA</code>) <i>or</i> an anonymous array
+of the form <code>[$red, $green, $blue, $alpha]</code>.</p>
 
 <h3>Primitives</h3>
 
-<p>Drawing  are usually simple shapes that can be used for creating
-graphics dynamically.</p>
+<p></p>
+
+<p>Drawing primitives are simple shapes that SDL supports natively.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/draw-1.png}
 \caption{Drawing a line} \label{fig:draw_line}</p>
@@ -431,10 +402,13 @@ graphics dynamically.</p>
 
 <h4>Lines</h4>
 
-<pre><code>    $app-&gt;draw_line( [200,20], [20,200], [255, 255, 0, 255] );</code></pre>
+<p>A line is a series of contiguous pixels between two points. The
+<code>draw_line</code> method causes SDL to draw a line to a surface:</p>
 
-<p>This will draw a yellow line from positions <code>(200,20)</code> to
-<code>(20,200)</code>.</p>
+<pre><code>    $app-&gt;draw_line( [200, 20], [20, 200], [255, 255, 0, 255] );</code></pre>
+
+<p>This will draw a yellow line from positions <code>(200, 20)</code> to
+<code>(20, 200)</code>.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/draw-2.png}
 \caption{Drawing a Rectangle} \label{fig:draw_rect}</p>
@@ -443,13 +417,17 @@ graphics dynamically.</p>
 
 <h4>Rectangles</h4>
 
-<p>Rectangles are a common building block for games. In SDL, rectangles are
-the most cost effective of the primitives to draw.</p>
+<p></p>
 
-<pre><code>    $app-&gt;draw_rect( [10,20, 40, 40 ], [255, 255, 255,255] );</code></pre>
+<p>A rectangle is a four-sided, filled polygon. Rectangles are a common
+building block for games. In SDL, rectangles are the most cost effective of
+the primitives to draw. The <code>draw_rect</code> method draws a rectangle
+on a surface:</p>
 
-<p>The above will add a white square of size <code>40x40</code> onto the
-screen at the position <code>(10,20)</code>.</p>
+<pre><code>    $app-&gt;draw_rect( [10, 20, 40, 40 ], [255, 255, 255,255] );</code></pre>
+
+<p>This draws a white square of size <code>40x40</code> onto the screen at
+the position <code>(10,20)</code>.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/draw-3.png}
 \caption{Drawing a Circle} \label{fig:draw_circle}</p>
@@ -463,23 +441,24 @@ screen at the position <code>(10,20)</code>.</p>
 
 <h4>Circles</h4>
 
-<p>Circles are drawn similarly either filled or unfilled.</p>
+<p></p>
 
-<pre><code>    $app-&gt;draw_circle(        [100,100], 20, [255,0,0,255] );
-    $app-&gt;draw_circle_filled( [100,100], 19, [0,0,255,255] );</code></pre>
+<p>A circle is a primitive a fixed radius around a given point. Circles may
+be filled or unfilled. The <code>draw_circle</code> and
+<code>draw_circle_filled</code> methods draw these to a surface:</p>
 
-<p>Now we will have an unfilled circle colored red and a filled circle
-colored blue.</p>
+<pre><code>    $app-&gt;draw_circle(        [100, 100], 20, [255, 0,   0, 255] );
+    $app-&gt;draw_circle_filled( [100, 100], 19, [0,   0, 255, 255] );</code></pre>
 
-<h4>More Primitives</h4>
+<p>These draw an unfilled red circle and a filled blue circle.</p>
 
-<p>For more complex drawing functions have a look at
+<p>SDL provides more complex primitives in
 <code>SDL::GFX::Primitives</code>.</p>
 
-<h3>Application: Primitives</h3>
+<h3>Drawing with Primitives</h3>
 
-<p>Using our knowledge of Primitives in SDL, let's draw our field, sky, and
-a simple flower.</p>
+<p>It's easy to combine several primitives to draw an interesting
+images.</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -493,26 +472,26 @@ a simple flower.</p>
         title =&gt; &#39;Pretty Flowers&#39;
     );
 
-    #Adding the blue skies
+    # Add the blue skies
     $app-&gt;draw_rect( [ 0,   0, 500, 500 ], [ 20,  50, 170, 255 ] );
 
-    #Draw our green field
+    # Draw a green field
     $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170,  20, 100 ] );
 
-    # Make a surface 50x100 pixels
+    # Make a surface for the flower
     my $flower = SDLx::Surface-&gt;new( width =&gt; 50, height =&gt; 100 );
 
-    # Lets make the background black
+    # With a black background
     $flower-&gt;draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
 
-    # Now for a pretty green stem
+    # Draw a pretty green stem
     $flower-&gt;draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
 
-    # And the simple flower bud
+    # And a simple flower bud
     $flower-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
     $flower-&gt;draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
-    # Draw flower on $app surface
+    # Draw flower on $app
     $flower-&gt;blit( $app, [ 0, 0, 50, 100 ] );
 
     $app-&gt;update();
@@ -524,56 +503,45 @@ a simple flower.</p>
 
 
 
-<h2>Drawing a Field of Flowers</h2>
+<h2>Drawing on Multiple Surfaces</h2>
 
-<h3>Multiple Surfaces</h3>
+<p>The examples so far have drawn on only a single surface, the display.
+SDL makes it possible to write on multiple surfaces. These other surfaces
+exist only in memory until you draw them to the display.</p>
 
-<p>So far we have been drawing only on one surface, the display. In SDL it
-is possible to write on several surfaces that are in memory. These surfaces
-can later on be added on to the display to show them. The Surface is
-defined as an <code>SDLx::Surface</code> type in SDL Perl.</p>
+<h3>Creating Surfaces</h3>
 
-<h4>Creating Surfaces</h4>
-
-<p>There are several ways to create an <code>SDLx::Surface</code> for
-use.</p>
-
-<h4>Raw Surfaces</h4>
-
-<p>For the purposes of preparing surfaces using only draw functions (as
-mentioned above) we can create a surface using the
-<code>SDLx::Surface</code>'s constructor.</p>
+<p>There are several ways to create an <code>SDLx::Surface</code> for use.
+The most common is to create one manually with a constructor call:</p>
 
 <pre><code>    $surface = SDLx::Surface-&gt;new( width =&gt; $width, height =&gt; $height );</code></pre>
 
-<h4>Images in SDL</h4>
-
-<p>Using <code>SDL::Image</code> and <code>SDL::Video</code> we can load
-images as surfaces too. <code>SDL::Image</code> provides support for all
-types of images, however it requires <code>SDL_image</code> library support
-to be compiled with the right library.</p>
+<p><code>SDL::Image</code> and <code>SDL::Video</code> can load images as
+surfaces too. <code>SDL::Image</code> provides support for all types of
+images, provided that the underlying <code>SDL_image</code> library
+supports the image type you want to load. For example,
+<code>SDL_image</code> must support PNG images to use:</p>
 
 <pre><code>    $surface = SDL::Image::load( &#39;picture.png&#39; );</code></pre>
 
 <p>In the event that the desired <code>SDL_image</code> library is
-unavailable, we can fall-back on the built-in support for the
+unavailable, you can fallback to the built-in support for the
 <code>.bmp</code> format.</p>
 
 <pre><code>    $surface = SDL::Video::load_BMP( &#39;picture.bmp&#39; );</code></pre>
 
-<p>Generally, however, the <code>SDLx::Sprite</code> module is used.</p>
+<p>The <code>SDLx::Sprite</code> module provides another option to
+manipulate surfaces.</p>
 
 <h2>Lots of Flowers but One Seed</h2>
 
-<h3>Sprites</h3>
-
-<p>You might have noticed that putting another <code>SDLx::Surface</code>
-on the <code>$app</code> requires the usage of a <code>blit( )</code>
-function, which may not clarify as to what is going on there. Fortunately
-an <code>SDLx::Sprite</code> can be used to make our flower. Besides making
-drawing simpler, <code>SDLx::Sprite</code> adds several other features that
-we need for game images that move a lot. For now let's use
-<code>SDLx::Sprite</code> for our flowers.</p>
+<p>The flower example used a method called <code>blit</code> to draw a
+surface to the display. This method copies data from one surface to
+another. It's a fundamental operation, but it's a low level operation.
+<code>SDLx::Sprite</code> provides higher level options. Besides making
+drawing simpler, <code>SDLx::Sprite</code> adds several other features
+useful for moving images. Here's a revised example using
+<code>SDLx::Sprite</code> for flowers:</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -588,23 +556,23 @@ we need for game images that move a lot. For now let's use
         title =&gt; &#39;Pretty Flowers&#39;
     );
 
-    #Adding the blue skies
+    # Adding blue skies
     $app-&gt;draw_rect( [ 0,   0, 500, 500 ], [ 20, 50, 170, 255 ] );
 
-    #Draw our green field
+    # Draw a green field
     $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
 
     my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
 
-    # To access the SDLx::Surface to write to, we use the -&gt;surface() method
+    # Use -&gt;surface() to access a sprite&#39;s SDLx::Surface
 
-    # Let&#39;s make the background black
+    # Make the background black
     $flower-&gt;surface-&gt;draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
 
     # Now for a pretty green stem
     $flower-&gt;surface-&gt;draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
 
-    # And the simple flower bud
+    # Add the simple flower bud
     $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
     $flower-&gt;surface-&gt;draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
@@ -614,22 +582,26 @@ we need for game images that move a lot. For now let's use
 
     sleep(1);</code></pre>
 
-<p>Obviously at this point we don't want our single flower floating in the
-sky, so we will draw several of them on the ground. Delete everything from
-line 34 including and after</p>
+<p>Flowers usually don't grow in the sky. Flowers make more sense on the
+ground. It's easy to insert plenty of identical flowers from a single
+sprite. Replace the line:</p>
 
 <pre><code>    $flower-&gt;draw_xy( $app, 0, 0 );</code></pre>
 
-<p>and insert the code below to get a field of flowers.</p>
+<p>... with:</p>
 
-<pre><code>    for(0..500){
+<pre><code>    for (0 .. 500) {
         my $y =           425 - rand( 50);
-        $flower-&gt;draw_xy( $app, rand(500)-20, $y );
+        $flower-&gt;draw_xy( $app, rand(500) - 20, $y );
     }
 
     $app-&gt;update();
 
     sleep(1);</code></pre>
+
+<p>... to make an entire field of flowers.</p>
+
+<p>Probably don't need this.</p>
 
 <h2>Program</h2>
 
@@ -670,15 +642,19 @@ line 34 including and after</p>
 
 <h1>Handling Events</h1>
 
-<h2>The SDL Queue and Events</h2>
+<p></p>
 
-<p>SDL process events using a queue. The event queue holds all events that
-occur until they are removed. Events are any inputs such as: key presses,
-mouse movements and clicks, window focuses, and joystick presses. Every
-time the window sees one of these events, it puts it on the event queue
-once. The queue holds SDL events, which can be read via an
-<code>SDL::Event</code> object. We can process the Event Queue manually by
-pumping and polling the queue, constantly.</p>
+<p>The cornerstone of an SDL application is event handling. The user
+presses a key or moves the mouse. The operating system switches the focus
+of the active window. The user selects the quit option from the menu or the
+operating system. These are all events. How do you handle them?</p>
+
+<p> </p>
+
+<p>SDL provides an event queue which holds all events that occur until they
+are removed. Every time an event occurs, SDL places it into the queue. The
+<code>SDL::Event</code> object represents this queue in Perl, allowing you
+to add and remove events constantly:</p>
 
 <pre><code>        use strict;
         use warnings;
@@ -687,37 +663,50 @@ pumping and polling the queue, constantly.</p>
         use SDL::Events;
         use SDLx::App;
 
-        my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200 );
-
+        my $app   = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200 );
         my $event = SDL::Event-&gt;new();
         
-        my $quit = 0;
+        my $quit  = 0;
 
         while (!$quit) {
-                SDL::Events::pump_events();    #Updates the queue to recent events
+        # Updates the queue to recent events
+        SDL::Events::pump_events();
 
-                #Process all events that are available
+                # process all available events
                 while ( SDL::Events::poll_event($event) ) {
 
-                        #Check by Event type
+                        # check by Event type
                         do_key() if $event-&gt;type == SDL_KEYDOWN;
                 }
         }
 
-
         sub do_key { $quit = 1 }</code></pre>
 
-<p><code>SDLx::Controller</code> via the <code>SDLx::App</code> handles
-this loop by accepting Event Callbacks. Every application loop, each event
-callback is called repetitively with each event in the queue. This chapter
-will go through some examples of how to process various events for common
-usage.</p>
+<p>Add other types of events.</p>
+
+<p> </p>
+
+<p>Every event has an associated type which represents the category of the
+event. The previous example looks for a keypress event (footnote: SDL
+separates the event of pressing a key from the event of releasing a key,
+which allows you to identify combinations of keypresses, such as Ctrl + P
+to print.). The SDL library defines several types of events, and SDL_perl
+makes them available as constants with names such as
+<code>SDL_KEYDOWN</code> and <code>SDL_QUIT</code>. See <code>perldoc
+SDL::Events</code> for a list of all event types.</p>
+
+<p></p>
+
+<p>Checking for every possible event type within that event loop can be
+tedious. The <code>SDLx::Controller</code> available from the
+<code>SDLx::App</code> offers the use of event callbacks with which to
+handle events. Processing events is a matter of setting up the appropriate
+callbacks and letting SDL do the heavy work.</p>
 
 <h2>Quitting with Grace</h2>
 
-<p>So far we have not been exiting an <code>SDLx::App</code> in a graceful
-manner. Using the built in <code>SDLx::Controller</code> in the
-<code>$app</code> we can handle events using callbacks.</p>
+<p>The example applications so far have not exited cleanly. Handling quit
+events is much better:</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -725,83 +714,62 @@ manner. Using the built in <code>SDLx::Controller</code> in the
     use SDL::Event;
     use SDLx::App;
 
-    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32, title =&gt; &quot;Quit Events&quot; );
+    my $app = SDLx::App-&gt;new(
+        w     =&gt; 200,
+        h     =&gt; 200,
+        d     =&gt;  32,
+        title =&gt; &quot;Quit Events&quot;
+    );
 
-    #We can add an event handler 
     $app-&gt;add_event_handler( \&amp;quit_event );
-
-    #Then we will run the app
-    #which will start a loop for keeping the app alive
     $app-&gt;run();
 
     sub quit_event
     {
-        #The callback is provided a SDL::Event to use
+        # the callback receives the appropriate SDL::Event
             my $event = shift;
 
-        #Each event handler also returns you back the Controller call it
+            # ... as well as the calling SDLx::Controller
             my $controller = shift;
 
-        #Stopping the controller for us will exit $app-&gt;run() for us
+        # stopping the controller will exit $app-&gt;run() for us
             $controller-&gt;stop if $event-&gt;type == SDL_QUIT;
     }</code></pre>
 
 <p><code>SDLx::App</code> calls the event_handlers, from an internal
-<code>SDLx::Controller</code>, until a
-<code>SDLx::Controller::stop()</code> is called. <code>SDLx::App</code>
-will exit gracefully once it is stopped.</p>
-
-<h3>Event Type Defines</h3>
-
-<p>In the above sample <code>SDL_QUIT</code> was used to define the type of
-event we have. SDL uses a lot of integers to define different types of
-objects and states. Fortunately these integers are wrapped in constant
-functions like <code>SDL_QUIT</code>. More defines are explained in the
-<code>SDL::Events</code> documentation. Have a look at the perldoc for
-<code>SDL::Events</code>.</p>
-
-<pre><code>    perldoc SDL::Events </code></pre>
-
-<blockquote>
-
-<p>Events can also be processed without using callbacks from
-<code>SDLx::App</code>. Chapter 5 goes more in detail for this topic. The
-perldoc for <code>SDL::Events</code> will also show how do the
-processing.</p>
-
-</blockquote>
+<code>SDLx::Controller</code>. When this event handler receives a quit
+event, it calls <code>SDLx::Controller::stop()</code> which causes
+<code>SDLx::App</code> to exit gracefully.</p>
 
 <h3>Exit on Quit</h3>
 
-<p>Exiting when the <code>SDL_QUIT</code> event is call is a common
-callback so <code>SDLx::App</code> provides it for you, as a constructor
-option.</p>
+<p>Exiting on receiving the <code>SDL_QUIT</code> event is such a common
+operation that <code>SDLx::App</code> provides it as a constructor
+option:</p>
 
 <pre><code>    use strict;
     use warnings;
     use SDL;
     use SDLx::App;
 
-    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32, 
-                              title =&gt; &quot;Quit Events&quot;, 
-                             exit_on_quit =&gt; 1); 
+    my $app = SDLx::App-&gt;new(
+        w            =&gt; 200,
+        h            =&gt; 200,
+        d            =&gt;  32,
+        title        =&gt; &quot;Quit Events&quot;,
+        exit_on_quit =&gt; 1
+    );
 
-        #exit_on_quit option exits when SDL_QUIT is processed
-
-    #Then we will run the app
-    #which will start a loop for keeping the app alive
-    $app-&gt;run();
-  </code></pre>
+    $app-&gt;run();</code></pre>
 
 <h2>Small Paint: Input Devices</h2>
 
-<p>SDL events also allow us to handle input from various devices. To
-demonstrate two of the common devices, lets make a simple paint program. It
-will provide a small black window where you can draw with the mouse.
-Moreover when you press the number keys 0-10 it will pick different colors.
-By pressing 'q' or 'Q' we will exit. Similarity pressing 'c' or 'C' will
-clear the screen. Pressing 'ctrl-s' will save our image to the file
-'painted.bmp'.</p>
+<p>SDL events also allow input handling. Consider a simple paint program.
+It will provide a small black window. Moving the mouse draws on this
+window. Pressing a number key chooses a paint color. Pressing
+<code>q</code> or <code>Q</code> exits the program. Pressing <code>c</code>
+or <code>C</code> clears the screen. Pressing <code>Ctrl-S</code> saves the
+image to a file named <i>painted.bmp</i>.</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/painted.png}
 \caption{Simple Paint: Smile} \label{fig:Smile}</p>
@@ -810,55 +778,54 @@ clear the screen. Pressing 'ctrl-s' will save our image to the file
 
 <h3>Saving the image</h3>
 
-<p>First, lets define the save subroutine.</p>
+<p>Start by defining the saving function:</p>
 
 <pre><code>    sub save_image {
-
-       if( SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0 &amp;&amp; -e &#39;painted.bmp&#39;)
+        if (SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0
+        &amp;&amp; -e &#39;painted.bmp&#39;)
         {
-             warn &#39;Saved painted.bmp to &#39;.cwd();
+             warn &#39;Saved painted.bmp to &#39; . cwd();
         }
-        else 
+        else
         {
-            warn &#39;Could not save painted.bmp: &#39;.SDL::get_errors();
+            warn &#39;Could not save painted.bmp: &#39; . SDL::get_errors();
         }
-
     }</code></pre>
 
 <h3>Keyboard</h3>
 
-<p>To handle the keyboard specifications we will create another event
-callback.</p>
+<p>Keyboard handling requires some color data as well as a keypress
+callback:</p>
 
 <pre><code>    my $brush_color = 0;
 
     sub keyboard_event
     {
         my $event = shift;
-        
-        #Check that our type of event press is a SDL_KEYDOWN
-        if( $event-&gt;type == SDL_KEYDOWN )
-        {
-            #Convert the key_symbol (integer) to a keyname
-            my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
-            
-            #if our $key_name is a digit use it as a color
-            $brush_color = $key_name if $key_name =~ /^\d$/;
-           
-            #Get the keyboard modifier perldoc SDL::Events
-            #We are using any CTRL so KMOD_CTRL is fine
-            my $mod_state = SDL::Events::get_mod_state();
-            
-            #Save the image.         
-            save_image if $key_name =~ /^s$/ &amp;&amp; ($mod_state &amp; KMOD_CTRL); 
 
-            #Clear the screen if we pressed C or c
-            $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 ) if $key_name =~ /^c$/;
-            
-            #Exit if we press a Q or q
+        if ( $event-&gt;type == SDL_KEYDOWN )
+        {
+            # convert the key_symbol (integer) to a keyname
+            my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
+
+            # if $key_name is a digit, use it as a color
+            $brush_color = $key_name if $key_name =~ /^\d$/;
+
+            # get the keyboard modifier (see perldoc SDL::Events)
+            my $mod_state = SDL::Events::get_mod_state();
+
+            # we are using any CTRL so KMOD_CTRL is fine
+            save_image() if $key_name =~ /^s$/ &amp;&amp; ($mod_state &amp; KMOD_CTRL);
+
+            # clear the screen
+            $app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0 )
+                if $key_name =~ /^c$/;
+
+            # exit
             $app-&gt;stop() if $key_name =~ /^q$/;
         }
-        $app-&gt;update();    
+
+        $app-&gt;update();
     }
 
     $app-&gt;add_event_handler(\&amp;quit_event);
@@ -866,188 +833,100 @@ callback.</p>
 
 <blockquote>
 
-<h5>NOTE: Globals and Callbacks</h5>
-
-<p>When adding a callback to <code>SDLx::App</code> which uses globals (
-<code>$brush_color</code> and <code>@colors</code> in this case ), be sure
-to define them before declaring the subroutine. Also add it to the
-<code>SDLx::App</code> after the subroutine is defined. The reason for this
-is so that <code>SDLx::App</code> is aware of the globals before it calls
-the callback internally.</p>
+<p><b>NOTE: </b> When adding a callback to <code>SDLx::App</code> which
+uses variables declared outside of the function (<code>$brush_color</code>
+and <code>@colors</code> in this case), be sure to define them before
+declaring the subroutine. Normal Perl scoping and initialization rules
+apply.</p>
 
 </blockquote>
 
 <h3>Mouse</h3>
 
-<p>Now we will go about capturing our Mouse events, by inserting the
-following code after the <code>keyboard_event</code> subroutine.</p>
+<p>Handling mouse events is almost as straightforward as keyboard events:
+=begin programlisting</p>
 
-<pre><code>    #Keep track if we are drawing 
+<pre><code>    # track the drawing status
     my $drawing = 0;
+
     sub mouse_event {
-
-        my $event = shift;
-        
-        #We will detect Mouse Button events
-        #and check if we already started drawing
-        if($event-&gt;type == SDL_MOUSEBUTTONDOWN || $drawing)
-        {
-            # set drawing to 1 
-            $drawing = 1;
-
-            # get the X and Y values of the mouse
-            my $x =  $event-&gt;button_x;
-            my $y =  $event-&gt;button_y;
-            
-            # Draw a rectangle at the specified position
-            $app-&gt;draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
-    
-            # Update the application
-            $app-&gt;update();
-        }
-
-        # Turn drawing off if we lift the mouse button
-        $drawing = 0 if($event-&gt;type == SDL_MOUSEBUTTONUP );
-     
-    }
-
-
-    $app-&gt;add_event_handler( \&amp;mouse_event );</code></pre>
-
-<p>Currently we don't make a distinction between what mouse click is done.
-This can be accomplished by taking a look at the
-<code>button_button()</code> method in <code>SDL::Event</code>. At this
-point we have a simple paint application done.</p>
-
-<p>Another point to note is that each event_handler is called in the order
-that it was attached.</p>
-
-<h3>Program</h3>
-
-<p>The final program looks like this:</p>
-
-<pre><code>    use strict;
-    use warnings;
-    use SDL;
-    use Cwd;
-    use SDL::Event;
-    use SDLx::App;
-
-    my $app = SDLx::App-&gt;new( w =&gt; 200, h =&gt; 200, d =&gt; 32,
-        title =&gt; &quot;Simple Paint&quot; );
-
-    sub quit_event {
-        my $event = shift;
-        my $controller = shift;
-        $controller-&gt;stop() if $event-&gt;type == SDL_QUIT;
-    }
-
-
-    sub save_image {
-
-       if( SDL::Video::save_BMP( $app, &#39;painted.bmp&#39; ) == 0 &amp;&amp; -e &#39;painted.bmp&#39;)
-        {
-             warn &#39;Saved painted.bmp to &#39;.cwd();
-        }
-        else
-        {
-            warn &#39;Could not save painted.bmp: &#39;.SDL::get_errors();
-        }
-
-    }
-
-    my @colors = (  0xFF0000FF, 0x00FF00FF,
-                    0x0000FFFF, 0xFFFF00FF,
-                    0xFF00FFFF, 0x00FFFFFF,
-                    0xCCFFCCFF, 0xFFCC33FF,
-                    0x000000FF, 0xFFFFFFFF );
-
-    my $brush_color = 0;
-
-    sub keyboard_event
-    {
         my $event = shift;
 
-        #Check that our type of event press is a SDL_KEYDOWN
-        if( $event-&gt;type == SDL_KEYDOWN )
-        {
-            #Convert the key_symbol (integer) to a keyname
-            my $key_name = SDL::Events::get_key_name( $event-&gt;key_sym );
-
-            #if our $key_name is a digit use it as a color
-            $brush_color = $key_name if $key_name =~ /^\d$/;
-
-            #Get the keyboard modifier perldoc SDL::Events
-            #We are using any CTRL so KMOD_CTRL is fine
-            my $mod_state = SDL::Events::get_mod_state();
-
-            #Save the image.
-            save_image if $key_name =~ /^s$/ &amp;&amp; ($mod_state &amp; KMOD_CTRL);
-
-            #Clear the screen if we pressed C or c
-            $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 ) if $key_name =~ /^c$/;
-
-            #Exit if we press a Q or q
-            $app-&gt;stop() if $key_name =~ /^q$/;
-        }
-        $app-&gt;update();
-    }
-
-    $app-&gt;add_event_handler(\&amp;keyboard_event);
-
-    #Keep track if we are drawing
-    my $drawing = 0;
-    sub mouse_event {
-
-        my $event = shift;
-
-        #We will detect Mouse Button events
-        #and check if we already started drawing
-        if($event-&gt;type == SDL_MOUSEBUTTONDOWN || $drawing)
+        # detect Mouse Button events and check if user is currently drawing
+        if ($event-&gt;type == SDL_MOUSEBUTTONDOWN || $drawing)
         {
             # set drawing to 1
             $drawing = 1;
 
             # get the X and Y values of the mouse
-            my $x =  $event-&gt;button_x;
-            my $y =  $event-&gt;button_y;
+            my $x = $event-&gt;button_x;
+            my $y = $event-&gt;button_y;
 
-            # Draw a rectangle at the specified position
-            $app-&gt;draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
+            # draw a rectangle at the specified position
+            $app-&gt;draw_rect( [ $x, $y, 2, 2 ], $colors[$brush_color] );
 
-            # Update the application
             $app-&gt;update();
         }
 
-        # Turn drawing off if we lift the mouse button
-        $drawing = 0 if($event-&gt;type == SDL_MOUSEBUTTONUP );
-
+        # disable drawing when user releases mouse button
+        $drawing = 0 if ($event-&gt;type == SDL_MOUSEBUTTONUP );
     }
 
+    $app-&gt;add_event_handler( \&amp;mouse_event );</code></pre>
 
-    $app-&gt;add_event_handler( \&amp;mouse_event );
-    $app-&gt;run();</code></pre>
+<p>This is all of the code necessary to make a simple drawing
+application.</p>
+
+<p>Take note of two things. First, SDL_perl invokes the event handlers in
+the order of attachment. If the user presses <code>Q</code> and then moves
+the mouse, the application will quit before processing the mouse
+movement.</p>
+
+<p>Second, the application makes no distinction between right, middle, or
+left mouse clicks. SDL provides this information. See the
+<code>button_button()</code> method in <code>SDL::Event</code>.</p>
+
+<h2>POD ERRORS</h2>
+
+<p>Hey! <b>The above document had some coding errors, which are explained
+below:</b></p>
+
+<ul>
+
+<li>Around line 259:
+
+<p>=end programlisting without matching =begin.  (Stack: [empty])</p>
+
+</ul>
 
 <h1>The Game Loop</h1>
 
-<h2>Simplest Game Loop</h2>
+<p></p>
 
-<p>The simplest game loop can be boiled down to the following.</p>
+<p>Just as an interactive SDL app builds around an event loop, a game
+builds around a game loop. The simplest game loop is something like:</p>
 
-<pre><code>    while(!$quit)
+<pre><code>    while (!$quit)
     {
        get_events();
        calculate_next_positions();
        render();
     }</code></pre>
 
-<p>In <code>get_events()</code> we get events from what input devices that
-we need. It is important to process events first to prevent lag. In
-<code>calculate_next_positions</code> we update the game state according to
-animations and the events captured. In <code>render()</code> we will update
-the screen and show the game to the player.</p>
+<p>The names of the functions called in this loop hint at their purposes,
+but the subtleties of even this simple code are important.
+<code>get_events()</code> obviously processes events from the relevant
+input devices (keyboard, mouse, joystick). Processing events at the start
+of every game loop iteration helps to prevent lag.</p>
 
-<p>A practical example of this is a moving laser bolt.</p>
+<p><code>calculate_next_positions</code> updates the game state according
+to user input as well as any active animations (a player walking, an
+explosion, a cut scene). <code>render()</code> finally updates and displays
+the screen.</p>
+
+<h2>A Practical Game Loop</h2>
+
+<p>Consider a game with a moving laser bolt:</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -1055,98 +934,93 @@ the screen and show the game to the player.</p>
     use SDL::Event;
     use SDL::Events;
     use SDLx::App;
-    
-    my $app = SDLx::App-&gt;new( 
-                             width=&gt; 200, height =&gt; 200,
-                             title=&gt; &#39;Pew Pew&#39;
-                            );
 
-    #Don&#39;t need to quit yet
+    my $app = SDLx::App-&gt;new(
+        width  =&gt; 200,
+        height =&gt; 200,
+        title  =&gt; &#39;Pew Pew&#39;
+    );
+
     my $quit = 0;
-    #Start laser on the left
+
+    # start laser on the left
     my $laser = 0;
-    sub get_events{ 
 
-                    my $event = SDL::Event-&gt;new();
-                    
-                    #Pump the event queue
-                    SDL::Events::pump_events;
+    sub get_events {
+        my $event = SDL::Event-&gt;new();
 
-                    while( SDL::Events::poll_event($event) )
-                    {
-                        $quit = 1 if $event-&gt;type == SDL_QUIT  
-                    }
+        SDL::Events::pump_events;
+
+        while( SDL::Events::poll_event($event) )
+        {
+            $quit = 1 if $event-&gt;type == SDL_QUIT
+        }
     }
 
-    sub calculate_next_positions{
-        # Move the laser over
+    sub calculate_next_positions {
+            # move the laser
         $laser++;
-        # If the laser goes off the screen bring it back
+
+            # if the laser goes off the screen, bring it back
         $laser = 0 if $laser &gt; $app-&gt;w();
-
     }
-    
-    sub render { 
-        
-        #Draw the background first
-        $app-&gt;draw_rect( [0,0,$app-&gt;w, $app-&gt;h], 0 );
 
-        #Draw the laser, in the middle height of the screen
-        $app-&gt;draw_rect( [$laser, $app-&gt;h/2, 10, 2], [255,0,0,255]);
+    sub render {
+        # draw the background first
+        $app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0 );
+
+        # draw the laser halfway up the screen
+        $app-&gt;draw_rect( [ $laser, $app-&gt;h / 2, 10, 2 ], [ 255, 0, 0, 255 ]);
 
         $app-&gt;update();
-
     }
 
-
-    # Until we quit stay looping 
-    while(!$quit)
+    while (!$quit)
     {
          get_events();
          calculate_next_positions();
          render();
     }</code></pre>
 
-<h3>Issues</h3>
+<p>This game loop works very well for consoles and other devices where you
+know exactly how much CPU time the game will get for every loop iteration.
+That hardware stability is easy to predict: each animation and calculation
+will happen at the same time for each machine. Unfortunately, this is
+<i>not</i> true for modern operating systems and general purpose computing
+hardware. CPU speeds and workloads vary, so for this game to play
+consistently across multiple machines and myriad configurations, the game
+loop itself needs to regulate its updates.</p>
 
-<p>This game loop works well for consoles and devices where the share of
-CPU clock speed is always known. The game users will be using the same
-processor characteristics to run this code. This means that each animation
-and calculation will happen at the exact same time in each machine.
-Unfortunately, this is typically not true for modern operating systems and
-hardware. For faster CPUs and systems with varying loads, we need to
-regulate updates so that game play will be consistent in most cases.</p>
+<h3>Fixed FPS</h3>
 
-<h2>Fixed FPS</h2>
+<p> </p>
 
-<p>One way to solve this problem is to regulate the "Frames Per Second" for
-your game's updates. A "frame" is defined as a complete redraw of the
-screen representing the updated game state. We can keep track of the number
-of frames we are delivering each second and control it using the technique
-illustrated below.</p>
+<p>One way to solve this problem is to regulate the number of frames per
+second the game will produce. A <i>frame</i> is a complete redraw of the
+screen representing the updated game state. If each iteration of the game
+loop draws one frame, the more frames per second, the faster the game is
+running. If the game loop limits the number of frames per second, the game
+will perform consistently on all machines fast enough to draw that many
+frames per second.</p>
 
-<h3>Exercise</h3>
+<p>You can see this with the example program <i>game_fixed.pl</i>. When run
+with no arguments:</p>
 
-<p>First run the below script with no fps fixing:</p>
+<pre><code>    $ <b>perl game_fixed.pl</b></code></pre>
 
-<pre><code>    perl game_fixed.pl</code></pre>
+<p>.... the FPS rate will be erratic. The laser seems to change its speed
+randomly. When run with a single argument, the game sets an upper bound on
+the number of frames per second:</p>
 
-<p>You will see that the FPS is erratic, and the laser seems to speed up
-and slow down randomly.</p>
+<pre><code>    $ <b>perl game_fixed.pl 1</b></code></pre>
 
-<p>Next fix the upper bounds of the FPS</p>
+<p>This will prevent the laser from going faster than 60 frames per second.
+When run with a second argument, the game will set a lower bound of frames
+per second:</p>
 
-<pre><code>    perl game_fixed.pl 1</code></pre>
+<pre><code>    $ <b>perl game_fixed.pl 1 1</b></code></pre>
 
-<p>This will prevent the laser from going too fast, in this case faster
-then 60 frames per second.</p>
-
-<p>Finally fix the lower bounds of the FPS</p>
-
-<pre><code>    perl game_fixed.pl 1 1</code></pre>
-
-<p>At this point the FPS should be at a steady 60 frames per second.
-However if this is not the case read on to the problems below.</p>
+<p>At this point the FPS should hold steady at 60 frames per second.</p>
 
 <pre><code>        use strict;
         use warnings;
@@ -1159,30 +1033,24 @@ However if this is not the case read on to the problems below.</p>
                         width  =&gt; 200,
                         height =&gt; 200,
                         title  =&gt; &#39;Pew Pew&#39;
-                        );
+        );
 
-        # Variables 
-        # to save our start/end and delta times for each frame
-        # to save our frames and FPS 
         my ( $start, $end, $delta_time, $FPS, $frames ) = ( 0, 0, 0, 0, 0 );
 
-        # We will aim for a rate of 60 frames per second 
+        # aim for a rate of 60 frames per second
         my $fixed_rate = 60;
 
-        # Our times are in micro second, so we will compensate for it
-        my $fps_check = (1000/ $fixed_rate );
+        # compensate for times stored in microseconds
+        my $fps_check = (1000 / $fixed_rate );
 
-        #Don&#39;t need to quit yet
         my $quit = 0;
 
-        #Start laser on the left
+        # start laser on the left
         my $laser = 0;
 
         sub get_events {
-
                 my $event = SDL::Event-&gt;new();
 
-                #Pump the event queue
                 SDL::Events::pump_events;
 
                 while ( SDL::Events::poll_event($event) ) {
@@ -1197,161 +1065,145 @@ However if this is not the case read on to the problems below.</p>
         }
 
         sub render {
-
-                #Draw the background first
+                # draw the background first
                 $app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0 );
 
-                #Draw the laser
+                # draw the laser
                 $app-&gt;draw_rect( [ $laser, $app-&gt;h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
 
-                #Draw our FPS on the screen so we can see
+                # draw the FPS
                 $app-&gt;draw_gfx_text( [ 10, 10 ], [ 255, 0, 255, 255 ], &quot;FPS: $FPS&quot; );
 
                 $app-&gt;update();
         }
 
-
         # Called at the end of each frame, whether we draw or not
         sub calculate_fps_at_frame_end
         {
-
                 # Ticks are microseconds since load time
                 $end = SDL::get_ticks();
 
-                # We will average our frame rate over 10 frames, to give less erratic rates
+        # smooth the frame rate by averaging over 10 frames
                 if ( $frames &lt; 10 ) {
-                        
-                        #Count a frame
                         $frames++;
-                        
-                        #Calculate how long it took from the start 
                         $delta_time += $end - $start;
                 }
                 else {
+                        # frame rate is Frames * 100 / Time Elapsed in us
+            $FPS        = int( ( $frames * 100 ) / $delta_time )
+                        if $delta_time != 0;
 
-                        # Our frame rate is our  Frames * 100 / Time Elapsed in us
-                        $FPS        = int( ( $frames * 100 ) / $delta_time ) if $delta_time != 0;
-
-                        # Reset our metrics
+                        # reset metrics
                         $frames     = 0;
                         $delta_time = 0;
                 }
-
-
-
         }
 
         while ( !$quit ) {
-
-
                 # Get the time for the starting of the frame
                 $start = SDL::get_ticks();
 
                 get_events();
 
-                # If we are fixing the lower bounds of the frame rate
+                # if fixing the lower bounds of the frame rate
                 if( $ARGV[1] )
                 {
-
-                        # And our delta time is going too slow for frame check
+                        # if delta time is going too slow for frame check
                         if ( $delta_time &gt; $fps_check ) {
 
-                                # Calculate our FPS from this 
                                 calculate_fps_at_frame_end();
 
-                                # Skip rendering and collision detections 
-                                # The heavy functions in the game loop
-                                next;             
-
+                # skip rendering and collision detections
+                # (heavy functions in the game loop)
+                                next;           
                         }
-
                 }
-
 
                 calculate_next_positions();
                 render();
 
-                # A normal frame with rendering actually performed
+                # a normal frame with rendering actually performed
                 calculate_fps_at_frame_end();
 
-                # if we are fixing the upper bounds of the frame rate
+                # if fixing the upper bounds of the frame rate
                 if ( $ARGV[0] ) {
                         
-                        # and our delta time is going too fast compared to the frame check
+                        # if delta time is going too fast compared to the frame check
                         if ( $delta_time &lt; $fps_check ) {
 
                                 # delay for the difference
                                 SDL::delay( $fps_check - $delta_time );
                         }
                 }
-
-
         }</code></pre>
 
-<h3>Problems</h3>
+<p>This method is generally sufficient for most computers. The animations
+will be smooth enough to provide the same gameplay even on machines with
+different hardware.</p>
 
-<p>Generally, this method is sufficient for most computers out there. The
-animations will be smooth enough that we see the same game play on
-differing hardware. However, there are some serious problems with this
-method. First, if a computer is too slow for 60 fps, it will skip a lot of
-rendering, and the animation will look sparse and jittery. Maybe it would
-be better for to set the fps bounds to 30 fps or lower for that machine.
-However, the developer cannot predict and hard code the best frame rate for
-a user. Secondly, if a CPU is fast, a lot of CPU cycles are wasted in the
-delay.</p>
+<p>However, this method still has some serious problems. First, if a
+computer is too slow to sustain a rate of 60 FPS, the game will skip
+rendering some frames, leading to sparse and jittery animation.it will skip
+a lot of rendering, and the animation will look sparse and jittery. It
+might be better to set a lower bounds of 30 FPS, though it's difficult to
+predict the best frame rate for a user.</p>
 
-<p>Finally, this method does not fix the fundamental problem that the
-rendering is tied to CPU clock speed.</p>
+<p>The worst problem is that this technique still ties rendering speed to
+the CPU speed: a very fast computer will waste CPU cycles delaying.</p>
 
-<h3>Potential Fix: Variable FPS</h3>
+<h3>Variable FPS</h3>
 
-<p>One way to fix the problem of a computer being consistently faster or
-slower for the default Frames per Second set is to change the FPS
-accordingly. So for a slow CPU, the fps will be limited to 30 FPS and so
-on. In our opinion, although a consistent FPS can be achieved this way, it
-still presents the problem of differing animation speeds for different CPUs
-and systems. There are better solutions available that will maintain a
-decent FPS across all systems.</p>
+<p>To fix the problem of a computer being consistently too fast or too slow
+for the hard-coded FPS rate is to adjust the FPS rate accordingly. A slow
+CPU may limit itself to 30 FPS, while a fast CPU might run at 300 FPS.
+Although you may achieve a consistent rate this way (consistent for any one
+particular computer), this technique still presents the problem of
+differing animation speeds between different computers.</p>
+
+<p>Better solutions are available.</p>
 
 <h2>Integrating Physics</h2>
 
-<p>The problem caused by coupling rendering to the CPU speed has a
-convenient solution. We can derive our rendering from a physical model
-based on the passage of time. Objects moving according to real world time
-will have consistent behavior at all CPU speeds and smooth interpolation
-between frames. SDLx::App provides just such features for our convenience
-through movement handlers and 'show' handlers.</p>
+<p>Describe movement and show handlers.</p>
 
-<p>A simple physics model for our laser has a consistent horizontal
+<p>The problem caused by coupling rendering to the CPU speed has a
+convenient solution. Instead of updating object positions based on how fast
+the computer can get through the game loop, derive their positions from a
+physical model based on the passage of time. Objects moving according to
+real world time will have consistent behavior at all CPU speeds and smooth
+interpolation between frames. SDLx::App provides this behavior through
+movement and show handlers.</p>
+
+<p>A simple physics model for the laser has a consistent horizontal
 velocity in pixels per time step at the window's mid-point:</p>
 
 <pre><code>    X = Velocity * time step,
     Y = 100</code></pre>
 
-<p>Assuming a velocity of say 10, we will get points like:</p>
+<p>Assuming a velocity of 10, the laser will pass through the
+coordinates:</p>
 
-<pre><code>    0,100
-    10,100
-    20,100
-    30,100
+<pre><code>      0, 100
+     10, 100
+     20, 100
+     30, 100
     ...
-    200,100</code></pre>
+    200, 100</code></pre>
 
-<p>Note that it no longer matters at what speed this equation is processed,
-instead the values are coupled to the passage of real time.</p>
+<p>Note that the speed of processing the game loop no longer matters. The
+position of the laser depends instead on the passage of real time.</p>
 
-<p>The biggest problem with this sort of solution is the required
-bookkeeping for the many objects and callbacks we may track. The
-implementation of such complex models is non-trivial and will not be
-explored in this manual. This topic is discussed at length in the
+<p>The biggest problem with this approach is the required bookkeeping for
+the many objects and callbacks. The implementation of such complex models
+is non-trivial; see the lengthy discussion in the documentation of the
 <code>SDLx::Controller</code> module.</p>
 
 <h3>Laser in Real Time</h3>
 
-<p>This version of the laser example demonstrates the use of movement,
-'show' handlers, and the simple physics model described above. This example
-is also much simpler since SDLx::App is doing more of the book work for us.
-SDLx::App even implements the whole game loop for us.</p>
+<p>This version of the laser example demonstrates the use of movement, show
+handlers, and a simple physics model. This example also shows how
+<code>SDLx::App</code> can do more of the work, even providing the entire
+game loop:</p>
 
 <pre><code>        use strict;
         use warnings;
@@ -1368,11 +1220,10 @@ SDLx::App even implements the whole game loop for us.</p>
         my $laser    = 0;
         my $velocity = 10;
 
-        #We can add an event handler
         $app-&gt;add_event_handler( \&amp;quit_event );
 
-        #We tell app to handle the appropriate times to
-        #call both rendering and physics calculation
+        # tell app to handle the appropriate times to
+        # call both rendering and physics calculation
 
         $app-&gt;add_move_handler( \&amp;calculate_laser );
         $app-&gt;add_show_handler( \&amp;render_laser );
@@ -1380,21 +1231,15 @@ SDLx::App even implements the whole game loop for us.</p>
         $app-&gt;run();
 
         sub quit_event {
-
-            #The callback is provided a SDL::Event to use
-            my $event = shift;
-
-            #Each event handler also returns you back the Controller call it
+            my $event      = shift;
             my $controller = shift;
 
-            #Stopping the controller for us will exit $app-&gt;run() for us
             $controller-&gt;stop if $event-&gt;type == SDL_QUIT;
         }
 
         sub calculate_laser {
 
-            # The step is the difference in Time calculated for the
-            # next jump
+            # The step is the difference in Time calculated for the next jump
             my ( $step, $app, $t ) = @_;
             $laser += $velocity * $step;
             $laser = 0 if $laser &gt; $app-&gt;w;
@@ -1405,20 +1250,17 @@ SDLx::App even implements the whole game loop for us.</p>
 
             # The delta can be used to render blurred frames
 
-            #Draw the background first
+            # draw the background first
             $app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0 );
 
-            #Draw the laser
+            # draw the laser
             $app-&gt;draw_rect( [ $laser, $app-&gt;h / 2, 10, 2 ], [ 255, 0, 0, 255 ] );
             $app-&gt;update();
-
         }</code></pre>
-
-<h2>Learn More</h2>
 
 <p>To learn more about this topic please, see an excellent blog post by
 <b>GafferOnGames.com</b>:
-http://gafferongames.com/game-physics/fix-your-timestep/.</p>
+HTTP://GafferOnGames.Com/game-physics/fix-your-timestep.</p>
 
 <h1>Pong!</h1>
 
@@ -2195,7 +2037,7 @@ referenced by <code>colour</code>, instead of the previously hardcoded red
 
 <p>In this chapter we work on creating the classic Tetris game using what
 we have learned so far. Get the tetris code from
-https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip. To
+HTTPS://GitHub.Com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip. To
 run the game invoke in the extracted folder.</p>
 
 <pre><code>        perl tetris.pl</code></pre>
@@ -3054,7 +2896,7 @@ we will be doing the following:</p>
 
 <pre><code>   +use SDL::Mixer::Samples;
 
-   +#Brillant Lazer Sound from http://www.freesound.org/samplesViewSingle.php?id=30935
+   +#Brillant Lazer Sound from HTTP://FreeSound.Org/samplesViewSingle.php?id=30935
    +my $sample = SDL::Mixer::Samples::load_WAV(&#39;data/sample.wav&#39;);
 
    +unless($sample)
@@ -3097,7 +2939,7 @@ music to our script here.</p>
 <pre><code>    use SDL::Mixer::Channels;
     +use SDL::Mixer::Music;
 
-    +#Load our awesome music from http://8bitcollective.com
+    +#Load our awesome music from HTTP://8BitCollective.Com
     +my $background_music = 
         +         SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
 
@@ -3164,7 +3006,7 @@ would like to play the song for, where 0 is 1.</p>
 
     my $playing_channel = SDL::Mixer::Channels::play_channel( -1, $sample, 0 );
 
-    #Load our awesome music from http://8bitcollective.com
+    #Load our awesome music from HTTP://8BitCollective.Com
     my $background_music = SDL::Mixer::Music::load_MUS(&#39;data/music/01-PC-Speaker-Sorrow.ogg&#39;);
 
     unless( $background_music )
@@ -3820,7 +3662,7 @@ might find the <i>Games::Word</i> module useful.</p>
 <h2>Picking Modules</h2>
 
 <p>So, you thought of a nice game, identified your needs, typed some
-keywords in http://seach.cpan.org, and got tons of results. What now? How
+keywords in HTTP://Search.CPAN.Org, and got tons of results. What now? How
 to avoid vaporware and find the perfect solution for your needs?</p>
 
 <h3>Documentation</h3>
@@ -3839,27 +3681,27 @@ extendable?</p>
 <h3>License</h3>
 
 <p>It's useless to find a module you can't legally use. Most (if not all)
-modules in CPAN are free and open source software, but even so each needs a
-license telling developers what they can and cannot do with it. A lot of
-CPAN modules are released <i>"under the same terms as Perl itself"</i>, and
-this means you can pick between the Artistic License or the GPL (version
-1).</p>
+modules in HTTP://Search.CPAN.Org are free and open source software, but
+even so each needs a license telling developers what they can and cannot do
+with it. A lot of CPAN modules are released <i>"under the same terms as
+Perl itself"</i>, and this means you can pick between the Artistic License
+or the GPL (version 1).</p>
 
 <p>Below is a short and incomplete list of some popular license choices by
 CPAN developers:</p>
 
 <ul>
 
-<li>Artistic License - http://dev.perl.org/licenses/artistic.html</li>
+<li>Artistic License - HTTP://Dev.Perl.Org/licenses/artistic.html</li>
 
-<li>GPL (all versions and variations) - http://www.gnu.org/licenses</li>
+<li>GPL (all versions and variations) - HTTP://GNU.Org/licenses</li>
 
-<li>MIT License - http://www.opensource.org/licenses/mit-license.php</li>
+<li>MIT License - HTTP://OpenSource.Org/licenses/mit-license.php</li>
 
 </ul>
 
-<p>See http://www.opensource.org/licenses/alphabetical for a comprehensive
-list with each license's full documentation.</p>
+<p>See HTTP://OpenSource.Org/licenses/alphabetical for a comprehensive list
+with each license's full documentation.</p>
 
 <p>You should be able to find the module's license by going to a "LICENSE
 AND COPYRIGHT" section, usually available at the bottom of the
@@ -3890,7 +3732,7 @@ module depends on several others - code reusability is a good thing.</p>
 
 <p>You may, however, be interested in <b>which</b> modules it depends on,
 or, more practically, in the likelihood of a clean installation by your
-users. For that, you can browse to http://deps.cpantesters.org and input
+users. For that, you can browse to HTTP://Deps.CPANTesters.Org and input
 the module's name on the search box.</p>
 
 <p>The CPAN Testers is a collaborative matrix designed to help developers
@@ -3917,14 +3759,14 @@ module that only fails on those conditions?</p>
 How can you tell if that module will run in your target machine according
 to architecture, operating system and perl version?</p>
 
-<p>The CPAN Testers website at http://www.cpantesters.org offers a direct
+<p>The CPAN Testers website at HTTP://CPANTesters.Org offers a direct
 search for distributions by name or author. To see the results for the SDL
 module, for instance, you can go to
-http://www.cpantesters.org/distro/S/SDL.html. You can also find a test
-report summary directly on CPAN, by selecting the distribution and looking
-at the <i>"CPAN Testers"</i> line. If you click on the <i>"View
-Reports"</i> link, you'll be redirected to the proper CPAN Testers page,
-like the one shown above.</p>
+HTTP://CPANTesters.Org/distro/S/SDL.html. You can also find a test report
+summary directly on CPAN, by selecting the distribution and looking at the
+<i>"CPAN Testers"</i> line. If you click on the <i>"View Reports"</i> link,
+you'll be redirected to the proper CPAN Testers page, like the one shown
+above.</p>
 
 <p>The first chart is a PASS summary, containing information about the most
 recent version of that module with at least one <i>PASS</i> report
@@ -4006,7 +3848,7 @@ done in C via XS. This chapter will show two methods of doing this.</p>
 <h2>Sol's Ripple Effect</h2>
 
 <p>For our first pixel effect we will be doing is a ripple effect from a
-well known SDL resource, http://sol.gfxile.net/gp/ch02.html. This effects
+well known SDL resource, HTTP://Sol.Gfxile.Net/gp/ch02.html. This effects
 uses <code>SDL::get_ticks</code> to animate a ripple effect across the
 surface as seen in the following figure.</p>
 
@@ -4026,7 +3868,7 @@ the <code>SDL::Surface::set_pixels</code> which takes an offset for the
 <code>SDL_Surface</code> pixels array, and sets a value there for us. The
 actual pixel effect is just a time dependent (using
 <code>SDL::get_ticks</code> for time) render of a function. See
-http://sol.gfxile.net/gp/ch02.html for a deeper explanation.</p>
+HTTP://Sol.Gfxile.Net/gp/ch02.html for a deeper explanation.</p>
 
 <pre><code>    use strict;
     use warnings;
@@ -4521,35 +4363,35 @@ know so we can update the list.</p>
 
 <ul>
 
-<li>http://www.cgtextures.com</li>
+<li>HTTP://CGTextures.Com</li>
 
-<li>http://www.mayang.com/textures/</li>
+<li>HTTP://Mayang.Com/textures</li>
 
-<li>http://www.pixelpoke.com/</li>
+<li>HTTP://GRSites.Com/archive/textures</li>
 
-<li>http://www.flyingyogi.com/fun/spritelib.html</li>
+<li>HTTP://ImageAfter.Com</li>
 
-<li>http://www.grsites.com/archive/textures/</li>
+<li>HTTP://AbsoluteCross.Com/graphics/textures</li>
 
-<li>http://www.imageafter.com/</li>
+<li>HTTP://FreeFoto.Com</li>
 
-<li>http://www.absolutecross.com/graphics/textures/</li>
+<li>HTTP://Noctua-Graphics.De</li>
 
-<li>http://www.freefoto.com/</li>
+<li>HTTP://M3Corp.Com/a/download/3d_textures/pages</li>
 
-<li>http://www.noctua-graphics.de</li>
+<li>HTTP://ReinersTileSet.4Players.De/englisch.html</li>
 
-<li>http://www.m3corp.com/a/download/3d_textures/pages/index.htm</li>
+<li>HTTP://VirtualWorlds.Wikia.Com</li>
 
-<li>http://reinerstileset.4players.de/englisch.html</li>
+<li>HTTP://Lunar.LostGarden.Com/labels/free%20game%20graphics.html</li>
 
-<li>http://virtualworlds.wikia.com/</li>
+<li>HTTP://PDGameResources.WordPress.Com</li>
 
-<li>http://lunar.lostgarden.com/labels/free%20game%20graphics.html</li>
+<li>HTTP://GamingGroundZero.Com</li>
 
-<li>http://pdgameresources.wordpress.com/</li>
+<li>HTTP://FlyingYogi.Com/fun/spritelib.html</li>
 
-<li>http://gaminggroundzero.com</li>
+<li>HTTP://PixelPoke.Com</li>
 
 </ul>
 
@@ -4557,19 +4399,19 @@ know so we can update the list.</p>
 
 <ul>
 
-<li>http://www.freesound.org</li>
+<li>HTTP://FreeSound.Org</li>
 
-<li>http://www.ccmixter.org</li>
+<li>HTTP://CCMixter.Org</li>
 
-<li>http://www.jamendo.com</li>
+<li>HTTP://Jamendo.Com</li>
 
-<li>http://8bc.org</li>
+<li>HTTP://8BC.Org</li>
 
-<li>http://www.sakari-infinity.net</li>
+<li>HTTP://Sakari-Infinity.Net</li>
 
-<li>http://www.findsounds.com</li>
+<li>HTTP://FindSounds.Com</li>
 
-<li>http://www.grsites.com/archive/sounds/</li>
+<li>HTTP://GRSites.Com/archive/sounds</li>
 
 </ul>
 
@@ -4577,25 +4419,25 @@ know so we can update the list.</p>
 
 <ul>
 
-<li>http://www.dafont.com/</li>
+<li>HTTP://DAFont.Com</li>
 
-<li>http://www.fontsquirrel.com/</li>
+<li>HTTP://FontSquirrel.Com</li>
 
-<li>http://www.theleagueofmoveabletype.com/</li>
+<li>HTTP://TheLeagueOfMoveableType.Com</li>
 
-<li>http://openfontlibrary.org/</li>
+<li>HTTP://OpenFontLibrary.Org</li>
 
-<li>http://www.acidfonts.com/</li>
+<li>HTTP://AcidFonts.Com</li>
 
-<li>http://www.grsites.com/archive/fonts/</li>
+<li>HTTP://GRSites.Com/archive/fonts</li>
 
-<li>http://www.urbanfonts.com/</li>
+<li>HTTP://UrbanFonts.Com</li>
 
 </ul>
 
 <h2>DIY</h2>
 
-<p>http://www.gamesounddesign.com/ has several tips on making game music,
+<p>HTTP://GameSoundDesign.Com has several tips on making game music,
 including several sources for inspiration.</p>
 
 <p>If you want to create 3D models, either for cutscenes or to integrate
@@ -4603,11 +4445,11 @@ into your game via OpenGL, there are several nice libraries out there for
 you:</p>
 
 <p><b>Blender</b> - A free 3D graphics application for modeling, texturing,
-water and smoke simulations, rendering, etc. http://blender.org</p>
+water and smoke simulations, rendering, etc. HTTP://Blender.Org</p>
 
 <p><b>OGRE</b> - An open-source graphics rendering engine, used in a large
 number of production projects. It can be easily integrated via Scott
-Lanning's <i>Ogre</i> Perl bindings, on CPAN. http://www.ogre3d.org</p>
+Lanning's <i>Ogre</i> Perl bindings, on CPAN. HTTP://Ogre3D.Org</p>
 
 <h2>Author</h2>
 

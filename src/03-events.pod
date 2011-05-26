@@ -1,13 +1,18 @@
 =head0 Handling Events
 
-=head1 The SDL Queue and Events
+X<event>
 
-SDL process events using a queue. The event queue holds all events that occur 
-until they are removed. Events are any inputs such as: key presses, mouse movements 
-and clicks, window focuses, and joystick presses. Every time the window sees one of 
-these events, it puts it on the event queue once. The queue holds SDL events, which can 
-be read via an C<SDL::Event> object. We can process the Event Queue
-manually by pumping and polling the queue, constantly.
+The cornerstone of an SDL application is event handling. The user presses a key
+or moves the mouse. The operating system switches the focus of the active
+window. The user selects the quit option from the menu or the operating system. These are all events. How do you handle them?
+
+X<events; queue>
+X<C<SDL::Event>>
+
+SDL provides an event queue which holds all events that occur until they are
+removed. Every time an event occurs, SDL places it into the queue. The
+C<SDL::Event> object represents this queue in Perl, allowing you to add and
+remove events constantly:
 
 =begin programlisting
 		
@@ -18,37 +23,55 @@ manually by pumping and polling the queue, constantly.
 	use SDL::Events;
 	use SDLx::App;
 
-	my $app = SDLx::App->new( w => 200, h => 200 );
-
+	my $app   = SDLx::App->new( w => 200, h => 200 );
 	my $event = SDL::Event->new();
 	
-	my $quit = 0;
+	my $quit  = 0;
 
 	while (!$quit) {
-		SDL::Events::pump_events();    #Updates the queue to recent events
+        # Updates the queue to recent events
+        SDL::Events::pump_events();
 
-		#Process all events that are available
+		# process all available events
 		while ( SDL::Events::poll_event($event) ) {
 
-			#Check by Event type
+			# check by Event type
 			do_key() if $event->type == SDL_KEYDOWN;
 		}
 	}
-
 
 	sub do_key { $quit = 1 }
 
 =end programlisting
 
-C<SDLx::Controller> via the C<SDLx::App> handles this loop by accepting Event Callbacks. 
-Every application loop, each event callback is called repetitively with each event in the queue. 
-This chapter will go through some examples of how to process various events for common usage.
+=for author
+
+Add other types of events.
+
+=end for
+
+X<C<SDL_KEYDOWN>>
+X<C<SDL_QUIT>>
+
+Every event has an associated type which represents the category of the event.
+The previous example looks for a keypress eventN<SDL separates the event of
+pressing a key from the event of releasing a key, which allows you to identify
+combinations of keypresses, such as Ctrl + P to print.>. The SDL library
+defines several types of events, and SDL_perl makes them available as constants
+with names such as C<SDL_KEYDOWN> and C<SDL_QUIT>. See C<perldoc SDL::Events>
+for a list of all event types.
+
+X<C<SDLx::Controller>>
+
+Checking for every possible event type within that event loop can be tedious.
+The C<SDLx::Controller> available from the C<SDLx::App> offers the use of event
+callbacks with which to handle events. Processing events is a matter of setting
+up the appropriate callbacks and letting SDL do the heavy work.
 
 =head1 Quitting with Grace
 
-So far we have not been exiting an C<SDLx::App> in a graceful manner. Using 
-the built in C<SDLx::Controller> in the C<$app> we can handle events using 
-callbacks.
+The example applications so far have not exited cleanly. Handling quit events
+is much better:
 
 =begin programlisting
 
@@ -58,50 +81,38 @@ callbacks.
     use SDL::Event;
     use SDLx::App;
 
-    my $app = SDLx::App->new( w => 200, h => 200, d => 32, title => "Quit Events" );
+    my $app = SDLx::App->new(
+        w     => 200,
+        h     => 200,
+        d     =>  32,
+        title => "Quit Events"
+    );
 
-    #We can add an event handler 
     $app->add_event_handler( \&quit_event );
-
-    #Then we will run the app
-    #which will start a loop for keeping the app alive
     $app->run();
 
     sub quit_event
     {
-        #The callback is provided a SDL::Event to use
+        # the callback receives the appropriate SDL::Event
 	    my $event = shift;
 
-	#Each event handler also returns you back the Controller call it
+	    # ... as well as the calling SDLx::Controller
 	    my $controller = shift;
 
-        #Stopping the controller for us will exit $app->run() for us
+        # stopping the controller will exit $app->run() for us
 	    $controller->stop if $event->type == SDL_QUIT;
     }
 
 =end programlisting
 
-C<SDLx::App> calls the event_handlers, from an internal C<SDLx::Controller>, until a C<SDLx::Controller::stop()> is called. C<SDLx::App> will exit gracefully once it is stopped.
-
-
-=head2 Event Type Defines
-
-In the above sample C<SDL_QUIT> was used to define the type of event we have. SDL uses a lot of integers to define different types of objects and states. 
-Fortunately these integers are wrapped in constant functions like C<SDL_QUIT>. More defines are explained in the C<SDL::Events> documentation. Have a look at the perldoc for C<SDL::Events>.
-
-    perldoc SDL::Events 
-
-=begin sidebar
-
-Events can also be processed without using callbacks from C<SDLx::App>. Chapter 5 goes more in detail for this topic. The perldoc for C<SDL::Events> will also
-show how do the processing. 
-
-=end sidebar
-
+C<SDLx::App> calls the event_handlers, from an internal C<SDLx::Controller>.
+When this event handler receives a quit event, it calls
+C<SDLx::Controller::stop()> which causes C<SDLx::App> to exit gracefully.
 
 =head2 Exit on Quit
 
-Exiting when the C<SDL_QUIT> event is call is a common callback so C<SDLx::App> provides it for you, as a constructor option.
+Exiting on receiving the C<SDL_QUIT> event is such a common operation that
+C<SDLx::App> provides it as a constructor option:
 
 =begin programlisting
 
@@ -110,57 +121,54 @@ Exiting when the C<SDL_QUIT> event is call is a common callback so C<SDLx::App> 
     use SDL;
     use SDLx::App;
 
-    my $app = SDLx::App->new( w => 200, h => 200, d => 32, 
-			      title => "Quit Events", 
-			     exit_on_quit => 1); 
+    my $app = SDLx::App->new(
+        w            => 200,
+        h            => 200,
+        d            =>  32,
+        title        => "Quit Events",
+        exit_on_quit => 1
+    );
 
-	#exit_on_quit option exits when SDL_QUIT is processed
-
-    #Then we will run the app
-    #which will start a loop for keeping the app alive
     $app->run();
-  
-=end programlisting
 
+=end programlisting
 
 =head1 Small Paint: Input Devices
 
-SDL events also allow us to handle input from various devices. To demonstrate two of the common devices, lets make a simple paint program.
-It will provide a small black window where you can draw with the mouse. Moreover when you press the number keys 0-10 it will pick different
-colors. By pressing 'q' or 'Q' we will exit. Similarity pressing 'c' or 'C' will clear the screen. Pressing 'ctrl-s' will save our image to
-the file 'painted.bmp'. 
+SDL events also allow input handling. Consider a simple paint program. It will
+provide a small black window. Moving the mouse draws on this window. Pressing a
+number key chooses a paint color.  Pressing C<q> or C<Q> exits the program.
+Pressing C<c> or C<C> clears the screen. Pressing C<Ctrl-S> saves the image to
+a file named F<painted.bmp>.
 
-=for figure 
-       \includegraphics[width=0.5\textwidth]{../src/images/painted.png}      
-        \caption{Simple Paint: Smile}               
-         \label{fig:Smile} 
+=for figure
+       \includegraphics[width=0.5\textwidth]{../src/images/painted.png}
+        \caption{Simple Paint: Smile}
+         \label{fig:Smile}
 
 =head2 Saving the image
 
-First, lets define the save subroutine.
+Start by defining the saving function:
 
 =begin programlisting
 
     sub save_image {
-
-       if( SDL::Video::save_BMP( $app, 'painted.bmp' ) == 0 && -e 'painted.bmp')
+        if (SDL::Video::save_BMP( $app, 'painted.bmp' ) == 0
+        && -e 'painted.bmp')
         {
-             warn 'Saved painted.bmp to '.cwd();
+             warn 'Saved painted.bmp to ' . cwd();
         }
-        else 
+        else
         {
-            warn 'Could not save painted.bmp: '.SDL::get_errors();
+            warn 'Could not save painted.bmp: ' . SDL::get_errors();
         }
-
     }
 
 =end programlisting
 
-
-
 =head2 Keyboard
 
-To handle the keyboard specifications we will create another event callback.
+Keyboard handling requires some color data as well as a keypress callback:
 
 =begin programlisting
     # Color array
@@ -175,30 +183,30 @@ To handle the keyboard specifications we will create another event callback.
     sub keyboard_event
     {
         my $event = shift;
-        
-        #Check that our type of event press is a SDL_KEYDOWN
-        if( $event->type == SDL_KEYDOWN )
-        {
-            #Convert the key_symbol (integer) to a keyname
-            my $key_name = SDL::Events::get_key_name( $event->key_sym );
-            
-            #if our $key_name is a digit use it as a color
-            $brush_color = $key_name if $key_name =~ /^\d$/;
-           
-            #Get the keyboard modifier perldoc SDL::Events
-            #We are using any CTRL so KMOD_CTRL is fine
-            my $mod_state = SDL::Events::get_mod_state();
-            
-            #Save the image.         
-            save_image if $key_name =~ /^s$/ && ($mod_state & KMOD_CTRL); 
 
-            #Clear the screen if we pressed C or c
-            $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/;
-            
-            #Exit if we press a Q or q
+        if ( $event->type == SDL_KEYDOWN )
+        {
+            # convert the key_symbol (integer) to a keyname
+            my $key_name = SDL::Events::get_key_name( $event->key_sym );
+
+            # if $key_name is a digit, use it as a color
+            $brush_color = $key_name if $key_name =~ /^\d$/;
+
+            # get the keyboard modifier (see perldoc SDL::Events)
+            my $mod_state = SDL::Events::get_mod_state();
+
+            # we are using any CTRL so KMOD_CTRL is fine
+            save_image() if $key_name =~ /^s$/ && ($mod_state & KMOD_CTRL);
+
+            # clear the screen
+            $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0 )
+                if $key_name =~ /^c$/;
+
+            # exit
             $app->stop() if $key_name =~ /^q$/;
         }
-        $app->update();    
+
+        $app->update();
     }
 
     $app->add_event_handler(\&quit_event);
@@ -206,169 +214,58 @@ To handle the keyboard specifications we will create another event callback.
 
 =end programlisting
 
-=for sidebar
+=begin sidebar
 
-=head4 NOTE: Globals and Callbacks
-
-When adding a callback to C<SDLx::App> which uses globals ( C<$brush_color> and C<@colors> in this case ), be sure
-to define them before declaring the subroutine. Also add it to the C<SDLx::App> after the subroutine is defined.
-The reason for this is so that C<SDLx::App> is aware of the globals before it calls the callback internally.
+B<NOTE: > When adding a callback to C<SDLx::App> which uses variables declared
+outside of the function (C<$brush_color> and C<@colors> in this case), be sure
+to define them before declaring the subroutine. Normal Perl scoping and
+initialization rules apply.
 
 =end sidebar
 
 =head2 Mouse
 
-Now we will go about capturing our Mouse events, by inserting the following code after the C<keyboard_event> subroutine.
-
+Handling mouse events is almost as straightforward as keyboard events:
 =begin programlisting
 
-    #Keep track if we are drawing 
+    # track the drawing status
     my $drawing = 0;
+
     sub mouse_event {
-
-        my $event = shift;
-        
-        #We will detect Mouse Button events
-        #and check if we already started drawing
-        if($event->type == SDL_MOUSEBUTTONDOWN || $drawing)
-        {
-            # set drawing to 1 
-            $drawing = 1;
-
-            # get the X and Y values of the mouse
-            my $x =  $event->button_x;
-            my $y =  $event->button_y;
-            
-            # Draw a rectangle at the specified position
-            $app->draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
-    
-            # Update the application
-            $app->update();
-        }
-
-        # Turn drawing off if we lift the mouse button
-        $drawing = 0 if($event->type == SDL_MOUSEBUTTONUP );
-     
-    }
-
-
-    $app->add_event_handler( \&mouse_event );
-
-=end programlisting
-
-Currently we don't make a distinction between what mouse click is done. This can be accomplished by taking a look at the
-C<button_button()> method in C<SDL::Event>. At this point we have a simple paint application done.
-
-Another point to note is that each event_handler is called in the order that it was attached.
-
-=head2 Program
-
-The final program looks like this:
-
-=begin programlisting
-
-    use strict;
-    use warnings;
-    use SDL;
-    use Cwd;
-    use SDL::Event;
-    use SDLx::App;
-
-    my $app = SDLx::App->new( w => 200, h => 200, d => 32,
-        title => "Simple Paint" );
-
-    sub quit_event {
-        my $event = shift;
-        my $controller = shift;
-        $controller->stop() if $event->type == SDL_QUIT;
-    }
-
-
-    sub save_image {
-
-       if( SDL::Video::save_BMP( $app, 'painted.bmp' ) == 0 && -e 'painted.bmp')
-        {
-             warn 'Saved painted.bmp to '.cwd();
-        }
-        else
-        {
-            warn 'Could not save painted.bmp: '.SDL::get_errors();
-        }
-
-    }
-
-    my @colors = (  0xFF0000FF, 0x00FF00FF,
-                    0x0000FFFF, 0xFFFF00FF,
-                    0xFF00FFFF, 0x00FFFFFF,
-                    0xCCFFCCFF, 0xFFCC33FF,
-                    0x000000FF, 0xFFFFFFFF );
-
-    my $brush_color = 0;
-
-    sub keyboard_event
-    {
         my $event = shift;
 
-        #Check that our type of event press is a SDL_KEYDOWN
-        if( $event->type == SDL_KEYDOWN )
-        {
-            #Convert the key_symbol (integer) to a keyname
-            my $key_name = SDL::Events::get_key_name( $event->key_sym );
-
-            #if our $key_name is a digit use it as a color
-            $brush_color = $key_name if $key_name =~ /^\d$/;
-
-            #Get the keyboard modifier perldoc SDL::Events
-            #We are using any CTRL so KMOD_CTRL is fine
-            my $mod_state = SDL::Events::get_mod_state();
-
-            #Save the image.
-            save_image if $key_name =~ /^s$/ && ($mod_state & KMOD_CTRL);
-
-            #Clear the screen if we pressed C or c
-            $app->draw_rect( [0,0,$app->w, $app->h], 0 ) if $key_name =~ /^c$/;
-
-            #Exit if we press a Q or q
-            $app->stop() if $key_name =~ /^q$/;
-        }
-        $app->update();
-    }
-
-    $app->add_event_handler(\&keyboard_event);
-
-    #Keep track if we are drawing
-    my $drawing = 0;
-    sub mouse_event {
-
-        my $event = shift;
-
-        #We will detect Mouse Button events
-        #and check if we already started drawing
-        if($event->type == SDL_MOUSEBUTTONDOWN || $drawing)
+        # detect Mouse Button events and check if user is currently drawing
+        if ($event->type == SDL_MOUSEBUTTONDOWN || $drawing)
         {
             # set drawing to 1
             $drawing = 1;
 
             # get the X and Y values of the mouse
-            my $x =  $event->button_x;
-            my $y =  $event->button_y;
+            my $x = $event->button_x;
+            my $y = $event->button_y;
 
-            # Draw a rectangle at the specified position
-            $app->draw_rect( [$x,$y, 2, 2],  $colors[$brush_color]);
+            # draw a rectangle at the specified position
+            $app->draw_rect( [ $x, $y, 2, 2 ], $colors[$brush_color] );
 
-            # Update the application
             $app->update();
         }
 
-        # Turn drawing off if we lift the mouse button
-        $drawing = 0 if($event->type == SDL_MOUSEBUTTONUP );
-
+        # disable drawing when user releases mouse button
+        $drawing = 0 if ($event->type == SDL_MOUSEBUTTONUP );
     }
 
-
     $app->add_event_handler( \&mouse_event );
-    $app->run();
 
 =end programlisting
+
+This is all of the code necessary to make a simple drawing application.
+
+Take note of two things. First, SDL_perl invokes the event handlers in the
+order of attachment. If the user presses C<Q> and then moves the mouse, the
+application will quit before processing the mouse movement.
+
+Second, the application makes no distinction between right, middle, or left
+mouse clicks. SDL provides this information. See the C<button_button()> method
+in C<SDL::Event>.
 
 =for vim: spell

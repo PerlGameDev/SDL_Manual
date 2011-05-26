@@ -1,70 +1,83 @@
 =head0 Drawing
 
-=head1 Preview
-
-SDL provides several ways to draw graphical elements on the screen; these
-methods can be broken down into three general categories: Primitives, Images,
-and Text.
-Methods in each of the three categories draw a single object on the Surface.
-The Surface is represented by C<SDLx::Surface>. Even our C<SDLx::App> is an
-C<SDLx::Surface>. This means that we can draw directly on the C<SDLx::App>,
-however there are several advantages to drawing on multiple surfaces. In this
-chapter we will explore these methods of drawing, and make a pretty picture.
+SDL provides several ways to draw graphical elements on the screen in three
+general categories: primitives, images, and text. All drawing occurs on a
+surface, represented by the C<SDLx::Surface> class. Even the C<SDLx::App> is an
+C<SDLx::Surface>. Though this means it's possible to draw directly to the app's
+surface, there are several advantages to drawing on multiple surfaces.
 
 =head1 Coordinates
 
-SDL's surface coordinate system has x=0,y=0 in the upper left corner and the
-dimensions span to the right and downward. The API always lists coordinates in
-x,y order.
-More discussion of these details can be found in the SDL library documentation:
-U<HTTP://SDLTutorials.Com/sdl-coordinates-and-blitting>
+SDL's surface coordinate system has its origin (where both the x and y
+coordinates have the value of zero) in the upper left corner. As the value of x
+increases, the position moves to the right of the origin. As the value of y
+increases, the position moves downward from the origin. The API always lists
+coordinates in x, y order.
 
-=head1 Objective
+=begin sidebar
 
-Using SDL we will try to construct the following image.
+The SDL library documentation has an extended discussion on coordinates:
+U<http://sdltutorials.com/sdl-coordinates-and-blitting>.
+
+=end sidebar
+
+=head1 Drawing with SDL
+
+You can produce original pictures knowing little more than how to draw to a
+surface with SDL:
 
 =for figure
        \includegraphics[width=0.5\textwidth]{../src/images/flower.png}
         \caption{A field of flowers}
          \label{fig:flowers}
 
-=head1 Drawing the Flower
+=head2 Surface Drawing Methods
 
-To begin actually drawing the flower, we need to cover some theory.
-
-=head2 Syntax Overview
-
-Drawing in SDL is done on Surfaces. The C<SDLx::Surface> object provides
-access to methods in the form of:
+As mentioned earlier, all drawing in SDL requires a surface. The
+C<SDLx::Surface> object provides access to methods in the form of:
 
     $surface->draw_{something}( .... );
 
-Parameters are usually provided as array references, to define areas and
-colors.
+Parameters to these methods are generally coordinates and colors, provided as
+array references.
 
 =head3 Rectangular Parameters
 
-Some parameters are just a quick definition of the positions and dimensions.
-For a rectangle that will be placed at C<(20, 20)> pixel units on the screen,
-which has dimensions of C<40x40> pixel units, the following would suffice.
+Some parameters are sets of coordinate positions and dimensions.  For example,
+parameters to describe a rectangle of C<40x40> pixels placed at C<(20, 20)>
+pixel units on the screen make a four-element array reference of x, y, width,
+height:
 
     my $rect = [20, 20, 40, 40];
 
 =head3 Color
 
-Color in SDL is described by 4 numbers. The first three numbers define the
-Red, Green, and Blue intensity of the Color. The final number defines the
-transparency of the Color.
+X<color>
+
+=for author
+
+Need to document what the magnitude of the color and transparency values mean.
+
+=end for
+
+SDL color parameters require four-element array references. The first three
+numbers define the Red, Green, and Blue intensity of the color. The final
+number defines the transparency of the color.
 
     my $color = [255, 255, 255, 255];
 
-Color can also be defined as hexadecimal values:
+You may also represent a color as hexadecimal values, where the values of the
+numbers range from 0-255 for 32 bit depth in RGBA format:
 
     my $color = 0xFFFFFFFF;
+    my $white = 0xFFFFFFFF;
+    my $black = 0x000000FF;
+    my $red   = 0xFF0000FF;
+    my $green = 0x00FF00FF;
+    my $blue  = 0x0000FFFF;
 
-The values of the numbers range from 0-255 for 32 bit depth in RGBA format.
-Alternately color can be described as a 4 byte hexadecimal value, each two
-digit byte encoding the same RGBA values as above:
+... or as four-byte hexadecimal values, where each two-digit byte encodes the
+same RGBA values:
 
     my $goldenrod = 0xDAA520FF;
 
@@ -72,39 +85,32 @@ digit byte encoding the same RGBA values as above:
 
 =head4 NOTE: Depth of Surface
 
-The bits of the surface are set when the C<SDLx::Surface> or C<SDLx::App> is
-made.
+The color depth of the surface--how many bits are available to describe
+colors--is a property of the relevant C<SDLx::Surface> or C<SDLx::App>. Set it
+in its constructor:
 
     my $app = SDLx::App->new( depth => 32 );
 
-Other options are 24, 16, and 8. 32 is the default bit depth.
+The default bit depth is 32, such that each color component has 256 possible
+values. Other options are 24, 16, and 8.
 
 =end sidebar
 
 =head2 Pixels
 
-All C<SDLx::Surface>s are made of pixels that can be read and written to via
-a tied array interface.
+All C<SDLx::Surface>s are collections of pixels. You can read from and write to these pixels by treating the surface as an array reference:
 
     $app->[$x][$y] = $color;
 
-The C<$color> is defined as an unsigned integer value which is constructed in
-the following hexadecimal format, C<0xRRGGBBAA>.
-Here are some examples:
-
-    $white = 0xFFFFFFFF;
-    $black = 0x000000FF;
-    $red   = 0xFF0000FF;
-    $green = 0x00FF00FF;
-    $blue  = 0x0000FFFF;
-
-Pixels can also be defined as anonymous arrays as before with
-C<[$red, $green, $blue, $alpha]>.
+... where C<$color> is an unsigned integer value using the hexadecimal format
+(C<0xRRGGBBAA>) I<or> an anonymous array of the form C<[$red, $green, $blue,
+$alpha]>.
 
 =head2 Primitives
 
-Drawing Primitives are usually simple shapes that can be used for creating
-graphics dynamically.
+X<primitives>
+
+Drawing primitives are simple shapes that SDL supports natively.
 
 =for figure
        \includegraphics[width=0.5\textwidth]{../src/images/draw-1.png}
@@ -113,9 +119,12 @@ graphics dynamically.
 
 =head3 Lines
 
-    $app->draw_line( [200,20], [20,200], [255, 255, 0, 255] );
+A line is a series of contiguous pixels between two points. The C<draw_line>
+method causes SDL to draw a line to a surface:
 
-This will draw a yellow line from positions C<(200,20)> to C<(20,200)>.
+    $app->draw_line( [200, 20], [20, 200], [255, 255, 0, 255] );
+
+This will draw a yellow line from positions C<(200, 20)> to C<(20, 200)>.
 
 =for figure
        \includegraphics[width=0.5\textwidth]{../src/images/draw-2.png}
@@ -124,11 +133,16 @@ This will draw a yellow line from positions C<(200,20)> to C<(20,200)>.
 
 =head3 Rectangles
 
-Rectangles are a common building block for games. In SDL, rectangles are the most cost effective of the primitives to draw.
+X<rectangle>
 
-    $app->draw_rect( [10,20, 40, 40 ], [255, 255, 255,255] );
+A rectangle is a four-sided, filled polygon. Rectangles are a common building
+block for games. In SDL, rectangles are the most cost effective of the
+primitives to draw. The C<draw_rect> method draws a rectangle on a surface:
 
-The above will add a white square of size C<40x40> onto the screen at the position C<(10,20)>.
+    $app->draw_rect( [10, 20, 40, 40 ], [255, 255, 255,255] );
+
+This draws a white square of size C<40x40> onto the screen at the position
+C<(10,20)>.
 
 =for figure
        \includegraphics[width=0.5\textwidth]{../src/images/draw-3.png}
@@ -142,20 +156,22 @@ The above will add a white square of size C<40x40> onto the screen at the positi
 
 =head3 Circles
 
-Circles are drawn similarly either filled or unfilled.
+X<circle>
 
-    $app->draw_circle(        [100,100], 20, [255,0,0,255] );
-    $app->draw_circle_filled( [100,100], 19, [0,0,255,255] );
+A circle is a primitive a fixed radius around a given point.  Circles may be
+filled or unfilled. The C<draw_circle> and C<draw_circle_filled> methods draw
+these to a surface:
 
-Now we will have an unfilled circle colored red and a filled circle colored blue.
+    $app->draw_circle(        [100, 100], 20, [255, 0,   0, 255] );
+    $app->draw_circle_filled( [100, 100], 19, [0,   0, 255, 255] );
 
-=head3 More Primitives
+These draw an unfilled red circle and a filled blue circle.
 
-For more complex drawing functions have a look at C<SDL::GFX::Primitives>.
+SDL provides more complex primitives in C<SDL::GFX::Primitives>.
 
-=head2 Application: Primitives
+=head2 Drawing with Primitives
 
-Using our knowledge of Primitives in SDL, let's draw our field, sky, and a simple flower.
+It's easy to combine several primitives to draw an interesting images.
 
 =begin programlisting
 
@@ -171,26 +187,26 @@ Using our knowledge of Primitives in SDL, let's draw our field, sky, and a simpl
         title => 'Pretty Flowers'
     );
 
-    #Adding the blue skies
+    # Add the blue skies
     $app->draw_rect( [ 0,   0, 500, 500 ], [ 20,  50, 170, 255 ] );
 
-    #Draw our green field
+    # Draw a green field
     $app->draw_rect( [ 0, 400, 500, 100 ], [ 50, 170,  20, 100 ] );
 
-    # Make a surface 50x100 pixels
+    # Make a surface for the flower
     my $flower = SDLx::Surface->new( width => 50, height => 100 );
 
-    # Lets make the background black
+    # With a black background
     $flower->draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
 
-    # Now for a pretty green stem
+    # Draw a pretty green stem
     $flower->draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
 
-    # And the simple flower bud
+    # And a simple flower bud
     $flower->draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
     $flower->draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
-    # Draw flower on $app surface
+    # Draw flower on $app
     $flower->blit( $app, [ 0, 0, 50, 100 ] );
 
     $app->update();
@@ -204,48 +220,39 @@ Using our knowledge of Primitives in SDL, let's draw our field, sky, and a simpl
         \caption{Looks so lonely there all alone}
          \label{fig:draw_flower_lone}
 
-=head1 Drawing a Field of Flowers
+=head1 Drawing on Multiple Surfaces
 
-=head2 Multiple Surfaces
+The examples so far have drawn on only a single surface, the display. SDL makes it possible to write on multiple surfaces. These other surfaces exist only in memory until you draw them to the display.
 
-So far we have been drawing only on one surface, the display. In SDL it is possible to write on
-several surfaces that are in memory. These surfaces can later on be added on to the display to
-show them. The Surface is defined as an C<SDLx::Surface> type in SDL Perl.
+=head2 Creating Surfaces
 
-=head3 Creating Surfaces
-
-There are several ways to create an C<SDLx::Surface> for use.
-
-=head3 Raw Surfaces
-
-For the purposes of preparing surfaces using only draw functions (as mentioned above)
-we can create a surface using the C<SDLx::Surface>'s constructor.
+There are several ways to create an C<SDLx::Surface> for use. The most common
+is to create one manually with a constructor call:
 
     $surface = SDLx::Surface->new( width => $width, height => $height );
 
-=head3 Images in SDL
-
-Using C<SDL::Image> and C<SDL::Video> we can load images as surfaces too.
-C<SDL::Image> provides support for all types of images, however it requires
-C<SDL_image> library support to be compiled with the right library.
+C<SDL::Image> and C<SDL::Video> can load images as surfaces too.  C<SDL::Image>
+provides support for all types of images, provided that the underlying
+C<SDL_image> library supports the image type you want to load. For example,
+C<SDL_image> must support PNG images to use:
 
     $surface = SDL::Image::load( 'picture.png' );
 
-In the event that the desired C<SDL_image> library is unavailable, we can
-fall-back on the built-in support for the C<.bmp> format.
+In the event that the desired C<SDL_image> library is unavailable, you can
+fallback to the built-in support for the C<.bmp> format.
 
     $surface = SDL::Video::load_BMP( 'picture.bmp' );
 
-Generally, however, the C<SDLx::Sprite> module is used.
+The C<SDLx::Sprite> module provides another option to manipulate surfaces.
 
 =head1 Lots of Flowers but One Seed
 
-=head2 Sprites
-
-You might have noticed that putting another C<SDLx::Surface> on the C<$app> requires the usage
-of a C<blit( )> function, which may not clarify as to what is going on there. Fortunately an C<SDLx::Sprite>
-can be used to make our flower. Besides making drawing simpler, C<SDLx::Sprite> adds several other features
-that we need for game images that move a lot. For now let's use C<SDLx::Sprite> for our flowers.
+The flower example used a method called C<blit> to draw a surface to the
+display. This method copies data from one surface to another. It's a
+fundamental operation, but it's a low level operation.  C<SDLx::Sprite>
+provides higher level options.  Besides making drawing simpler, C<SDLx::Sprite>
+adds several other features useful for moving images. Here's a revised example
+using C<SDLx::Sprite> for flowers:
 
 =begin programlisting
 
@@ -262,23 +269,23 @@ that we need for game images that move a lot. For now let's use C<SDLx::Sprite> 
         title => 'Pretty Flowers'
     );
 
-    #Adding the blue skies
+    # Adding blue skies
     $app->draw_rect( [ 0,   0, 500, 500 ], [ 20, 50, 170, 255 ] );
 
-    #Draw our green field
+    # Draw a green field
     $app->draw_rect( [ 0, 400, 500, 100 ], [ 50, 170, 20, 100 ] );
 
     my $flower = SDLx::Sprite->new( width => 50, height => 100 );
 
-    # To access the SDLx::Surface to write to, we use the ->surface() method
+    # Use ->surface() to access a sprite's SDLx::Surface
 
-    # Let's make the background black
+    # Make the background black
     $flower->surface->draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
 
     # Now for a pretty green stem
     $flower->surface->draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
 
-    # And the simple flower bud
+    # Add the simple flower bud
     $flower->surface->draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
     $flower->surface->draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
 
@@ -290,18 +297,19 @@ that we need for game images that move a lot. For now let's use C<SDLx::Sprite> 
 
 =end programlisting
 
-Obviously at this point we don't want our single flower floating in the sky, so we will draw several of them
-on the ground. Delete everything from line 34 including and after
+Flowers usually don't grow in the sky. Flowers make more sense on the ground.
+It's easy to insert plenty of identical flowers from a single sprite. Replace
+the line:
 
     $flower->draw_xy( $app, 0, 0 );
 
-and insert the code below to get a field of flowers.
+... with:
 
 =begin programlisting
 
-    for(0..500){
+    for (0 .. 500) {
         my $y =           425 - rand( 50);
-        $flower->draw_xy( $app, rand(500)-20, $y );
+        $flower->draw_xy( $app, rand(500) - 20, $y );
     }
 
     $app->update();
@@ -309,6 +317,14 @@ and insert the code below to get a field of flowers.
     sleep(1);
 
 =end programlisting
+
+... to make an entire field of flowers.
+
+=for author
+
+Probably don't need this.
+
+=end for
 
 =head1 Program
 
