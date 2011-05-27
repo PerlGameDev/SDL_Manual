@@ -347,6 +347,19 @@ final number defines the transparency of the color.</p>
 
 <pre><code>    my $color = [255, 255, 255, 255];</code></pre>
 
+<p>The magnitude of each color value determines how much of that color
+component will be mixed into the resulting color. A 0 value specifies that
+none of the color channel should be used while 255 specifies a maximum
+intensity for a particular channel. The first value corresponds with the
+Red channel, so a higher number there means more red will be mixed into the
+resulting color. It is a common practice to achieve a grayscale of varying
+intensity by specifying the same value for each of the Red, Green, and Blue
+color channels. The fourth and final value designates the transparency (or
+Alpha channel) where a 0 value makes the resulting color fully transparent
+and 255 makes it entirely opaque. A transparency value somewhere in between
+will allow underlying colors to be blended with the specified RGB values
+into the final color output.</p>
+
 <p>You may also represent a color as hexadecimal values, where the values
 of the numbers range from 0-255 for 32 bit depth in RGBA format:</p>
 
@@ -593,52 +606,11 @@ sprite. Replace the line:</p>
 <pre><code>    for (0 .. 500) {
         my $y =           425 - rand( 50);
         $flower-&gt;draw_xy( $app, rand(500) - 20, $y );
-    }
-
-    $app-&gt;update();
-
-    sleep(1);</code></pre>
+    }</code></pre>
 
 <p>... to make an entire field of flowers.</p>
 
 <p>Probably don't need this.</p>
-
-<h2>Program</h2>
-
-<p>The final program looks like this:</p>
-
-<pre><code>    use SDL;
-    use SDLx::App;
-    use SDLx::Sprite;
-
-    my $app = SDLx::App-&gt;new(
-        w     =&gt; 500,
-        h     =&gt; 500,
-        d     =&gt; 32,
-        title =&gt; &#39;Pretty Flowers&#39;
-    );
-
-    # Draw Code Starts here
-    my $flower = SDLx::Sprite-&gt;new( width =&gt; 50, height =&gt; 100 );
-
-    $flower-&gt;surface-&gt;draw_rect( [  0,  0, 50, 100 ], [ 0,   0, 0,   0 ] );
-    $flower-&gt;surface-&gt;draw_rect( [ 23, 30,  4, 100 ], [ 0, 255, 0, 255 ] );
-    $flower-&gt;surface-&gt;draw_circle_filled( [ 25, 25 ], 10, [ 150, 0, 0, 255 ] );
-    $flower-&gt;surface-&gt;draw_circle(        [ 25, 25 ], 10, [ 255, 0, 0, 255 ] );
-    $flower-&gt;alpha_key(0);
-
-    $app-&gt;draw_rect( [ 0,   0, 500, 500 ], [ 20,  50, 170, 255 ] );
-    $app-&gt;draw_rect( [ 0, 400, 500, 100 ], [ 50, 170,  20, 100 ] );
-
-    for(0..500){
-        my $y =           425 - rand( 50);
-        $flower-&gt;draw_xy( $app, rand(500) - 20, $y );
-    }
-    #Draw Code Ends Here
-
-    $app-&gt;update();
-
-    sleep(2);</code></pre>
 
 <h1>Handling Events</h1>
 
@@ -682,12 +654,10 @@ to add and remove events constantly:</p>
 
         sub do_key { $quit = 1 }</code></pre>
 
-<p>Add other types of events.</p>
-
-<p> </p>
+<p>		  </p>
 
 <p>Every event has an associated type which represents the category of the
-event. The previous example looks for a keypress event (footnote: SDL
+event. The previous example looks for a keypress event	(footnote: SDL
 separates the event of pressing a key from the event of releasing a key,
 which allows you to identify combinations of keypresses, such as Ctrl + P
 to print.). The SDL library defines several types of events, and SDL_perl
@@ -702,6 +672,60 @@ tedious. The <code>SDLx::Controller</code> available from the
 <code>SDLx::App</code> offers the use of event callbacks with which to
 handle events. Processing events is a matter of setting up the appropriate
 callbacks and letting SDL do the heavy work.</p>
+
+<blockquote>
+
+<p><b>SDL Events Types</b></p>
+
+<p>Additional Event types that can be captured by SDL are:</p>
+
+<ul>
+
+<li>Keyboard
+
+<p><code>SDL_KEYDOWN</code> <code>SDL_KEYUP</code> - Keyboard button
+pressed</p>
+
+<li>Mouse
+
+<p><code>SDL_MOUSEMOTION</code> - Mouse motion occured</p>
+
+<p><code>SDL_MOUSEBUTTONDOWN</code> <code>SDL_MOUSEBUTTONUP</code> - Mouse
+button pressed</p>
+
+<li>Joystick
+
+<p><code>SDL_JOYAXISMOTION</code> - Joystick axis motion</p>
+
+<p><code>SDL_JOYBALLMOTION</code> - Joystick trackball motion</p>
+
+<p><code>SDL_JOYHATMOTION</code> - Joystick hat position change</p>
+
+<p><code>SDL_JOYBUTTONDOWN</code> <code>SDL_JOYBUTTONUP</code> - Joystick
+button pressed</p>
+
+<li>Window \& System
+
+<p><code>SDL_ACTIVEEVENT</code> - Application visibility</p>
+
+<p><code>SDL_VIDEORESIZE</code> - Window resized</p>
+
+<p><code>SDL_VIDEOEXPOSE</code> - Window exposed</p>
+
+<p><code>SDL_QUIT</code> - Quit requested</p>
+
+<p><code>SDL_USEREVENT</code> - A user-defined event type</p>
+
+<p><code>SDL_SYSWMEVENT</code> - Platform-dependent window manager
+event</p>
+
+</ul>
+
+<p>For more information look at:</p>
+
+<pre><code>        perldoc SDL::Event </code></pre>
+
+</blockquote>
 
 <h2>Quitting with Grace</h2>
 
@@ -893,7 +917,7 @@ below:</b></p>
 
 <ul>
 
-<li>Around line 259:
+<li>Around line 317:
 
 <p>=end programlisting without matching =begin.  (Stack: [empty])</p>
 
