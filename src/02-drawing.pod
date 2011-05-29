@@ -76,8 +76,8 @@ specifying the same value for each of the Red, Green, and Blue color
 channels. The fourth and final value designates the transparency (or Alpha
 channel) where a 0 value makes the resulting color fully transparent and
 255 makes it entirely opaque. A transparency value somewhere in between
-will allow underlying colors to be blended with the specified RGB values
-into the final color output.
+will allow underlying (pixel data of surfaces below the current one) colors to 
+be blended with the specified RGB values into the final color output.
 
 You may also represent a color as hexadecimal values, where the values of the
 numbers range from 0-255 for 32 bit depth in RGBA format:
