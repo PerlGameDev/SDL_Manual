@@ -357,8 +357,9 @@ intensity by specifying the same value for each of the Red, Green, and Blue
 color channels. The fourth and final value designates the transparency (or
 Alpha channel) where a 0 value makes the resulting color fully transparent
 and 255 makes it entirely opaque. A transparency value somewhere in between
-will allow underlying colors to be blended with the specified RGB values
-into the final color output.</p>
+will allow underlying (pixel data of surfaces below the current one) colors
+to be blended with the specified RGB values into the final color
+output.</p>
 
 <p>You may also represent a color as hexadecimal values, where the values
 of the numbers range from 0-255 for 32 bit depth in RGBA format:</p>
@@ -704,7 +705,7 @@ button pressed</p>
 <p><code>SDL_JOYBUTTONDOWN</code> <code>SDL_JOYBUTTONUP</code> - Joystick
 button pressed</p>
 
-<li>Window \& System
+<li>Window & System
 
 <p><code>SDL_ACTIVEEVENT</code> - Application visibility</p>
 
@@ -1195,11 +1196,11 @@ convenient solution. Instead of updating object positions based on how fast
 the computer can get through the game loop, derive their positions from a
 physical model based on the passage of time. Objects moving according to
 real world time will have consistent behavior at all CPU speeds and smooth
-interpolation between frames. SDLx::App provides this behavior through
-movement and show handlers.</p>
+interpolation between frames. <code>SDLx::App</code> provides this behavior
+through movement and show handlers.</p>
 
-<p>A simple physics model for the laser has a consistent horizontal
-velocity in pixels per time step at the window's mid-point:</p>
+<p>Consider a simple physics model for the laser has a consistent
+horizontal velocity in pixels per time step at the window's mid-point:</p>
 
 <pre><code>    X = Velocity * time step,
     Y = 100</code></pre>
@@ -1221,6 +1222,17 @@ position of the laser depends instead on the passage of real time.</p>
 the many objects and callbacks. The implementation of such complex models
 is non-trivial; see the lengthy discussion in the documentation of the
 <code>SDLx::Controller</code> module.</p>
+
+<p><code>SDLx::App</code> using the <code>SDLx::Controller</code> module
+provide callbacks to handle both aspects of this type of game loop. One is
+the the movement handler, which is a callback where calculations of the
+next step for each relevant data point is calculated. In the above example
+the movement handler would calculate the <code>X</code> and <code>Y</code>
+values, for each time step between the frames of animations.</p>
+
+<p>When we are ready to render the frame it is handled by the show handler.
+In the above example that would mean the show handler would print or render
+the <code>X, Y</code> values.</p>
 
 <h3>Laser in Real Time</h3>
 
