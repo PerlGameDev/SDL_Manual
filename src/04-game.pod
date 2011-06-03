@@ -274,7 +274,7 @@ Better solutions are available.
 
 =head1 Integrating Physics
 
-=for author
+=for editor
 
 Describe movement and show handlers.
 
@@ -285,9 +285,9 @@ solution. Instead of updating object positions based on how fast the computer
 can get through the game loop, derive their positions from a physical model
 based on the passage of time. Objects moving according to real world time will
 have consistent behavior at all CPU speeds  and smooth interpolation between
-frames. SDLx::App provides this behavior through movement and show handlers.
+frames. C<SDLx::App> provides this behavior through movement and show handlers.
 
-A simple physics model for the laser has a consistent horizontal velocity in
+Consider a  simple physics model for the laser has a consistent horizontal velocity in
 pixels per time step at the window's mid-point:
 
     X = Velocity * time step,
@@ -309,6 +309,15 @@ The biggest problem with this approach is the required bookkeeping for the many
 objects and callbacks. The implementation of such complex models is
 non-trivial; see the lengthy discussion in the documentation of the
 C<SDLx::Controller> module.
+
+C<SDLx::App> using the C<SDLx::Controller> module provide callbacks to handle both 
+aspects of this type of game loop. One is the the movement handler, which is a 
+callback where calculations of the next step for each relevant data point is calculated. 
+In the above example the movement handler would calculate the C<X> and C<Y> values, for 
+each time step between the frames of animations. 
+
+When we are ready to render the frame it is handled by the show handler. In the above 
+example that would mean the show handler would print or render the C<X, Y> values. 
 
 =head2 Laser in Real Time
 

@@ -44,17 +44,25 @@ remove events constantly:
 
 =end programlisting
 
-=for author
-
-Add other types of events.
-
-=end for
-
+X<C<SDL_ACTIVEEVENT>>
 X<C<SDL_KEYDOWN>>
+X<C<SDL_KEYUP>>
+X<C<SDL_MOUSEMOTION>>
+X<C<SDL_MOUSEBUTTONDOWN>>
+X<C<SDL_MOUSEBUTTONUP>>
+X<C<SDL_JOYAXISMOTION>>
+X<C<SDL_JOYBALLMOTION>>
+X<C<SDL_JOYHATMOTION>>
+X<C<SDL_JOYBUTTONDOWN>>
+X<C<SDL_JOYBUTTONUP>>
 X<C<SDL_QUIT>>
+X<C<SDL_SYSWMEVENT>>
+X<C<SDL_VIDEORESIZE>>
+X<C<SDL_VIDEOEXPOSE>>
+X<C<SDL_USEREVENT>>
 
 Every event has an associated type which represents the category of the event.
-The previous example looks for a keypress eventN<SDL separates the event of
+The previous example looks for a keypress event N<SDL separates the event of
 pressing a key from the event of releasing a key, which allows you to identify
 combinations of keypresses, such as Ctrl + P to print.>. The SDL library
 defines several types of events, and SDL_perl makes them available as constants
@@ -67,6 +75,56 @@ Checking for every possible event type within that event loop can be tedious.
 The C<SDLx::Controller> available from the C<SDLx::App> offers the use of event
 callbacks with which to handle events. Processing events is a matter of setting
 up the appropriate callbacks and letting SDL do the heavy work.
+
+=for sidebar
+
+B<SDL Events Types> 
+
+Additional Event types that can be captured by SDL are:
+
+=over
+
+=item Keyboard 
+
+C<SDL_KEYDOWN> C<SDL_KEYUP> - Keyboard button pressed 
+
+=item Mouse 
+
+C<SDL_MOUSEMOTION> - Mouse motion occured 
+
+C<SDL_MOUSEBUTTONDOWN> C<SDL_MOUSEBUTTONUP> - Mouse button pressed 
+
+=item Joystick 
+
+C<SDL_JOYAXISMOTION> - Joystick axis motion 
+
+C<SDL_JOYBALLMOTION> - Joystick trackball motion
+
+C<SDL_JOYHATMOTION> - Joystick hat position change 
+
+C<SDL_JOYBUTTONDOWN> C<SDL_JOYBUTTONUP> - Joystick button pressed 
+
+=item Window & System  
+
+C<SDL_ACTIVEEVENT> - Application visibility 
+
+C<SDL_VIDEORESIZE> - Window resized 
+
+C<SDL_VIDEOEXPOSE> - Window exposed 
+
+C<SDL_QUIT> - Quit requested 
+
+C<SDL_USEREVENT> - A user-defined event type 
+
+C<SDL_SYSWMEVENT> - Platform-dependent window manager event 
+
+=back 
+
+For more information look at:
+
+	perldoc SDL::Event 
+
+=end
 
 =head1 Quitting with Grace
 
