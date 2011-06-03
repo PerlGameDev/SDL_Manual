@@ -1140,7 +1140,7 @@ per second:</p>
 
                 # skip rendering and collision detections
                 # (heavy functions in the game loop)
-                                next;           
+                                next;
                         }
                 }
 
@@ -1300,428 +1300,436 @@ HTTP://GafferOnGames.Com/game-physics/fix-your-timestep.</p>
 
 <h1>Pong!</h1>
 
-<h2>The Game</h2>
+<p>  </p>
 
-<p>Pong is one of the first popular video games in the world. It was
-created by Allan Alcorn for Atari Inc. and released in 1972, being Atari's
-first game ever, and sparkling the beginning of the video game
-industry.</p>
+<p>Pong is one of the first popular video games in the world. Allan Alcorn
+created it for Atari, Inc. Its release in 1972 was both Atari's first game
+ever and the spark which began the video game industry.</p>
 
-<p>Pong simulates a table tennis match ("ping pong"), where you try to
-defeat your opponent by earning a higher score. Each player controls a
-paddle moving it vertically on the screen, and use it to hit a bouncing
-ball back and forth. You earn a point if your opponent is unable to return
-the ball to your side of the screen.</p>
+<p>Pong simulates a table tennis match ("ping pong"). Each player controls
+a paddle which moves vertically on the screen to hit a ball bouncing back
+and forth between the players. You earn a point if your opponent is unable
+to return the ball to your side of the screen.</p>
 
-<p>And now we're gonna learn how to create one ourselves in Perl and
-SDL.</p>
+<p>You can recreate Pong yourself with Perl and SDL.</p>
 
-<h3>Getting our feet wet</h3>
+<h2>The Basic Screen</h2>
 
-<p>Let's start by making a simple screen for our Pong clone. Open a file in
-your favourite text editor and type:</p>
+<p>Start by making a simple screen for Pong. Open a file in your favourite
+text editor and type:</p>
 
-<pre><code>    + #!/usr/bin/perl
-    + use strict;
-    + use warnings;
-    + 
-    + use SDL;
-    + use SDLx::App;
-    + 
-    + # create our main screen
-    + my $app = SDLx::App-&gt;new(
-    +     width        =&gt; 500,
-    +     height       =&gt; 500,
-    +     title        =&gt; &#39;My Pong Clone!&#39;,
-    +     dt           =&gt; 0.02,
-    +     exit_on_quit =&gt; 1,
-    + );
-    + 
-    + # let&#39;s roll!
-    + $app-&gt;run;</code></pre>
+<pre><code>    #!/usr/bin/perl
+    use strict;
+    use warnings;
 
-<p>Save this file as <code>"pong.pl"</code> and run it by typing on the
-command line:</p>
+    use SDL;
+    use SDLx::App;
 
-<pre><code>  perl pong.pl</code></pre>
+    # create the main screen
+    my $app = SDLx::App-&gt;new(
+        width        =&gt; 500,
+        height       =&gt; 500,
+        title        =&gt; &#39;My Pong Clone!&#39;,
+        dt           =&gt; 0.02,
+        exit_on_quit =&gt; 1,
+    );
+
+    # let&#39;s roll!
+    $app-&gt;run;</code></pre>
+
+<p>Save this file as <i>pong.pl</i> and run it by typing on the command
+line:</p>
+
+<pre><code>  $ <b>perl pong.pl</b></code></pre>
+
+<p>The explanation of <code>dt</code> needs much more explanation, probably
+in the previous section on frame rate.</p>
 
 <p>You should see a 500x500 black window entitled <i>"My Pong Clone!"</i>.
-In our SDLx::App construction we also set a time interval (dt) of 0.02 for
-the game loop, and let it handle SDL_QUIT events for us. If any of the
-arguments above came as a surprise to you, please refer to previous
-chapters for an in-depth explanation.</p>
+The only new feature you might not have seen before is the <code>dt</code>
+parameter to the <code>SDLx::App</code> constructor. This represents the
+length, in seconds, of a movement step as managed by an
+<code>SDLx::Controller</code> object. Because the <code>SDLx::App</code>
+object is also an <code>SDLx::Controller</code> object, it can handle
+<code>SDL_QUIT</code> events. See chapter 4 for more information.</p>
 
-<h3>Game Objects</h3>
+<h2>Game Objects</h2>
 
-<p>There are three main game objects in Pong: the player's paddle, the
-enemy's paddle, and a bouncing ball.</p>
-
-<p>Paddles are rectangles moving vertically on the screen, and can be
-easily represented with SDLx::Rect objects. First, put
+<p>There are three main game objects in Pong: two player paddles and the
+bouncing ball. Paddles are rectangles moving which move vertically. They're
+easy to represent with SDLx::Rect objects. First, put
 <code>SDLx::Rect</code> in your module's declarations:</p>
 
-<pre><code>      use SDL;
-      use SDLx::App;
-    + use SDLx::Rect;</code></pre>
+<pre><code>    use SDL;
+    use SDLx::App;
+    <b>use SDLx::Rect;</b></code></pre>
 
-<p>Now let's add a simple hash reference in our code to store our player's
-paddle, between the call to <code>SDLx::App->new()</code> and
-<code>$app->run</code>.</p>
+<p>Next, add a hash reference to store the first player's paddle. Using a
+hash reference allows the possibility of adding more information later. In
+a more complex game, consider using an actual object which <i>contains</i>
+an <code>SDLx::Rect</code>. For now, this will suffice:</p>
 
-<p>We'll use a hash reference instead of just assigning a
-<code>SDLx::Rect</code> to a variable because it will allow us to store
-more information later on. If you were building a more complex game, you
-should consider using actual objects. For now, a simple hash reference will
-suffice:</p>
+<pre><code>    <b>my $player1 = {</b>
+          <b>paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40 ),</b>
+    <b>};</b>
 
-<pre><code>    + my $player1 = {
-    +      paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40),
-    + };</code></pre>
+    # let&#39;s roll!
+    $app-&gt;run;</code></pre>
 
-<p>As we know, <code>SDLx::Rect</code> objects receive four arguments: x,
-y, width and height, in this order. So in the code above we're creating a
-10x40 paddle rect for player 1, on the left side of the screen (<code>x =
-10</code>) and somewhat in the center (<code>y = $app->h / 2</code>).</p>
+<p>This creates a 10x40 paddle rect for the first player on the left side
+of the screen (<code>x = 10</code>) and somewhat in the center (<code>y =
+$app->h / 2</code>). The second player's paddle is similar:</p>
 
-<p>Let's do the same for player 2, adding the following code right after
-the one above:</p>
+<pre><code>    <b>my $player2 = {</b>
+         <b>paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),</b>
+    <b>};</b>
 
-<pre><code>    + my $player2 = {
-    +      paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),
-    + };</code></pre>
+    # let&#39;s roll!
+    $app-&gt;run;</code></pre>
 
-<p>Player 2's paddle, also 10x40, needs to go to the right end of the
-screen. So we make its <code>x</code> position as our screen's width minus
-20. Since the paddle has a width of 10 itself and the <code>x</code>
-position refers to the rect's top-left corner, it will leave a space of 10
-pixels between its rightmost side and the end of the screen, just like we
-did for player 1.</p>
+<p>The second paddle needs to appear on the right side of the screen, so
+its <code>x</code> position is the screen's width minus 20. As the paddle
+has a width of 10 and the <code>x</code> position refers to the rect's
+top-left corner, the paddle has a 10 pixel margin from the right edge of
+the screen.</p>
 
-<p>Finally, the bouncing ball, a 10x10 rect in the middle of the
+<p>Finally, the bouncing ball is a 10x10 rect in the middle of the
 screen:</p>
 
-<pre><code>    + my $ball = {
-    +     rect =&gt; SDLx::Rect-&gt;new( $app-&gt;w / 2, $app-&gt;h / 2, 10, 10 ),
-    + };</code></pre>
+<pre><code>    <b>my $ball = {</b>
+        <b>rect =&gt; SDLx::Rect-&gt;new( $app-&gt;w / 2, $app-&gt;h / 2, 10, 10 ),</b>
+    <b>};
 
-<p>Yes, it's a "square ball", just like the original :)</p>
+    # let&#39;s roll!
+    $app-</b>run;</code></pre>
 
-<h4>Show me what you got!</h4>
+<p>Just like the original Pong, this ball is square.</p>
 
-<p>Now that we created our game objects, let's add a 'show' handler to
-render them on the screen:</p>
+<h3>Show it Off</h3>
 
-<pre><code>    + $app-&gt;add_show_handler(
-    +     sub {
-    +         # first, we clear the screen
-    +         $app-&gt;draw_rect( [0, 0, $app-&gt;w, $app-&gt;h], 0x000000FF );
-    + 
-    +         # then we render the ball
-    +         $app-&gt;draw_rect( $ball-&gt;{rect}, 0xFF0000FF );
-    + 
-    +         # ... and each paddle
-    +         $app-&gt;draw_rect( $player1-&gt;{paddle}, 0xFF0000FF );
-    +         $app-&gt;draw_rect( $player2-&gt;{paddle}, 0xFF0000FF );
-    + 
-    +         # finally, we update the screen
-    +         $app-&gt;update;
-    +     }
-    + );</code></pre>
+<p>With the game objects created, add a show handler to render them to the
+screen:</p>
 
-<p>Our approach is rather simple here, "clearing" the screen by painting a
-black rectangle the size of the screen, then using <code>draw_rect()</code>
-calls to paint opaque red (<code>0xFF0000FF</code>) rectangles in each
-object's position.</p>
+<pre><code>    <b>$app-</b>add_show_handler(&gt;
+        <b>sub {</b>
+            <b># first, clear the screen</b>
+            <b>$app-&gt;draw_rect( [ 0, 0, $app-&gt;w, $app-&gt;h ], 0x000000FF );</b>
 
-<p>The result can be seen on the screenshot below:</p>
+            <b># then render the ball</b>
+            <b>$app-&gt;draw_rect( $ball-&gt;{rect}, 0xFF0000FF );</b>
+
+            <b># ... and each paddle</b>
+            <b>$app-&gt;draw_rect( $player1-&gt;{paddle}, 0xFF0000FF );</b>
+            <b>$app-&gt;draw_rect( $player2-&gt;{paddle}, 0xFF0000FF );</b>
+
+            <b># finally, update the screen</b>
+            <b>$app-&gt;update;</b>
+        <b>}</b>
+    <b>);</b>
+
+    # let&#39;s roll!
+    $app-&gt;run;</code></pre>
+
+<p>This approach is rather simple. The code clears the screen by painting a
+black rectangle the size of the screen, then painting opaque red
+(<code>0xFF0000FF</code>) rectangles in each object's position.</p>
+
+<p>The result can be seen on the screenshot:</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/pong1.png}
 \caption{First view of our Pong clone} \label{fig:pong1}</p>
 
 
 
-<h3>Moving the Player's Paddle</h3>
+<h2>Moving the Player's Paddle</h2>
 
-<p>It's time to let the player move the left paddle! Take a few moments to
-recap what motion is all about: changing your object's position with
-respect to time. If it's some sort of magical teleportation repositioning,
-just change the (x,y) coordinates and be done with it. If however, we're
-talking about real motion, we need to move at a certain speed. Our paddle
-will have constant speed, so we don't need to worry about acceleration.
-Also, since it will only move vertically, we just need to add the vertical
-(y) velocity. Let's call it <code>v_y</code> and add it to our paddle
+<p></p>
+
+<p>It's time to let the player move the left paddle! Remember that motion
+is merely changing an object's position with respect to time. If this
+motion is, in the game, a magical teleportation, you can change the (x, y)
+coordinates and be done with it. If the motion needs to represent some sort
+of realistic physics, the object needs to move at an understood speed. Pong
+paddles have a constant speed, so there's no need to model acceleration.
+Also, as paddles move only vertically, the game only needs to track
+vertical velocity. Add a <code>v_y</code> element to each paddle
 structure:</p>
 
 <pre><code>      my $player1 = {
-           paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40),
-    +      v_y    =&gt; 0,
+           paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40 ),
+           <b>v_y    =&gt; 0,</b>
       };</code></pre>
 
-<p>Ok, now we have an attribute for vertical velocity (<code>v_y</code>) in
-our paddle, so what? How will this update the <code>y</code> position of
-the paddle? Well, velocity is how much displacement happens in a unit of
-time, like 20 km/h or 4 m/s. In our case, the unit of time is the app's
-<code>dt</code>, so all we have to do is move the paddle <code>v_y</code>
-pixels per <code>dt</code>. Here is where the motion handlers come in
-handy:</p>
+<p> </p>
 
-<pre><code>    + # handles the player&#39;s paddle movement
-    + $app-&gt;add_move_handler( sub {
-    +     my ( $step, $app ) = @_;
-    +     my $paddle = $player1-&gt;{paddle};
-    +     my $v_y = $player1-&gt;{v_y};
-    + 
-    +     $paddle-&gt;y( $paddle-&gt;y + ( $v_y * $step ) );
-    + });</code></pre>
+<p>Now what? How does this new attribute help modify the position of a
+paddle? Velocity represents the <i>displacement</i> how much displacement
+happens in a unit of time, as in 20 km/h or 4 m/s. In this Pong clone, the
+unit of time is the app's <code>dt</code>. The velocity of a paddle is
+<code>v_y</code> pixels per <code>dt</code>. Here is where the motion
+handlers come in handy:</p>
 
-<p>If you recall previous chapters, the code above should be pretty
-straightforward. When <code>v_y</code> is 0 at any given run cycle, the
-paddle won't change its <code>y</code> position. If, however, there is a
-vertical velocity, we update the <code>y</code> position based on how much
-of the expected cycle time (our app's "dt") has passed. A value of 1 in
-<code>$step</code> indicates a full cycle went through, and makes
-<code>$v_y * $step</code> the same as <code>$v_y * 1</code>, thus, plain
-<code>$v_y</code> - which is the desired speed for our cycle. Should the
-handler be called in a shorter cycle, we'll move only the relative factor
-of that.</p>
+<pre><code>    <b># handles the player&#39;s paddle movement</b>
+    <b>$app-&gt;add_move_handler( sub {</b>
+        <b>my ( $step, $app ) = @_;</b>
+        <b>my $paddle = $player1-&gt;{paddle};</b>
+        <b>my $v_y    = $player1-&gt;{v_y};</b>
 
-<h4>Player 2? Rinse and repeat</h4>
+        <b>$paddle-&gt;y( $paddle-&gt;y ( $v_y * $step ) );</b>
+    <b>});</b></code></pre>
 
-<p>We're not going to worry at this point about moving your nemesis'
-paddle, but since it uses the same motion mechanics of our player's, it
-won't hurt to prepare it:</p>
+<p>If you recall previous chapters, the code should be straightforward.
+When <code>v_y</code> is 0 at any given run cycle, the paddle won't change
+its <code>y</code> position. If, however, there is a vertical velocity, the
+code updates the <code>y</code> position based on how much of the expected
+cycle time (the app's <code>dt</code>) has passed. A value of 1 in
+<code>$step</code> indicates a full cycle has occurred, so that <code>$v_y
+* $step</code> is the same as <code>$v_y * 1</code>, which simplifies to
+<code>$v_y</code> -- the desired speed for one cycle. If the handler gets
+called more frequently, the paddle will move a relatively shorter
+amount.</p>
+
+<h3>Rinse and Repeat</h3>
+
+<p>The second player's paddle will use the same motion mechanics, so it
+won't hurt to prepare for its motion:</p>
 
 <pre><code>      my $player2 = {
            paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),
-    +      v_y    =&gt; 0,
+           <b>v_y    =&gt; 0,</b>
       };</code></pre>
 
-<p>And add a simple motion handler, just like our player's:</p>
+<p>And add another motion handler, just like our player's:</p>
 
-<pre><code>    + # handles AI&#39;s paddle movement
-    + $app-&gt;add_move_handler( sub {
-    +     my ( $step, $app ) = @_;
-    +     my $paddle = $player2-&gt;{paddle};
-    +     my $v_y = $player2-&gt;{v_y};
-    +
-    +     $paddle-&gt;y( $paddle-&gt;y + ( $v_y * $step ) );
-    + });</code></pre>
+<pre><code>    <b># handles AI&#39;s paddle movement</b>
+    <b>$app-&gt;add_move_handler( sub {</b>
+        <b>my ( $step, $app ) = @_;</b>
+        <b>my $paddle = $player2-&gt;{paddle};</b>
+        <b>my $v_y    = $player2-&gt;{v_y};</b>
 
-<h4>Back to our Player: Move that Paddle!</h4>
+        <b>$paddle-&gt;y( $paddle-&gt;y ( $v_y * $step ) );</b>
+    <b>});</b></code></pre>
 
-<p>We have preset <code>v_y</code> to zero as the paddle's initial
-velocity, so our player's paddle won't go haywire when the game starts. But
-we still need to know when the user wants to move it up or down the screen.
-In order to do that, we can bind the up and down arrow keys of the keyboard
-to positive and negative velocities for our paddle, through an event hook.
-Since we're going to use some event constants like <code>SDLK_DOWN</code>,
-we need to load the SDL::Events module:</p>
+<blockquote>
+
+<p>For the sake of simplicity of explanation, this code has repetition a
+real program would not want. This repetition could go away in several ways.
+You could use an array to hold all moving elements. You could use a helper
+function to create a new closure for each paddle. You could turn the game
+object hash references into real objects and add a <code>move()</code> or
+<code>update_position()</code> method.</p>
+
+</blockquote>
+
+<h3>Move that Paddle!</h3>
+
+<p>Paddle velocity <code>v_y</code> has a default value of zero, so paddles
+begin by not moving. That's good, until the player wants to move the
+paddle. To divine the player's intent, the program must bind the up and
+down arrow keys of the keyboard to manipulate the positive and negative
+velocity of the paddle through an event hook. This means loading the
+SDL::Events module:</p>
 
 <pre><code>     use SDL;
-   + use SDL::Events;
+     <b>use SDL::Events;</b>
      use SDLx::App;
      use SDLx::Rect;</code></pre>
 
-<p>Then we can proceed to create our event hook:</p>
+<p>... and creating an event hook:</p>
 
-<pre><code>   + # handles keyboard events
-   + $app-&gt;add_event_handler(
-   +     sub {
-   +         my ( $event, $app ) = @_;
-   +
-   +         # user pressing a key
-   +         if ( $event-&gt;type == SDL_KEYDOWN ) {
-   +
-   +             # up arrow key means going up (negative vel)
-   +             if ( $event-&gt;key_sym == SDLK_UP ) {
-   +                 $player1-&gt;{v_y} = -2;
-   +             }
-   +             # down arrow key means going down (positive vel)
-   +             elsif ( $event-&gt;key_sym == SDLK_DOWN ) {
-   +                 $player1-&gt;{v_y} = 2;
-   +             }
-   +         }
-   +         # user releasing a key
-   +         elsif ( $event-&gt;type == SDL_KEYUP ) {
-   +
-   +             # up or down arrow keys released, stop the paddle
-   +             if (
-   +                     $event-&gt;key_sym == SDLK_UP
-   +                  or $event-&gt;key_sym == SDLK_DOWN
-   +             ) {
-   +                 $player1-&gt;{v_y} = 0;
-   +             }
-   +         }
-   +     }
-   + );</code></pre>
+<pre><code>   <b># handles keyboard events</b>
+   <b>$app-</b>add_event_handler(&gt;
+       <b>sub {</b>
+           <b>my ( $event, $app ) = @_;</b>
 
-<p>Again, nothing new here. Whenever the user presses the up arrow key, we
-want the paddle to go up. Keep in mind our origin point (0,0) in SDL is the
-top-left corner, so a negative <code>v_y</code> will decrease the paddle's
-<code>y</code> and send it <b>up</b> the screen. Alternatively, we add a
-positive value to <code>v_y</code> whenever the user presses the down arrow
-key, so the paddle will move <b>down</b>, away from the top of the screen.
-When the user releases either the up or down arrow keys, we stop the paddle
-by setting <code>v_y</code> to 0.</p>
+           <b># user pressing a key</b>
+           <b>if ( $event-&gt;type == SDL_KEYDOWN ) {</b>
 
-<h3>A Bouncing Ball</h3>
+               <b># up arrow key means going up (negative velocity)</b>
+               <b>if ( $event-&gt;key_sym == SDLK_UP ) {</b>
+                   <b>$player1-&gt;{v_y} = -2;</b>
+               <b>}</b>
 
-<p>How about we animate the game ball? The movement itself is pretty
-similar to our paddle's, except the ball will also have a horizontal
-velocity ("<code>v_x</code>") component, letting it move all over the
-screen.</p>
+               <b># down arrow key means going down (positive velocity)</b>
+               <b>elsif ( $event-&gt;key_sym == SDLK_DOWN ) {</b>
+                   <b>$player1-&gt;{v_y} = 2;</b>
+               <b>}</b>
+           <b>}</b>
+           <b># user releasing a key</b>
+           <b>elsif ( $event-&gt;type == SDL_KEYUP ) {</b>
 
-<p>First, we add the velocity components to our ball structure:</p>
+               <b># up or down arrow keys released, stop the paddle</b>
+               <b>if (</b>
+                       <b>$event-&gt;key_sym == SDLK_UP</b>
+                    <b>or $event-&gt;key_sym == SDLK_DOWN</b>
+               <b>) {</b>
+                   <b>$player1-&gt;{v_y} = 0;</b>
+               <b>}</b>
+           <b>}</b>
+       <b>}</b>
+   <b>);</b></code></pre>
+
+<p>Again, there's nothing new. Whenever the user presses the up arrow key,
+the paddle should move up. Keep in mind that the origin point of 0, 0 in
+SDL is the top-left corner, so a negative <code>v_y</code> will decrease
+the paddle's <code>y</code> and send it <b>up</b> the screen. Similarly,
+adding a positive value to <code>v_y</code> whenever the user presses the
+down arrow key will move the paddle down. When the user releases either
+arrow key, assigning zero to <code>v_y</code> stops the motion.</p>
+
+<h2>A Bouncing Ball</h2>
+
+<p>The ball's movement is similar to that of either paddle, except that it
+also has a horizontal velocity component of <code>v_x</code>. Add that to
+the ball structure:</p>
 
 <pre><code>     my $ball = {
          rect =&gt; SDLx::Rect-&gt;new( $app-&gt;w / 2, $app-&gt;h / 2, 10, 10 ),
-   +     v_x  =&gt; -2.7,
-   +     v_y  =&gt; 1.8,
+         <b>v_x  =&gt; -2.7,</b>
+         <b>v_y  =&gt; 1.8,</b>
      };</code></pre>
 
-<p>The ball will have an initial velocity of -2.7 horizontally (just as a
-negative vertical velocity moves the object up, a negative horizontal
-velocity will move it towards the left side of the screen), and 1.8
-vertically. Next, we create a motion handler for the ball, updating the
-ball's <code>x</code> and <code>y</code> position according to its
-speed:</p>
+<p>The ball will have an initial velocity of -2.7 horizontally and 1.8
+vertically. Just as a negative vertical velocity moves the object up, a
+negative horizontal velocity moves it towards the left side of the screen.
+The ball also needs a motion handler to update its position according to
+its velocity:</p>
 
-<pre><code>   + # handles the ball movement
-   + $app-&gt;add_move_handler( sub {
-   +     my ( $step, $app ) = @_;
-   +     my $ball_rect = $ball-&gt;{rect};
-   +
-   +     $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
-   +     $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
-   + });</code></pre>
+<pre><code>   # handles the ball movement
+   $app-&gt;add_move_handler( sub {
+       my ( $step, $app ) = @_;
+       my $ball_rect      = $ball-&gt;{rect};
 
-<p>This is just like our paddle's motion handler: we update the ball's
-<code>x</code> and <code>y</code> position on the screen according to the
-current velocity. If you are paying attention, however, you probably
-realized the code above is missing a very important piece of logic. Need a
-clue? Try running the game as it is. You'll see the ball going, going,
-and... gone!</p>
+       $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
+       $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
+   });</code></pre>
 
-<p>We need to make sure the ball is bound to the screen. That is, it needs
-to collide and bounce back whenever it reaches the top and bottom edges of
-the screen. So let's change our ball's motion handler a bit, adding this
-functionality:</p>
+<p>All of these motion handlers look similar so far, but if you're paying
+close attention, you can probably spot a bug caused by missing code. Try
+running the game. You'll see the ball going, going, and gone!</p>
+
+<p>This handler needs to confine the ball to the screen. Whenever the ball
+reaches a top or bottom edge of the screen, it needs to bounce. That's easy
+enough to add:</p>
 
 <pre><code>     # handles the ball movement
      $app-&gt;add_move_handler( sub {
          my ( $step, $app ) = @_;
-         my $ball_rect = $ball-&gt;{rect};
-    
+         my $ball_rect      = $ball-&gt;{rect};
+
          $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
          $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
- 
-   +     # collision to the bottom of the screen
-   +     if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {
-   +         $ball_rect-&gt;bottom( $app-&gt;h );
-   +         $ball-&gt;{v_y} *= -1;
-   +     }
-   +
-   +     # collision to the top of the screen
-   +     elsif ( $ball_rect-&gt;top &lt;= 0 ) {
-   +         $ball_rect-&gt;top( 0 );
-   +         $ball-&gt;{v_y} *= -1;
-   +     }
+
+         <b># collision to the bottom of the screen</b>
+         <b>if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {</b>
+             <b>$ball_rect-&gt;bottom( $app-&gt;h );</b>
+             <b>$ball-&gt;{v_y} *= -1;</b>
+         <b>}</b>
+
+         <b># collision to the top of the screen</b>
+         <b>elsif ( $ball_rect-&gt;top &lt;= 0 ) {</b>
+             <b>$ball_rect-&gt;top( 0 );</b>
+             <b>$ball-&gt;{v_y} *= -1;</b>
+         <b>}</b>
      });</code></pre>
 
 <p>If the new y (<code>"bottom"</code> or <code>"top"</code>) value would
-take the ball totally or partially off the screen, we replace it with the
-farthest position possible (making it "touch" that edge of the screen) and
-reverse <code>v_y</code>, so it will go the opposite way on the next cycle,
-bouncing back into the screen.</p>
+take the ball off the screen in part or in whole, the handler updates the
+ball's position with the furthest position possible while remaining on the
+screen, so that the ball will only ever <i>touch</i> that edge. The handler
+also reverses <code>y_y</code> so that the ball will bounce back onto the
+screen going the opposite direction at the same speed.</p>
 
-<h4>He shoots... and scores!!</h4>
+<h3>He shoots... and scores!!</h3>
 
-<p>So far, so good. But what should happen when the ball hits the left or
-right edges of the screen? Well, according to the rules of Pong, this means
+<p>That fixes one bug, but what should happen when the ball hits the left
+or right edges of the screen? According to the rules of Pong, this means
 the player on the opposite side scored a point, and the ball should go back
-to the center of the screen. Let's begin by adding a 'score' attribute for
-each player:</p>
+to the center of the screen. Start by adding a <code>score</code> attribute
+for each player:</p>
 
 <pre><code>      my $player1 = {
            paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40),
            v_y    =&gt; 0,
-    +      score  =&gt; 0,
+           <b>score  =&gt; 0,</b>
       };
 
       my $player2 = {
            paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),
            v_y    =&gt; 0,
-    +      score  =&gt; 0,
+           <b>score  =&gt; 0,</b>
       };</code></pre>
 
-<p>Now we should teach the ball's motion handler what to do when it reaches
-the left and right corners:</p>
+<p>Then update the ball's motion handler to handle the out of bounds
+condition for the left and right borders:</p>
 
 <pre><code>     # handles the ball movement
      $app-&gt;add_move_handler( sub {
          my ( $step, $app ) = @_;
-         my $ball_rect = $ball-&gt;{rect};
-    
+         my $ball_rect      = $ball-&gt;{rect};
+
          $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
          $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
- 
+
          # collision to the bottom of the screen
          if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {
              $ball_rect-&gt;bottom( $app-&gt;h );
              $ball-&gt;{v_y} *= -1;
          }
-    
+
          # collision to the top of the screen
          elsif ( $ball_rect-&gt;top &lt;= 0 ) {
              $ball_rect-&gt;top( 0 );
              $ball-&gt;{v_y} *= -1;
          }
-   
-   +     # collision to the right: player 1 score!
-   +     elsif ( $ball_rect-&gt;right &gt;= $app-&gt;w ) {
-   +         $player1-&gt;{score}++;
-   +         reset_game();
-   +         return;
-   +     }
-   +
-   +     # collision to the left: player 2 score!
-   +     elsif ( $ball_rect-&gt;left &lt;= 0 ) {
-   +         $player2-&gt;{score}++;
-   +         reset_game();
-   +         return;
-   +     }
+
+         <b># collision to the right: player 1 score!</b>
+         <b>elsif ( $ball_rect-&gt;right &gt;= $app-&gt;w ) {</b>
+             <b>$player1-&gt;{score}++;</b>
+             <b>reset_game();</b>
+             <b>return;</b>
+         <b>}</b>
+
+         <b># collision to the left: player 2 score!</b>
+         <b>elsif ( $ball_rect-&gt;left &lt;= 0 ) {</b>
+             <b>$player2-&gt;{score}++;</b>
+             <b>reset_game();</b>
+             <b>return;</b>
+         <b>}</b>
      });</code></pre>
 
-<p>If the ball's right hits the right end of the screen (the app's width),
-we increase player 1's score, call <code>reset_game()</code>, and return
-without updating the ball's position. If the ball's left hits the left end
-of the screen, we do the same for player 2.</p>
+<p>If the ball hits the right edge of the screen (the app's width), we
+increase player 1's score, call <code>reset_game()</code>, and return
+without updating the ball's position. If the ball hits the left edge of the
+screen, do the same for player 2.</p>
 
-<p>We want the <code>reset_game()</code> function called above to set the
-ball back on the center of the screen, so let's make it happen:</p>
+<p>The <code>reset_game()</code> function must return the ball to the
+center of the screen:</p>
 
-<pre><code>   + sub reset_game {
-   +     $ball-&gt;{rect}-&gt;x( $app-&gt;w / 2 );
-   +     $ball-&gt;{rect}-&gt;y( $app-&gt;h / 2 );
-   + }</code></pre>
+<pre><code>     <b>sub reset_game {</b>
+         <b>$ball-&gt;{rect}-&gt;x( $app-&gt;w / 2 );</b>
+         <b>$ball-&gt;{rect}-&gt;y( $app-&gt;h / 2 );</b>
+     <b>}</b></code></pre>
 
-<h3>Collision Detection: The Ball and The Paddle</h3>
+<h2>Collision Detection: The Ball and The Paddle</h2>
 
-<p>We already learned how to do some simple collision detection, namely
-between the ball and the edges of the screen. Now it's time to take it one
-step further and figure out how to check whether the ball and the paddles
-are overlapping one another (colliding, or rather, intersecting). This is
-done via the Separating Axis Theorem, which roughly states that two convex
-shapes in a 2D plane are <b>not</b> intersecting if and only if we can
-place a line separating them. Since our rect objects (the ball and paddles)
-are both axis-aligned, we can simply pick one, and there will be only 4
-possible lines to test: its left, right, top and bottom. If the other
-object is completely on one side of any of those lines, then there is
-<b>no</b> collision. But if all four conditions are false, they are
-intersecting.</p>
+<p>The game's existing collision detection is very simple because the
+paddles and ball can only collide with the fixed edges of the screen. The
+game gets more interesting when it can detect whether the ball and a paddle
+collide--or rather, intersect.</p>
 
-<p>To put it in more general terms, if we have 2 rects, A and B, we can
-establish the following conditions, illustrated by the figure below:</p>
+<p></p>
+
+<p>The Separating Axis Theorem roughly states that two convex shapes in a
+2D plane <i> do not</i> intersect if and only you can place a line which
+separates them. Because the paddles and the ball are rectangular <i>and</i>
+aligned along one axis, detecting a collision means choosing one item and
+testing its top, right, bottom, and left lines for intersection. If any
+other object is on one side or the other of those four lines, there is no
+collision. Otherwise, there is a collision.</p>
+
+<p>In more general terms, given two rects A and B, you can establish
+several conditions:</p>
 
 <p>\includegraphics[width=0.9\textwidth]{../src/images/collision.png}
 \caption{if B is completely to the left, right, top or bottom of A, they do
@@ -1745,53 +1753,52 @@ completely to the right of B (fig 6.2.4).</li>
 
 </ul>
 
-<p>Keeping in mind that our origin point (0,0) in SDL is the top-left
-corner, we can translate the rules above to the following generic
-<code>check_collision()</code> function, receiving two rect objects and
-returning true if they collide:</p>
+<p>Keep in mind that SDL's origin point of 0, 0 is always the top left
+corner. This produces a simple generic <code>check_collision()</code>
+function which returns true of two rect objects have collided:</p>
 
-<pre><code>   + sub check_collision {
-   +     my ($A, $B) = @_;
-   +
-   +     return if $A-&gt;bottom &lt; $B-&gt;top;
-   +     return if $A-&gt;top    &gt; $B-&gt;bottom;
-   +     return if $A-&gt;right  &lt; $B-&gt;left;
-   +     return if $A-&gt;left   &gt; $B-&gt;right;
-   +
-   +     # if we got here, we have a collision!
-   +     return 1;
-   + }</code></pre>
+<pre><code>     sub check_collision {
+         my ($A, $B) = @_;
 
-<p>We can now use it in the ball's motion handler to see if it hits any of
-the paddles:</p>
+         return if $A-&gt;bottom &lt; $B-&gt;top;
+         return if $A-&gt;top    &gt; $B-&gt;bottom;
+         return if $A-&gt;right  &lt; $B-&gt;left;
+         return if $A-&gt;left   &gt; $B-&gt;right;
+
+         # we have a collision!
+         return 1;
+     }</code></pre>
+
+<p>The ball motion handler can now test to see if the ball has hit either
+paddle:</p>
 
 <pre><code>     # handles the ball movement
      $app-&gt;add_move_handler( sub {
          my ( $step, $app ) = @_;
          my $ball_rect = $ball-&gt;{rect};
-    
+
          $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
          $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
- 
+
          # collision to the bottom of the screen
          if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {
              $ball_rect-&gt;bottom( $app-&gt;h );
              $ball-&gt;{v_y} *= -1;
          }
-    
+
          # collision to the top of the screen
          elsif ( $ball_rect-&gt;top &lt;= 0 ) {
              $ball_rect-&gt;top( 0 );
              $ball-&gt;{v_y} *= -1;
          }
-   
+
          # collision to the right: player 1 score!
          elsif ( $ball_rect-&gt;right &gt;= $app-&gt;w ) {
              $player1-&gt;{score}++;
              reset_game();
              return;
          }
-    
+
          # collision to the left: player 2 score!
          elsif ( $ball_rect-&gt;left &lt;= 0 ) {
              $player2-&gt;{score}++;
@@ -1799,268 +1806,243 @@ the paddles:</p>
              return;
          }
 
-   +     # collision with player1&#39;s paddle
-   +     elsif ( check_collision( $ball_rect, $player1-&gt;{paddle} )) {
-   +         $ball_rect-&gt;left( $player1-&gt;{paddle}-&gt;right );
-   +         $ball-&gt;{v_x} *= -1;
-   +     }
-   +
-   +     # collision with player2&#39;s paddle
-   +     elsif ( check_collision( $ball_rect, $player2-&gt;{paddle} )) {
-   +         $ball-&gt;{v_x} *= -1;
-   +         $ball_rect-&gt;right( $player2-&gt;{paddle}-&gt;left );
-   +     }
+         <b># collision with player1&#39;s paddle</b>
+         <b>elsif ( check_collision( $ball_rect, $player1-&gt;{paddle} )) {</b>
+             <b>$ball_rect-&gt;left( $player1-&gt;{paddle}-&gt;right );</b>
+             <b>$ball-&gt;{v_x} *= -1;</b>
+         <b>}</b>
+
+         <b># collision with player2&#39;s paddle</b>
+         <b>elsif ( check_collision( $ball_rect, $player2-&gt;{paddle} )) {</b>
+             <b>$ball-&gt;{v_x} *= -1;</b>
+             <b>$ball_rect-&gt;right( $player2-&gt;{paddle}-&gt;left );</b>
+         <b>}</b>
      });</code></pre>
 
-<p>That's it! If the ball hits player1's paddle, we reverse its horizontal
-velocity (<code>v_x</code>) to make it bounce back, and set its left edge
-to the paddle's right so they don't overlap. Then we do the exact same
-thing for the other player's paddle, except this time we set the ball's
-right to the paddle's left - since the ball is coming from the other
-side.</p>
+<p>That's it! If the ball hits the first player's paddle, the handler
+reverses its horizontal velocity (<code>v_x</code>) to make it bounce back,
+and set its left edge to the paddle's right so they don't overlap. The
+logic is similar for the second player's paddle, except that the ball's
+right edge now must be at the same position as the paddle's left, as the
+ball has hit the other side of the paddle.</p>
 
-<h3>Artificial Stupidity</h3>
+<h2>Artificial Stupidity</h2>
 
-<p>Our Pong game is almost done now. We record the score, the ball bounces
-around, we keep track of each player's score, and we can move the left
-paddle with the up and down arrow keys. But this will be a very dull game
-unless our nemesis moves too!</p>
+<p>This Pong game is almost done. With scoring, ball movement, and paddle
+movement, it's playable--but dull, unless the second player can move. It's
+easy enough to bind a secondary set of keys to move the second paddle, but
+what if you want a quick game on your own without a friend around?</p>
 
-<p>There are several complex algorithms to model artificial intelligence,
-but we don't have to go that far for a simple game like this. What we're
-going to do is make player2's paddle follow the ball wherever it goes, by
-adding the following to its motion handler:</p>
+<p>Artificial intelligence for games is a complex field of study, with many
+algorithms. Fortunately, the easiest approach is simple to model for Pong:
+the second player's paddle should follow the ball as it moves. All that
+takes is some new code in the second player's motion handler:</p>
 
 <pre><code>      # handles AI&#39;s paddle movement
       $app-&gt;add_move_handler( sub {
           my ( $step, $app ) = @_;
-          my $paddle = $player2-&gt;{paddle};
-          my $v_y = $player2-&gt;{v_y};
+          my $paddle         = $player2-&gt;{paddle};
+          my $v_y            = $player2-&gt;{v_y};
 
-    +     if ( $ball-&gt;{rect}-&gt;y &gt; $paddle-&gt;y ) {
-    +         $player2-&gt;{v_y} = 1.5;
-    +     }
-    +     elsif ( $ball-&gt;{rect}-&gt;y &lt; $paddle-&gt;y ) {
-    +         $player2-&gt;{v_y} = -1.5;
-    +     }
-    +     else {
-    +         $player2-&gt;{v_y} = 0;
-    +     }
+          <b>if ( $ball-&gt;{rect}-&gt;y &gt; $paddle-&gt;y ) {</b>
+              <b>$player2-&gt;{v_y} = 1.5;</b>
+          <b>}</b>
+          <b>elsif ( $ball-&gt;{rect}-&gt;y &lt; $paddle-&gt;y ) {</b>
+              <b>$player2-&gt;{v_y} = -1.5;</b>
+          <b>}</b>
+          <b>else {</b>
+              <b>$player2-&gt;{v_y} = 0;</b>
+          <b>}</b>
 
           $paddle-&gt;y( $paddle-&gt;y + ( $v_y * $step ) );
       });</code></pre>
 
-<p>If the ball's "<code>y</code>" value (its top) is greater than the
-nemesis' paddle, it means the ball is below it, so we give the paddle a
-positive velocity, making it go downwards. On the other hand, if the ball
-has a lower "<code>y</code>" value, we set the nemesis' <code>v_y</code> to
-a negative value, making it go up. Finally, if the ball is somewhere in
-between those two values, we keep the paddle still.</p>
+<p>If the ball is below the paddle (if its <code>y</code> value is greater
+than the <code>y</code> value of the paddle), the paddle needs a positive
+velocity to go downwards. If, otherwise, the ball has a lower
+<code>y</code> value, the paddle's <code>v_y</code> gets a negative value.
+If the ball is somewhere in between those two values, the paddle stays in
+place.</p>
 
-<h3>Cosmetics: Displaying the Score</h3>
+<h2>Cosmetics: Displaying the Score</h2>
 
-<p>How about we display the score so the player can see who's winning? To
-render a text string in SDL, we're going to use the SDLx::Text module, so
-let's add it to the beginning of our code:</p>
+<p></p>
+
+<p>All that's left is polish. Displaying the score means drawing text to
+the screen. That's the purpose of the <code>SDLx::Text</code> module:</p>
 
 <pre><code>     use SDL;
      use SDL::Events;
      use SDLx::App;
      use SDLx::Rect;
-   + use SDLx::Text;</code></pre>
+     <b>use SDLx::Text;</b></code></pre>
 
-<p>Now we need to create the score object:</p>
+<p>Create an object to represent the display of the score:</p>
 
-<pre><code>   + my $score = SDLx::Text-&gt;new( font =&gt; &#39;font.ttf&#39;, h_align =&gt; &#39;center&#39; );</code></pre>
+<pre><code>    <b>my $score = SDLx::Text-&gt;new( font =&gt; &#39;font.ttf&#39;, h_align =&gt; &#39;center&#39; );</b></code></pre>
 
 <p>The optional <code>font</code> parameter specifies the path to a
-TrueType Font. Here we are loading the '<i>font.ttf</i>' file, so feel free
-to change this to whatever font you have in your system. Otherwise, you can
-leave it out and use the bundled default font. The <code>h_align</code>
-parameter lets us choose a horizontal alignment for the text we put in the
-object. It defaults to '<i>left</i>', so we make it '<i>center</i>'
-instead.</p>
+TrueType Font. Feel free to change <i>font.ttf</i> as you like. Otherwise,
+leave out this parameter and SDL will use the bundled default font. The
+other parameter, <code>h_align</code>, allows you to specify the horizontal
+alignment of rendered text. The default is left alignment.</p>
 
-<p>All that's left is using this object to write the score on the screen,
-so we update our 'show' handler:</p>
+<p>Add the score object to the show handler to display it:</p>
 
 <pre><code>      $app-&gt;add_show_handler(
           sub {
-              # first, we clear the screen
+              # first clear the screen
               $app-&gt;draw_rect( [0, 0, $app-&gt;w, $app-&gt;h], 0x000000FF );
-      
-              # then we render the ball
+
+              # then render the ball
               $app-&gt;draw_rect( $ball-&gt;{rect}, 0xFF0000FF );
-      
+
               # ... and each paddle
               $app-&gt;draw_rect( $player1-&gt;{paddle}, 0xFF0000FF );
               $app-&gt;draw_rect( $player2-&gt;{paddle}, 0xFF0000FF );
-      
-    +         # ... and each player&#39;s score!
-    +         $score-&gt;write_to(
-    +             $app,
-    +             $player1-&gt;{score} . &#39; x &#39; . $player2-&gt;{score}
-    +         );
 
-              # finally, we update the screen
+              <b># ... and each player&#39;s score!</b>
+              <b>$score-&gt;write_to(</b>
+                  <b>$app,</b>
+                  <b>$player1-&gt;{score} . &#39; x &#39; . $player2-&gt;{score}</b>
+              <b>);</b>
+
+              # finally, update the screen
               $app-&gt;update;
           }
       );</code></pre>
 
 <p>The <code>write_to()</code> call will write to any surface passed as the
-first argument - in our case, the app itself. The second argument, as you
-probably figured, is the string to be rendered. Note that the string's
-position is relative to the surface it writes to, and defaults to (0,0).
-Since we told it to center horizontally, it will write our text to the
-top/center, instead of top/left.</p>
+first argument--in this case, the app itself. The second argument is the
+string to render. Note that the string's when rendered is relative to the
+surface to which it writes. The default position is (0, 0). Because the
+<code>$score</code> object has horizontal centering, the text will write to
+the top and center of the screen--not the top and left.</p>
 
-<p>The result, and our finished game, can be seen on the figure below:</p>
+<p>The result is:</p>
 
 <p>\includegraphics[width=0.5\textwidth]{../src/images/pong2.png}
 \caption{our finished Pong clone, in all its glory} \label{fig:pong2}</p>
 
 
 
-<h3>Exercises</h3>
+<h2>Exercises</h2>
+
+<p>Pong is a simple game, but there's plenty of room for polish. Here's
+your chance to add some features. Of course, there's always more than one
+way to do things:</p>
 
 <ul>
 
-<li>1. Every time a player scores, the ball goes back to the middle but has
+<li>1 Every time a player scores, the ball goes back to the middle but has
 the same sense and direction as before. See if you can make it restart at a
 random direction instead.
 
-<li>2. Red is boring, you want to make a completely psychedelic Pong! Pick
-3 different colours and make each paddle oscillate between them every time
-the ball hits it.
+<li>2 Red is boring. How about a psychedelic Pong? Pick three different
+colors and make each paddle oscillate between them every time the ball hits
+it.
 
 </ul>
 
-<p>See if you can solve the exercises above by yourself, to make sure you
-understand what is what and how to do things in SDL Perl. Once you're done,
-check out the answers below. Of course, there's always more than one way to
-do things, so the ones below are not the only possible answers.</p>
+<h3>Answers</h3>
 
-<h4>Answers</h4>
+<ul>
 
-<p>1. To make the ball restart at a random direction, we can improve our
+<li>1 To make the ball restart at a random direction, update
 <code>reset_game()</code> function to set the ball's <code>v_x</code> and
-<code>v_y</code> to a random value between, say, 1.5 and 2.5, or -1.5 and
--2.5:</p>
+<code>v_y</code> to a random value between. Anything between positive 1.5
+and 2.5 works well:
 
 <pre><code>     sub reset_game {
          $ball-&gt;{rect}-&gt;x( $app-&gt;w / 2 );
          $ball-&gt;{rect}-&gt;y( $app-&gt;h / 2 );
 
-   +     $ball-&gt;{v_x} = (1.5 + int rand 1) * (rand 2 &gt; 1 ? 1 : -1);
-   +     $ball-&gt;{v_y} = (1.5 + int rand 1) * (rand 2 &gt; 1 ? 1 : -1);
+         <b>$ball-&gt;{v_x} = (1.5 + int rand 1) * (rand 2 &gt; 1 ? 1 : -1);</b>
+         <b>$ball-&gt;{v_y} = (1.5 + int rand 1) * (rand 2 &gt; 1 ? 1 : -1);</b>
      }</code></pre>
 
-<p>2. We can either choose one colour set for both paddles or one for each.
-Let's go with just one set, as an array of hex values representing our
-colours. We'll also hold the index for the current colour for each
-player:</p>
+<li>2 Start by representing the available colors. You could use separate
+colors or hues for each player, but for simplicity this code uses a single
+group of colors. Each player's hash will contain the index into this array:
 
-<pre><code>    + my @colours = qw( 0xFF0000FF 0x00FF00FF 0x0000FFFF 0xFFFF00FF );
+<pre><code>      <b>my @colors = qw( 0xFF0000FF 0x00FF00FF 0x0000FFFF 0xFFFF00FF );</b>
 
       my $player1 = {
            paddle =&gt; SDLx::Rect-&gt;new( 10, $app-&gt;h / 2, 10, 40),
            v_y    =&gt; 0,
            score  =&gt; 0,
-    +      colour =&gt; 0,
+           <b>color =&gt; 0,</b>
       };
 
       my $player2 = {
            paddle =&gt; SDLx::Rect-&gt;new( $app-&gt;w - 20, $app-&gt;h / 2, 10, 40),
            v_y    =&gt; 0,
            score  =&gt; 0,
-    +      colour =&gt; 0,
+           <b>color =&gt; 0,</b>
       };</code></pre>
 
-<p>Next we make it update the <code>colour</code> every time the ball hits
-the paddle:</p>
+<p>Now make the ball's color change every time a paddle hits it:</p>
 
 <pre><code>     # handles the ball movement
      $app-&gt;add_move_handler( sub {
-         my ( $step, $app ) = @_;
-         my $ball_rect = $ball-&gt;{rect};
-    
-         $ball_rect-&gt;x( $ball_rect-&gt;x + ($ball-&gt;{v_x} * $step) );
-         $ball_rect-&gt;y( $ball_rect-&gt;y + ($ball-&gt;{v_y} * $step) );
- 
-         # collision to the bottom of the screen
-         if ( $ball_rect-&gt;bottom &gt;= $app-&gt;h ) {
-             $ball_rect-&gt;bottom( $app-&gt;h );
-             $ball-&gt;{v_y} *= -1;
-         }
-    
-         # collision to the top of the screen
-         elsif ( $ball_rect-&gt;top &lt;= 0 ) {
-             $ball_rect-&gt;top( 0 );
-             $ball-&gt;{v_y} *= -1;
-         }
-   
-         # collision to the right: player 1 score!
-         elsif ( $ball_rect-&gt;right &gt;= $app-&gt;w ) {
-             $player1-&gt;{score}++;
-             reset_game();
-             return;
-         }
-    
-         # collision to the left: player 2 score!
-         elsif ( $ball_rect-&gt;left &lt;= 0 ) {
-             $player2-&gt;{score}++;
-             reset_game();
-             return;
-         }
+
+        ...
 
          # collision with player1&#39;s paddle
          elsif ( check_collision( $ball_rect, $player1-&gt;{paddle} )) {
              $ball_rect-&gt;left( $player1-&gt;{paddle}-&gt;right );
              $ball-&gt;{v_x} *= -1;
-   +         $player1-&gt;{colour} = ($player1-&gt;{colour} + 1) % @colours;
+             <b>$player1-&gt;{color} = ($player1-&gt;{color} + 1) % @colors;</b>
          }
-    
+
          # collision with player2&#39;s paddle
          elsif ( check_collision( $ball_rect, $player2-&gt;{paddle} )) {
              $ball-&gt;{v_x} *= -1;
              $ball_rect-&gt;right( $player2-&gt;{paddle}-&gt;left );
-   +         $player2-&gt;{colour} = ($player2-&gt;{colour} + 1) % @colours;
+             <b>$player2-&gt;{color} = ($player2-&gt;{color} + 1) % @colors;</b>
          }
      });</code></pre>
 
-<p>Finally, we change our 'show' handler to use the current colour
-referenced by <code>colour</code>, instead of the previously hardcoded red
-(0xFF0000FF):</p>
+<p>Finally, change the show handler to use the current color referenced by
+<code>color</code>, instead of the previously hardcoded value:</p>
 
 <pre><code>      $app-&gt;add_show_handler(
           sub {
-              # first, we clear the screen
+              # first clear the screen
               $app-&gt;draw_rect( [0, 0, $app-&gt;w, $app-&gt;h], 0x000000FF );
-      
-              # then we render the ball
-              $app-&gt;draw_rect( $ball-&gt;{rect}, 0xFF0000FF );
-      
-              # ... and each paddle
-    -         $app-&gt;draw_rect( $player1-&gt;{paddle}, 0xFF0000FF );
-    +         $app-&gt;draw_rect( $player1-&gt;{paddle}, $colours[ $player1-&gt;{colour} ] );
-    -         $app-&gt;draw_rect( $player2-&gt;{paddle}, 0xFF0000FF );
-    +         $app-&gt;draw_rect( $player2-&gt;{paddle}, $colours[ $player2-&gt;{colour} ] );
-  
-              # ... and each player&#39;s score!
-              $score-&gt;write_to(
-                  $app,
-                  $player1-&gt;{score} . &#39; x &#39; . $player2-&gt;{score}
-              );
 
-              # finally, we update the screen
+              # then render the ball
+              $app-&gt;draw_rect( $ball-&gt;{rect}, 0xFF0000FF );
+
+              # ... and each paddle
+              <b>$app-&gt;draw_rect( $player1-&gt;{paddle}, $colors[ $player1-&gt;{color} ] );</b>
+              <b>$app-&gt;draw_rect( $player2-&gt;{paddle}, $colors[ $player2-&gt;{color} ] );</b>
+              ...
+
+              # finally update the screen
               $app-&gt;update;
           }
       );</code></pre>
+
+</ul>
 
 <h2>Author</h2>
 
 <p>This chapter's content graciously provided by Breno G. de Oliveira
 (<code>garu</code>).</p>
+
+<h2>POD ERRORS</h2>
+
+<p>Hey! <b>The above document had some coding errors, which are explained
+below:</b></p>
+
+<ul>
+
+<li>Around line 814:
+
+<p>You forgot a '=back' before '=head1'</p>
+
+</ul>
 
 <h1>Tetris</h1>
 
