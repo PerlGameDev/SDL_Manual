@@ -223,7 +223,7 @@ At this point the FPS should hold steady at 60 frames per second.
 
                 # skip rendering and collision detections
                 # (heavy functions in the game loop)
-				next;		
+				next;
 			}
 		}
 
