@@ -1,23 +1,27 @@
-=head0 Tetris 
+=head0 Tetris
 
+Pong is an important milestone in gaming history. If you can write it, you understand the basics of game programming. The next step in mastery comes from writing something like Tetris, with better animation and more complex scoring.
 
-=for figure 
-       \includegraphics[width=0.5\textwidth]{../src/images/tetris.png}      
-        \caption{Tetris using SDLx Perl}               
-         \label{fig:tetris}   
+=for figure
+       \includegraphics[width=0.5\textwidth]{../src/images/tetris.png}
+        \caption{Tetris using SDLx Perl}
+         \label{fig:tetris}
 
-=head1 Eye Candy and Code
+To follow along, download the sample code from
+U<https://github.com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip>. To
+start the game, extract this Zip file and run:
 
-In this chapter we work on creating the classic Tetris game using what we have learned so far. 
-Get the tetris code from U<HTTPS://GitHub.Com/PerlGameDev/SDL_Manual/raw/master/games/tetris.zip>. To run the game 
-invoke in the extracted folder.
+=begin screen
 
-	perl tetris.pl
+	$ B<perl tetris.pl>
+
+=end screen
 
 =head1 The Game Window
 
-First we will make our window with a fixed size so we can place our art work
-in a fixed format.
+The game starts out as you should expect by now:
+
+=begin programlisting
 
     use strict;
     use warnings;
@@ -27,7 +31,7 @@ in a fixed format.
     use SDL::Events;
     use SDLx::App;
 
-    # create our main screen
+    # create the main screen
     my $app = SDLx::App->new(
        w            => 400,
        h            => 512,
@@ -36,79 +40,88 @@ in a fixed format.
        title        => 'SDLx Tetris'
     );
 
-=head1 Loading Artwork 
+=end programlisting
 
-We can load our artwork simply by storing an array of C<SDLx::Surface>s.
+This game requires several pieces of artwork, and so the program must manage
+and store them somehow. The C<SDLx::Surface> module handles the conversion of
+files from their storage on disk into a format SDL can use, and an array will
+hold them:
+
+=begin programlisting
 
      use SDL;
-    +use SDLx::Surface;
-   
-Next we load up the artwork into an array. 
+     B<< use SDLx::Surface; >>
+     B<< my $back  = SDLx::Surface->load( 'data/tetris_back.png' ); >>
+     B<< my @piece = (undef); >>
+     B<< push @piece, SDLx::Surface->load( "data/tetris_$_.png" ) for 1..7; >>
 
-    +my $back  = SDLx::Surface->load( 'data/tetris_back.png' );
-    +my @piece = (undef);
-    +push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
+=end programlisting
 
-The background is held in the C<$back> surface, and the pieces are held in the 
-C<@piece> array. Later on we will blit these onto our main screen as we need.
+The C<$back> variable holds one special surface: the background image.
+Everything else is in the C<@piece> array.
 
+=head1 Managing Blocks
 
-=head1 Data Structures
+Blocks are critical to the success of a Tetris game. The program must represent
+them in a sensible way: they must be easy to access and they must be easy to
+manipulate and calculate. A hash fulfills the ease of access:
 
-In Tetris the blocks are critical pieces of data that must be represented in code 
-such that it is easy to access, and quick to perform calculations on. A hash will 
-allow us to quickly access our pieces, based on their keys. 
-
+=begin programlisting
 
     my %pieces = (
-      I => [0,5,0,0,
-           0,5,0,0,
-           0,5,0,0,
-           0,5,0,0],
-      J => [0,0,0,0,
-           0,0,6,0,
-           0,0,6,0,
-           0,6,6,0],
-      L => [0,0,0,0,
-           0,2,0,0,
-           0,2,0,0,
-           0,2,2,0],
-      O => [0,0,0,0,
-           0,3,3,0,
-           0,3,3,0,
-           0,0,0,0],
-      S => [0,0,0,0,
-           0,4,4,0,
-           4,4,0,0,
-           0,0,0,0],
-      T => [0,0,0,0,
-           0,7,0,0,
-           7,7,7,0,
-           0,0,0,0],
-      Z => [0,0,0,0,
-           1,1,0,0,
-           0,1,1,0,
-           0,0,0,0],
+      I => [0, 5, 0, 0,
+            0, 5, 0, 0,
+            0, 5, 0, 0,
+            0, 5, 0, 0],
+      J => [0, 0, 0, 0,
+            0, 0, 6, 0,
+            0, 0, 6, 0,
+            0, 6, 6, 0],
+      L => [0, 0, 0, 0,
+            0, 2, 0, 0,
+            0, 2, 0, 0,
+            0, 2, 2, 0],
+      O => [0, 0, 0, 0,
+            0, 3, 3, 0,
+            0, 3, 3, 0,
+            0, 0, 0, 0],
+      S => [0, 0, 0, 0,
+            0, 4, 4, 0,
+            4, 4, 0, 0,
+            0, 0, 0, 0],
+      T => [0, 0, 0, 0,
+            0, 7, 0, 0,
+            7, 7, 7, 0,
+            0, 0, 0, 0],
+      Z => [0, 0, 0, 0,
+            1, 1, 0, 0,
+            0, 1, 1, 0,
+            0, 0, 0, 0],
     );
 
-Further more we have a 1-dimensional array for each piece that represents a grid of the piece.
+=end programlisting
 
-The grid of each piece is filled with empty spaces and a number from 1 to 7. When this grid is 
-imposed on the game grid, we can use the non zero number to draw the right piece block on to it.
+Each hash entry holds a four-element array reference which represents a grid of
+the piece. Each item in the array corresponds to an image in the C<@piece>
+array. Drawing a piece means blitting one element of C<@piece> for each
+non-zero entry in the piece's array.
 
-The non zero number corresponds to the images file that we loaded ealier.
 
-     push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
 
-=head1 Selecting Pieces 
-
+=begin programlisting
 
      use strict;
      use warnings;
 
-    +use List::Util qw(shuffle min max);
+    B<< use List::Util qw(shuffle min max); >>
 
-We will use the List::Util module to provide us with some neeeded functions. 
+=end programlisting
+
+X<C<List::Util>>
+
+Selecting pieces needs some randomness. The core C<List::Util> module can help:
+
+=begin programlisting
 
          Z => [0,0,0,0,
                1,1,0,0,
@@ -116,246 +129,367 @@ We will use the List::Util module to provide us with some neeeded functions.
                0,0,0,0],
      );
 
-    +my $next_tile         = shuffle(keys %pieces);
-    +my $curr_tile         = [undef, 4, 0];
-    +   @{$curr_tile->[0]} = @{$pieces{$next_tile}};
-    +   $next_tile         = shuffle(keys %pieces); 
+     B<< my $next_tile           = shuffle keys %pieces; >>
+     B<< my $curr_tile           = [ undef, 4, 0 ]; >>
+        B<< @{ $curr_tile->[0] } = @{ $pieces{$next_tile} }; >>
+        B<< $next_tile           = shuffle keys %pieces; >>
 
-We will randomly pick a C<$next_tile> and then set the piece data for our first piece in C<$curr_tile>.
-Then we will pick another tile for our C<$next_tile>.
+=end programlisting
 
-=head1 Moving Pieces
+=for author
 
-     push(@piece, SDLx::Surface->load( "data/tetris_$_.png" )) for(1..7);
+Seems like a function to choose the next tile would be more useful.
 
-    +# to check for collisions we compare the position of the moving piece with the non-movin pieces
-    +my $grid  = []; # moving piece
-    +my $store = []; # non-moving pieces
+=end for
+
+This code randomly chooses a C<$next_tile>, then sets the piece data for the
+first piece in C<$curr_tile>.
+
+=head1 Piece Collisions
+
+Collision detection is both easier (because only one piece at a time moves) and
+more difficult (because the screen continues to fill up with pieces). One
+solution is to treat the screen as two overlapping grids. The first grid
+represents the moving piece. The second grid represents the pieces already in
+place. When a moving piece collides with a piece in the fixed grid, the moving
+piece becomes stationary and joins the fixed grid. When that action clears one
+or more lines, the stationary grid changes.
+
+Start by defining these grids:
+
+=begin programlisting
+
+     push @piece, SDLx::Surface->load( "data/tetris_$_.png" ) for 1..7;
+
+     B<< # compare the position of the moving piece with non-moving pieces >>
+     B<< my $grid   = []; # moving piece >>
+     B<< my $store  = []; # non-moving pieces >>
+
      my %pieces = (
           I => [0,5,0,0,
 
-In our conceptual model of Tetris we have two grids that overlap each other. First we have the C<$grid> where the
-piece that is moving is stored. Once a piece has collided with sometime we move it to C<$store> grid and hold it 
-there until a line is cleared. 
+=end programlisting
 
-     $next_tile         = shuffle(keys %pieces); 
+Rotating a piece means transforming each of its elements:
 
-To rotate a piece we apply a transformation on each element of the piece.  
+=for author
 
-    + sub rotate_piece {
-    +     my $_piece   = shift;
-    +     my $_rotated = [];
-    +     my $_i = 0;
-    +     for(@{$_piece}) {
-    +         $_rotated->[$_i + (($_i%4+1)*3) - (5*int($_i/4))] = $_;
-    +         $_i++;
-    +     }
-    +     return $_rotated;
-    + }
+This math needs some explanation for everyone who hasn't done linear algebra in
+a while.
 
-Additionally we do a simple collision checking between the non zero elements in the pieces with the direction the user wants to move.  
+=end for
 
-    + sub can_move_piece {
-    +     my $direction = shift;
-    +     my $amount    = shift || 1;
-    +     for my $y (0..3) {
-    +         for my $x (0..3) {
-    +             if($curr_tile->[0]->[$x + 4 * $y]) {
-    +                 return if $direction eq 'left'  
-    +                          && $x - $amount + $curr_tile->[1]  < 0;
-    +                 return if $direction eq 'right' 
-    +                          && $x + $amount + $curr_tile->[1]  > 9;
-    +                 return if $direction eq 'down'  
-    +                          && int($y + $amount + $curr_tile->[2]) > 22;
-    +                 
-    +                 return if $direction eq 'right' 
-    +                          && $store->[ $x + $amount + 
-    +                                        $curr_tile->[1] + 
-    +                                        10 * int($y + $curr_tile->[2]) ];
-    +                 return if $direction eq 'left'  
-    +                          && $store->[ $x - $amount + 
-    +                                        $curr_tile->[1] + 
-    +                                        10 * int($y + $curr_tile->[2]) ];
-    +                 return if $direction eq 'down'  
-    +                          && $store->[ $x + 
-    +                                        $curr_tile->[1] 
-    +                                        + 10 * int($y + $amount + $curr_tile->[2]) ];
-    +             }
-    +         }
-    +     }
-    +     return 1;
-    + }
+=begin programlisting
 
-Finally we move the move piece by using the collision check and overlaying the piece array into the C<@grid> for each next position. 
+    sub rotate_piece {
+        my $_piece   = shift;
+        my $_rotated = [];
+        my $_i       = 0;
 
-    + sub move_piece {
-    +     my $direction = shift;
-    +     my $amount    = shift || 1;
-    +     if($direction eq 'right') {
-    +         $curr_tile->[1] += $amount;
-    +     }
-    +     elsif($direction eq 'left') {
-    +         $curr_tile->[1] -= $amount;
-    +     }
-    +     elsif($direction eq 'down') {
-    +         $curr_tile->[2] += $amount;
-    +     }
-    +     
-    +     @{$grid} = ();
-    +     for my $y (0..3) {
-    +         for my $x (0..3) {
-    +             if($curr_tile->[0]->[$x + 4 * $y]) {
-    +                 $grid->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] 
-    +                           = $curr_tile->[0]->[$x + 4 * $y];
-    +             }
-    +         }
-    +     }
-    + }
+        for (@{$_piece}) {
+            $_rotated->[ $_i + (($_i % 4 + 1 ) * 3)
+                             - ( 5 * int( $_i / 4 ))] = $_;
+            $_i++;
+        }
 
-    + sub store_piece {
-    +     for my $y (0..3) {
-    +         for my $x (0..3) {
-    +             if($curr_tile->[0]->[$x + 4 * $y]) {
-    +                 $store->[ $x + $curr_tile->[1] + 10 * ($y + int($curr_tile->[2])) ] 
-    +                           = $curr_tile->[0]->[$x + 4 * $y];
-    +             }
-    +         }
-    +     }
-    + }
+        return $_rotated;
+    }
 
-Finally we hook it into the event handler where we use the events to move the pieces in the right direction. 
+=end programlisting
 
-    + sub trigger_move_event_handler {
-    +     my ( $event, $app ) = @_;
-    +     if( $event->type == SDL_KEYDOWN ) {
-    +         my $key = $event->key_sym;
-    +         if( $event->key_sym & (SDLK_LEFT|SDLK_RIGHT|SDLK_UP|SDLK_DOWN) ) {
-    +             if($key == SDLK_LEFT && can_move_piece('left')) {
-    +                 move_piece('left');
-    +             }
-    +             elsif($key == SDLK_RIGHT && can_move_piece('right')) {
-    +                 move_piece('right');
-    +             }
-    +             elsif($key == SDLK_DOWN && can_move_piece('down')) {
-    +                 move_piece('down')
-    +             }
-    +             elsif($key == SDLK_UP) {
-    +                 $curr_tile->[0] = rotate_piece($curr_tile->[0]);
-    +             }
-    +         }
-    +     }
-    + }
+Collision detection requires checking both grids for a piece overlap in the
+direction the user wants to move the piece:
 
-    + $app->add_event_handler( \&trigger_move_event_handler );
+=for author
+
+The math concern applies here too. A diagram might help.
+
+=end for
+
+=begin programlisting
+
+    sub can_move_piece {
+        my $direction = shift;
+        my $amount    = shift || 1;
+
+        for my $y (0 .. 3) {
+
+            for my $x (0 . .3) {
+                if ($curr_tile->[0]->[ $x + 4 * $y ]) {
+                    return if $direction eq 'left'
+                             && $x - $amount + $curr_tile->[1]  < 0;
+                    return if $direction eq 'right'
+                             && $x + $amount + $curr_tile->[1]  > 9;
+                    return if $direction eq 'down'
+                             && int($y + $amount + $curr_tile->[2]) > 22;
+    
+                    return if $direction eq 'right'
+                             && $store->[ $x + $amount     +
+                                           $curr_tile->[1] +
+                                           10 * int($y + $curr_tile->[2]) ];
+                    return if $direction eq 'left'
+                             && $store->[ $x - $amount     +
+                                           $curr_tile->[1] +
+                                           10 * int($y + $curr_tile->[2]) ];
+                    return if $direction eq 'down'
+                             && $store->[ $x +
+                                           $curr_tile->[1]
+                                           + 10 * int($y + $amount +
+                                           $curr_tile->[2]) ];
+                }
+            }
+        }
+
+        return 1;
+    }
+
+=end programlisting
+
+All of the pieces are in place to move the piece: make the collision check,
+then place the piece into the appropriate grid for its next position:
+
+=begin programlisting
+
+    sub move_piece {
+        my $direction = shift;
+        my $amount    = shift || 1;
+
+        if ($direction eq 'right') {
+            $curr_tile->[1] += $amount;
+        }
+        elsif ($direction eq 'left') {
+            $curr_tile->[1] -= $amount;
+        }
+        elsif ($direction eq 'down') {
+            $curr_tile->[2] += $amount;
+        }
+
+        @{$grid} = ();
+
+        for my $y (0..3) {
+            for my $x (0..3) {
+                if ($curr_tile->[0]->[$x + 4 * $y]) {
+                    $grid->[ $x + $curr_tile->[1] +
+                             10 * ($y + int($curr_tile->[2])) ]
+                              = $curr_tile->[0]->[$x + 4 * $y];
+                }
+            }
+        }
+    }
+
+    sub store_piece {
+        for my $y (0..3) {
+            for my $x (0..3) {
+                if ($curr_tile->[0]->[$x + 4 * $y]) {
+                    $store->[ $x + $curr_tile->[1] + 10 *
+                             ($y + int($curr_tile->[2])) ]
+                              = $curr_tile->[0]->[$x + 4 * $y];
+                }
+            }
+        }
+    }
+
+=end programlisting
+
+Of course this all needs an event handler to attempt to move the pieces
+appropriately:
+
+=begin programlisting
+
+    sub trigger_move_event_handler {
+        my ( $event, $app ) = @_;
+
+        if ( $event->type == SDL_KEYDOWN ) {
+            my $key = $event->key_sym;
+
+            if ( $event->key_sym & (SDLK_LEFT|SDLK_RIGHT|SDLK_UP|SDLK_DOWN) ) {
+                if ($key == SDLK_LEFT && can_move_piece('left')) {
+                    move_piece('left');
+                }
+                elsif ($key == SDLK_RIGHT && can_move_piece('right')) {
+                    move_piece('right');
+                }
+                elsif ($key == SDLK_DOWN && can_move_piece('down')) {
+                    move_piece('down')
+                }
+                elsif ($key == SDLK_UP) {
+                    $curr_tile->[0] = rotate_piece($curr_tile->[0]);
+                }
+            }
+        }
+    }
+
+    $app->add_event_handler( \&trigger_move_event_handler );
+
+=end programlisting
 
 =head2 Score and Game State
 
-Next we add the move handler to update the game state. In tetris the game state can be summarized as the grid, current piece and the score. In this move handler we update all these things .
+The game state in Tetris is the combination of the fixed placement grid, the current piece, and the current score. The move handler can update all of these:
 
-    + $app->add_move_handler( sub {
-    +     my ( $step, $app ) = @_;
+=begin programlisting
 
-We update the current piece's state as movable or fixed.
+    $app->add_move_handler( sub {
+        my ( $step, $app ) = @_;
 
-    +     if(can_move_piece('down', $step / 2)) {
-    +         move_piece('down', $step / 2);
-    +     }
-    +     else {
-    +         store_piece($curr_tile); # placing the tile
-    +         
+=end programlisting
 
-We update the status of the grid and see if there are lines to remove. 
-    +         # checking for lines to delete
-    +         my $y;
-    +         my @to_delete = ();
-    +         for($y = 22; $y >= 0; $y--) {
-    +             # there is no space if min of this row is true (greater than zero)
-    +             if(min(@{$store}[($y*10)..((($y+1)*10)-1)])) {
-    +                 push(@to_delete, $y);
-    +             }
-    +         }
+Start by updating the current piece's state as movable or fixed:
 
-When we delete lines increment the score of the user. 
+=begin programlisting
 
-    +         # deleting lines
-    +         foreach(@to_delete) {
-    +             splice(@{$store}, $_*10, 10);
-    +             $score++;
-    +         }
-    +         
-Next for each deleted line we clear the grid. 
-    +         # adding blank rows to the top
-    +         foreach(@to_delete) {
-    +             splice(@{$store}, 0, 0, (0,0,0,0,0,0,0,0,0,0));
-    +         }
-    +         
-Finally we lauch a new current tile if needed. 
-    +         # launching new tile
-    +         @{$curr_tile->[0]}  = @{$pieces{$next_tile}};
-    +         $curr_tile->[1]     = 4;
-    +         $curr_tile->[2]     = 0;
-    +         $next_tile          = shuffle(keys %pieces);
-    +     }
-    + });
+        if (can_move_piece('down', $step / 2)) {
+            # still movable
+            move_piece('down', $step / 2);
+        }
+        else {
+            # place the tile
+            store_piece($curr_tile);
 
+=end programlisting
 
-=head2 Showing the Game
+Then update the state of the grid and check for lines to remove:
 
-In the show handler we iterate through each element in the store and grid array and place the right colored tile where needed (using the numbers). 
+=for author
 
-    + # renders game objects on the screen
-    + $app->add_show_handler(
-    +     sub {
-    +         # first, we clear the screen
-    +         $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0x000000 );
-    +         # and draw the background image
-    +         $back->blit( $app );
-    +         my $x = 0;
-    +         my $y = 0;
-    +         # draw the not moving tiles
-    +         foreach(@{$store}) {
-    +             $piece[$_]->blit( $app,
-    +                                undef, 
-    +                               [ 28 + $x%10 * 20, 28 + $y * 20 ] 
-    +                             ) if $_;
-    +             $x++;
-    +             $y++ unless $x % 10;
-    +         }
-    +         $x = 0;
-    +         $y = 0;
-    +         # draw the moving tile
-    +         foreach(@{$grid}) {
-    +             $piece[$_]->blit( $app, undef, [ 28 + $x%10 * 20, 28 + $y * 20 ] ) if $_;
-    +             $x++;
-    +             $y++ unless $x % 10;
-    +         }
-    +         # the next tile will be...
-    +         my $next_tile_index = max(@{$pieces{$next_tile}});
-    +         for $y (0..3) {
-    +             for $x (0..3) {
-    +                 if($pieces{$next_tile}->[$x + 4 * $y]) {
-    +                     $piece[$next_tile_index]->blit( $app, undef, 
-    +                                                     [ 264 + $x * 20, 48 + $y * 20 ] 
-    +                                                   );
-    +                 }
-    +             }
-    +         }
+Why count backwards? This seems like it could be C<for my $y (0 .. 22)>. Maybe
+the question is whether to remove rows from the bottom up or the top down.
 
-Lastly we draw texts needed.
+=end for
 
-    +         $score_text->write_xy( $app, 248,  20, "Next Piece" );
-    +         $score_text->write_xy( $app, 248, 240, "Score: $score" );
-    +         # finally, we update the screen
-    +         $app->update;
-    +     }
-    + );
+=begin programlisting
 
-    + # all is set, run the app!
-    + $app->run();
+            # checking for lines to delete
+            my $y;
+            my @to_delete);
+
+            for($y = 22; $y >= 0; $y--) {
+                # if the min value of this row is 0,
+                # it contains at least one open space
+                if (min( @{$store}[ ($y * 10)..((( $y + 1) *10 ) -1 )])) {
+                    push @to_delete, $y;
+                }
+            }
+
+=end programlisting
+
+Deleting a line should increment the user's score:
+
+=begin programlisting
+
+            # deleting lines
+            foreach (@to_delete) {
+                splice @{$store}, $_ * 10, 10;
+                $score++;
+            }
+
+=end programlisting
+
+... and should clear that line off of the fixed grid:
+
+=for author
+
+These loops should merge.
+
+=end for
+
+=begin programlisting
+
+            # adding blank rows to the top
+            foreach (@to_delete) {
+                splice @{$store}, 0, 0, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            }
+    
+
+=end programlisting
+
+... and the game should launch a new tile.
+
+=begin programlisting
+
+            # launching new tile
+            @{$curr_tile->[0]}  = @{ $pieces{$next_tile} };
+            $curr_tile->[1]     = 4;
+            $curr_tile->[2]     = 0;
+            $next_tile          = shuffle keys %pieces;
+        }
+    });
+
+=end programlisting
+
+=head2 Drawing the Game
+
+Those are the mechanics. How about displaying the game? The show handler needs
+to iterate through all of the elements in both grids and draw the appropriate
+tile:
+
+=begin programlisting
+
+    $app->add_show_handler(
+        sub {
+            # first clear the screen
+            $app->draw_rect( [ 0, 0, $app->w, $app->h ], 0x000000 );
+
+            # and draw the background image
+            $back->blit( $app );
+            my $x = 0;
+            my $y = 0;
+
+            # draw the fixed tiles
+            foreach (@{$store}) {
+                $piece[$_]->blit( $app,
+                                   undef,
+                                  [ 28 + $x%10 * 20, 28 + $y * 20 ]
+                                ) if $_;
+                $x++;
+                $y++ unless $x % 10;
+            }
+
+            $x = 0;
+            $y = 0;
+
+            # draw the moving tile
+            foreach (@{$grid}) {
+                $piece[$_]->blit( $app, undef,
+                    [ 28 + $x % 10 * 20, 28 + $y * 20 ] ) if $_;
+                $x++;
+                $y++ unless $x % 10;
+            }
+
+            # the next tile will be...
+            my $next_tile_index = max( @{$pieces{$next_tile}} );
+            for $y (0..3) {
+                for $x (0..3) {
+                    if ($pieces{$next_tile}->[$x + 4 * $y]) {
+                        $piece[$next_tile_index]->blit( $app, undef,
+                                                        [ 264 + $x * 20,
+                                                           48 + $y * 20 ]
+                                                      );
+                    }
+                }
+            }
+
+=end programlisting
+
+... and should draw the score:
+
+=begin programlisting
+
+            $score_text->write_xy( $app, 248,  20, "Next Piece" );
+            $score_text->write_xy( $app, 248, 240, "Score: $score" );
+
+            # finally, update the screen
+            $app->update;
+        }
+    );
+
+    # all is set, run the app!
+    $app->run();
+
+=end programlisting
 
 =head1 Author
 
-Code for this chapter was provided by Tobias Leich "FROGGS". 
-
+Code for this chapter was provided by Tobias Leich "FROGGS".
 
 =for vim: spell
