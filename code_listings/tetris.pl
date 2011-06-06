@@ -21,7 +21,7 @@ my $app = SDLx::App->new(
 );
 
 # create our game objects
-my $score_text = SDLx::Text->new( font => 'font.ttf', h_align => 'center', color => [255,255,255,255] );
+my $score_text = SDLx::Text->new( font => 'font.ttf', h_align => 'left', color => [255,255,255,255] );
 my $score      = 0;
 my $back       = SDLx::Surface->load( 'data/tetris_back.png' );
 my @piece      = (undef);
@@ -62,10 +62,12 @@ my %pieces = (
           0,0,0,0],
 );
 
-my $next_tile         = shuffle(keys %pieces);
+my $next_tile         = get_next_tile();
 my $curr_tile         = [undef, 4, 0];
    @{$curr_tile->[0]} = @{$pieces{$next_tile}};
-   $next_tile         = shuffle(keys %pieces); 
+   $next_tile         = get_next_tile();
+
+sub get_next_tile { shuffle(keys %pieces) }
 
 sub rotate_piece {
     my $_piece   = shift;
