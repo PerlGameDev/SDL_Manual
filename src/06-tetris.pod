@@ -51,6 +51,9 @@ hold them:
 
      use SDL;
      B<< use SDLx::Surface; >>
+	
+	...
+		
      B<< my $back  = SDLx::Surface->load( 'data/tetris_back.png' ); >>
      B<< my @piece = (undef); >>
      B<< push @piece, SDLx::Surface->load( "data/tetris_$_.png" ) for 1..7; >>
@@ -129,18 +132,14 @@ Selecting pieces needs some randomness. The core C<List::Util> module can help:
                0,0,0,0],
      );
 
-     B<< my $next_tile           = shuffle keys %pieces; >>
+     B<< my $next_tile           = get_next_tile(); >>
      B<< my $curr_tile           = [ undef, 4, 0 ]; >>
         B<< @{ $curr_tile->[0] } = @{ $pieces{$next_tile} }; >>
-        B<< $next_tile           = shuffle keys %pieces; >>
+        B<< $next_tile           = get_next_tile() >>
+
+	B<< sub get_next_tile { shuffle keys %pieces }; >>
 
 =end programlisting
-
-=for author
-
-Seems like a function to choose the next tile would be more useful.
-
-=end for
 
 This code randomly chooses a C<$next_tile>, then sets the piece data for the
 first piece in C<$curr_tile>.
@@ -324,6 +323,28 @@ appropriately:
 =end programlisting
 
 =head2 Score and Game State
+
+First we keep hold a variable to keep the game score and set the C<SDLx::Text> font and options 
+to draw the text on the screen later on. 
+
+=begin programlisting
+
+	use SDLx::App;
+	B<< use SDLx::Text; >>
+	use SDLx::Rect;
+
+	...
+	
+	# create our game objects
+	B<< my $score_text = SDLx::Text->new( font => 'font.ttf', >>
+					B<<	h_align => 'left',  >>
+					B<<	color => [255,255,255,255] ); >>
+	B<<	my $score      = 0; >>
+	my $back       = SDLx::Surface->load( 'data/tetris_back.png' );
+
+
+
+=end programlisting 
 
 The game state in Tetris is the combination of the fixed placement grid, the current piece, and the current score. The move handler can update all of these:
 
