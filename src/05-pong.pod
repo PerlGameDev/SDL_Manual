@@ -80,7 +80,7 @@ ball. Paddles are rectangles moving which move vertically. They're easy to
 represent with L<SDLx::Rect> objects. First, put C<SDLx::Rect> in your module's
 declarations:
 
-=for author
+=for programlisting 
 
     use SDL;
     use SDLx::App;
