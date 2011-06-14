@@ -1342,16 +1342,33 @@ line:</p>
 
 <pre><code>  $ <b>perl pong.pl</b></code></pre>
 
-<p>The explanation of <code>dt</code> needs much more explanation, probably
-in the previous section on frame rate.</p>
-
 <p>You should see a 500x500 black window entitled <i>"My Pong Clone!"</i>.
 The only new feature you might not have seen before is the <code>dt</code>
 parameter to the <code>SDLx::App</code> constructor. This represents the
 length, in seconds, of a movement step as managed by an
 <code>SDLx::Controller</code> object. Because the <code>SDLx::App</code>
 object is also an <code>SDLx::Controller</code> object, it can handle
-<code>SDL_QUIT</code> events. See chapter 4 for more information.</p>
+<code>SDL_QUIT</code> events.</p>
+
+<blockquote>
+
+<p><b>Game Loop Granularity</b></p>
+
+<p>The game loop runs using a process that performs calculus on the time
+progression. To do this it uses the <code>dt</code> parameter of
+<code>SDLx::App</code>. <code>dt</code> by default is set to
+<code>0.01</code> granularity. In simple terms <code>dt</code> determines
+how many small steps in movement ( calls to the move handler ) should be
+made per each render ( call to the show handler ).</p>
+
+<p>What is important to remember is that the <code>dt</code> granularity
+must never be set so big that it fails to capture collisions and
+interaction between moving objects. This can especially happen with fast
+moving objects such as bullets, but the principle applies to many
+situation. On the other hand having a too fine granularity taxes the CPU
+resources.</p>
+
+</blockquote>
 
 <h2>Game Objects</h2>
 
@@ -2038,7 +2055,7 @@ below:</b></p>
 
 <ul>
 
-<li>Around line 814:
+<li>Around line 822:
 
 <p>You forgot a '=back' before '=head1'</p>
 

@@ -51,19 +51,27 @@ Save this file as F<pong.pl> and run it by typing on the command line:
 
 =end screen
 
-=for author
-
-The explanation of C<dt> needs much more explanation, probably in the previous
-section on frame rate.
-
-=end for
-
 You should see a 500x500 black window entitled I<"My Pong Clone!">. The only
 new feature you might not have seen before is the C<dt> parameter to the
 C<SDLx::App> constructor. This represents the length, in seconds, of a movement
 step as managed by an C<SDLx::Controller> object. Because the C<SDLx::App>
 object is also an C<SDLx::Controller> object, it can handle C<SDL_QUIT> events.
-See chapter 4 for more information.
+
+=for sidebar
+
+B<Game Loop Granularity>
+
+The game loop runs using a process that performs calculus on the time progression. 
+To do this it uses the C<dt> parameter of C<SDLx::App>. C<dt> by default is set to C<0.01> 
+granularity. In simple terms C<dt> determines how many small steps in movement ( calls to 
+the move handler ) should be made per each render ( call to the show handler ). 
+
+What is important to remember is that the C<dt> granularity must never be set so big that 
+it fails to capture collisions and interaction between moving objects. This can especially
+happen with fast moving objects such as bullets, but the principle applies to many situation.
+On the other hand having a too fine granularity taxes the CPU resources. 
+ 
+=end sidebar 
 
 =head1 Game Objects
 
