@@ -1,5 +1,7 @@
 =head0 Drawing
 
+X<Draw>
+
 SDL provides several ways to draw graphical elements on the screen in three
 general categories: primitives, images, and text. All drawing occurs on a
 surface, represented by the C<SDLx::Surface> class. Even the C<SDLx::App> is an
@@ -7,6 +9,8 @@ C<SDLx::Surface>. Though this means it's possible to draw directly to the app's
 surface, there are several advantages to drawing on multiple surfaces.
 
 =head1 Coordinates
+
+X<Draw, Coordiates>
 
 SDL's surface coordinate system has its origin (where both the x and y
 coordinates have the value of zero) in the upper left corner. As the value of x
@@ -20,6 +24,8 @@ The SDL library documentation has an extended discussion on coordinates:
 U<http://sdltutorials.com/sdl-coordinates-and-blitting>.
 
 =end sidebar
+
+X<Draw, Surface>
 
 =head1 Drawing with SDL
 
@@ -41,6 +47,8 @@ C<SDLx::Surface> object provides access to methods in the form of:
 Parameters to these methods are generally coordinates and colors, provided as
 array references.
 
+X<Draw, Methods>
+
 =head3 Rectangular Parameters
 
 Some parameters are sets of coordinate positions and dimensions.  For example,
@@ -50,9 +58,13 @@ height:
 
     my $rect = [20, 20, 40, 40];
 
+Z<Draw>
+X<Rectangular Parameters>
+
 =head3 Color
 
-X<color>
+Z<Draw>
+X<Color Parameters>
 
 =for editor
 
@@ -98,6 +110,8 @@ same RGBA values:
 
 =head4 NOTE: Depth of Surface
 
+X<Surface, Depth>
+
 The color depth of the surface--how many bits are available to describe
 colors--is a property of the relevant C<SDLx::Surface> or C<SDLx::App>. Set it
 in its constructor:
@@ -111,6 +125,8 @@ values. Other options are 24, 16, and 8.
 
 =head2 Pixels
 
+X<Surface, Pixels>
+
 All C<SDLx::Surface>s are collections of pixels. You can read from and write to these pixels by treating the surface as an array reference:
 
     $app->[$x][$y] = $color;
@@ -121,7 +137,7 @@ $alpha]>.
 
 =head2 Primitives
 
-X<primitives>
+X<Draw Primitives>
 
 Drawing primitives are simple shapes that SDL supports natively.
 
@@ -131,6 +147,8 @@ Drawing primitives are simple shapes that SDL supports natively.
          \label{fig:draw_line}
 
 =head3 Lines
+
+X<Draw, Line>
 
 A line is a series of contiguous pixels between two points. The C<draw_line>
 method causes SDL to draw a line to a surface:
@@ -146,7 +164,7 @@ This will draw a yellow line from positions C<(200, 20)> to C<(20, 200)>.
 
 =head3 Rectangles
 
-X<rectangle>
+X<Draw, Rectangle>
 
 A rectangle is a four-sided, filled polygon. Rectangles are a common building
 block for games. In SDL, rectangles are the most cost effective of the
@@ -169,7 +187,7 @@ C<(10,20)>.
 
 =head3 Circles
 
-X<circle>
+X<Draw, Circle>
 
 A circle is a primitive a fixed radius around a given point.  Circles may be
 filled or unfilled. The C<draw_circle> and C<draw_circle_filled> methods draw
@@ -183,6 +201,8 @@ These draw an unfilled red circle and a filled blue circle.
 SDL provides more complex primitives in C<SDL::GFX::Primitives>.
 
 =head2 Drawing with Primitives
+
+X<Draw, Complex>
 
 It's easy to combine several primitives to draw an interesting images.
 
@@ -235,9 +255,13 @@ It's easy to combine several primitives to draw an interesting images.
 
 =head1 Drawing on Multiple Surfaces
 
+X<Surface, Multiple>
+
 The examples so far have drawn on only a single surface, the display. SDL makes it possible to write on multiple surfaces. These other surfaces exist only in memory until you draw them to the display.
 
 =head2 Creating Surfaces
+
+X<Surface, Creating>
 
 There are several ways to create an C<SDLx::Surface> for use. The most common
 is to create one manually with a constructor call:
@@ -250,6 +274,8 @@ C<SDL_image> library supports the image type you want to load. For example,
 C<SDL_image> must support PNG images to use:
 
     $surface = SDL::Image::load( 'picture.png' );
+
+X<Surface, Image>
 
 In the event that the desired C<SDL_image> library is unavailable, you can
 fallback to the built-in support for the C<.bmp> format.
@@ -266,6 +292,8 @@ fundamental operation, but it's a low level operation.  C<SDLx::Sprite>
 provides higher level options.  Besides making drawing simpler, C<SDLx::Sprite>
 adds several other features useful for moving images. Here's a revised example
 using C<SDLx::Sprite> for flowers:
+
+X<Surface, Blit>
 
 =begin programlisting
 

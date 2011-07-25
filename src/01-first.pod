@@ -34,6 +34,9 @@ the window:
 
 =head1 C<SDLx::App> Options
 
+X<SDL Application>
+X<C<SDLx::App>>
+
 C<SDLx::App> allows you to specify several options for the screen and your
 application. First are the physical dimensions of the screen itself. To make
 the screen of the C<SDLx::App> window a 400×400 pixel square, change the
@@ -44,6 +47,8 @@ initialization line to:
 Another important option is the window's title. Some systems display the path
 to the running program. Others leave the title blank. You can change the
 displayed title with another argument to the C<SDLx::App> constructor:
+
+X<C<SDLx::App> constructor>
 
     my $app = SDLx::App->new( width  => 400,
                               height => 400,
@@ -59,6 +64,8 @@ At this point your screen will be:
 =for vim: spell
 
 =head2 Shortcuts
+
+X<C<SDLx::App> constructor parameters, shortcut>
 
 Abbreviations for these parameters are available. Instead of C<width>,
 C<height>, and C<title>, you may use C<w>, C<h>, and C<t> respectively. The

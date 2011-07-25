@@ -268,6 +268,8 @@ with black. To enforce this behavior on all systems, you must
 
 <h2><code>SDLx::App</code> Options</h2>
 
+<p> </p>
+
 <p><code>SDLx::App</code> allows you to specify several options for the
 screen and your application. First are the physical dimensions of the
 screen itself. To make the screen of the <code>SDLx::App</code> window a
@@ -279,6 +281,8 @@ screen itself. To make the screen of the <code>SDLx::App</code> window a
 path to the running program. Others leave the title blank. You can change
 the displayed title with another argument to the <code>SDLx::App</code>
 constructor:</p>
+
+<p></p>
 
 <pre><code>    my $app = SDLx::App-&gt;new( width  =&gt; 400,
                               height =&gt; 400,
@@ -293,6 +297,8 @@ constructor:</p>
 
 <h3>Shortcuts</h3>
 
+<p></p>
+
 <p>Abbreviations for these parameters are available. Instead of
 <code>width</code>, <code>height</code>, and <code>title</code>, you may
 use <code>w</code>, <code>h</code>, and <code>t</code> respectively. The
@@ -304,6 +310,8 @@ previous example could also be written:</p>
 
 <h1>Drawing</h1>
 
+<p></p>
+
 <p>SDL provides several ways to draw graphical elements on the screen in
 three general categories: primitives, images, and text. All drawing occurs
 on a surface, represented by the <code>SDLx::Surface</code> class. Even the
@@ -312,6 +320,8 @@ it's possible to draw directly to the app's surface, there are several
 advantages to drawing on multiple surfaces.</p>
 
 <h2>Coordinates</h2>
+
+<p></p>
 
 <p>SDL's surface coordinate system has its origin (where both the x and y
 coordinates have the value of zero) in the upper left corner. As the value
@@ -325,6 +335,8 @@ lists coordinates in x, y order.</p>
 http://sdltutorials.com/sdl-coordinates-and-blitting.</p>
 
 </blockquote>
+
+<p></p>
 
 <h2>Drawing with SDL</h2>
 
@@ -347,6 +359,8 @@ of:</p>
 <p>Parameters to these methods are generally coordinates and colors,
 provided as array references.</p>
 
+<p></p>
+
 <h4>Rectangular Parameters</h4>
 
 <p>Some parameters are sets of coordinate positions and dimensions. For
@@ -356,9 +370,11 @@ four-element array reference of x, y, width, height:</p>
 
 <pre><code>    my $rect = [20, 20, 40, 40];</code></pre>
 
+<p><a name="Draw"> </p>
+
 <h4>Color</h4>
 
-<p></p>
+<p><a name="Draw"> </p>
 
 <p>Need to document what the magnitude of the color and transparency values
 mean.</p>
