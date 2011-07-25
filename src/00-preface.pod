@@ -1,19 +1,30 @@
 =head0 Preface
 
+Z<libsdl>
+X<libsdl> 
+
 I<Simple DirectMedia Layer> (or I<libsdl>) is a cross-platform C library that
 provides access to several input and output devices. Its most popular usage is
 to provide access to the video framebuffer and input devices for games. SDL
 also has several extension libraries to provide features such as text display,
 sound mixing, image handling, and graphics effects.
 
+X<Description libsdl>
+X<libsdl Description>
+
 SDL Perl binds several of these libraries together in the C<SDL::*> namespace.
 Moreover, SDL Perl provides several high-level libraries in the C<SDLx::*>
 namespace that encapsulate valuable game-writing abstractions.
+
+X< C<SDL::> and  C<SDLx::> namespace>
+
 
 =head1 C<SDL> and C<SDLx>
 
 The main purpose of the C<SDLx::*> layer is to smooth out the drudgery of using
 the C<SDL::*> layer directly.
+
+X< C<SDL::> and C<SDLx::> purpose>
 
 =for sidebar
 
@@ -100,16 +111,24 @@ U<http://sdl.perl.org/>.
 
 =head1 Installing SDL Perl
 
+X<Installing>
+
 We assume the presence of a recent version of the Perl language (at least Perl
 5.10) and supporting packages. We also assume that you can install packages
 from the CPAN, including SDL Perl itself.
 
 =head2 Windows
 
+X<Installing Windows>
+X<Windows: Install>
+
 C<Alien::SDL> will install binaries for 32bit and 64bit so there is no need
 to compile anything.
 
 =head2 Mac OS X
+
+X<Installing Mac OS X>
+X<Mac OS X: Install>
 
 Fink has packages for SDL Perl available. However, they do not support Pango, a
 library which provides internalization support for text handling.
@@ -120,6 +139,9 @@ you install C<libfreetype6>, C<libX11>, C<libvorbis>, C<libogg>, C<libpng>, and
 their headers.
 
 =head2 GNU/Linux
+
+X<Installing Linux>
+X<Linux: Install>
 
 Most current GNU/Linux distributions include all the parts needed for this
 tutorial in the default install and in their package management system.  It is
@@ -142,6 +164,8 @@ and some libraries are required.
 
 =head2 CPAN install
 
+X<SDL install>
+
 Before installing SDL Perl, ensure that you have the most recent versions of
 the modules necessary to build SDL:
 
@@ -156,6 +180,8 @@ For most platforms a CPAN install will suffice. Supported and tested
 platforms are listed at U<http://pass.cpantesters.org/distro/S/SDL.html>.
 
 =head1 Contact
+
+X<Contact> 
 
 Hopefully this book answers most of your questions. For additional assistance,
 contact the project via:
@@ -173,6 +199,8 @@ active and helpful resource.
 =back
 
 =head1 Examples
+
+X<Code Examples>
 
 The code examples in this book are available from
 U<https://github.com/PerlGameDev/SDL_Manual/tree/master/code_listings>.
