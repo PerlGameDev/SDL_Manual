@@ -370,11 +370,11 @@ four-element array reference of x, y, width, height:</p>
 
 <pre><code>    my $rect = [20, 20, 40, 40];</code></pre>
 
-<p><a name="Draw"> </p>
+<p></p>
 
 <h4>Color</h4>
 
-<p><a name="Draw"> </p>
+<p></p>
 
 <p>Need to document what the magnitude of the color and transparency values
 mean.</p>
@@ -418,6 +418,8 @@ encodes the same RGBA values:</p>
 
 <h5>NOTE: Depth of Surface</h5>
 
+<p></p>
+
 <p>The color depth of the surface--how many bits are available to describe
 colors--is a property of the relevant <code>SDLx::Surface</code> or
 <code>SDLx::App</code>. Set it in its constructor:</p>
@@ -430,6 +432,8 @@ possible values. Other options are 24, 16, and 8.</p>
 </blockquote>
 
 <h3>Pixels</h3>
+
+<p></p>
 
 <p>All <code>SDLx::Surface</code>s are collections of pixels. You can read
 from and write to these pixels by treating the surface as an array
@@ -453,6 +457,8 @@ of the form <code>[$red, $green, $blue, $alpha]</code>.</p>
 
 
 <h4>Lines</h4>
+
+<p></p>
 
 <p>A line is a series of contiguous pixels between two points. The
 <code>draw_line</code> method causes SDL to draw a line to a surface:</p>
@@ -509,6 +515,8 @@ be filled or unfilled. The <code>draw_circle</code> and
 
 <h3>Drawing with Primitives</h3>
 
+<p></p>
+
 <p>It's easy to combine several primitives to draw an interesting
 images.</p>
 
@@ -557,11 +565,15 @@ images.</p>
 
 <h2>Drawing on Multiple Surfaces</h2>
 
+<p></p>
+
 <p>The examples so far have drawn on only a single surface, the display.
 SDL makes it possible to write on multiple surfaces. These other surfaces
 exist only in memory until you draw them to the display.</p>
 
 <h3>Creating Surfaces</h3>
+
+<p></p>
 
 <p>There are several ways to create an <code>SDLx::Surface</code> for use.
 The most common is to create one manually with a constructor call:</p>
@@ -575,6 +587,8 @@ supports the image type you want to load. For example,
 <code>SDL_image</code> must support PNG images to use:</p>
 
 <pre><code>    $surface = SDL::Image::load( &#39;picture.png&#39; );</code></pre>
+
+<p></p>
 
 <p>In the event that the desired <code>SDL_image</code> library is
 unavailable, you can fallback to the built-in support for the
@@ -594,6 +608,8 @@ another. It's a fundamental operation, but it's a low level operation.
 drawing simpler, <code>SDLx::Sprite</code> adds several other features
 useful for moving images. Here's a revised example using
 <code>SDLx::Sprite</code> for flowers:</p>
+
+<p></p>
 
 <pre><code>    use strict;
     use warnings;

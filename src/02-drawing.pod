@@ -58,12 +58,10 @@ height:
 
     my $rect = [20, 20, 40, 40];
 
-Z<Draw>
 X<Rectangular Parameters>
 
 =head3 Color
 
-Z<Draw>
 X<Color Parameters>
 
 =for editor
