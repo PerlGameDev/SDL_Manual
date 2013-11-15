@@ -1,4 +1,3 @@
-
 =head1 Manual for Game Development with SDL Perl
 
 =over 1
