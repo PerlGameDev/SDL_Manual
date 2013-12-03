@@ -20,7 +20,7 @@ This example will do the following:
 =head2 Make the application
 
 Let's start an application to use with PDL. Make sure you do C<use PDL>.
-    
+
     + use strict;
     + use warnings;
     + use SDL;
@@ -199,7 +199,7 @@ Next we will make a C<OpenGL> perspective with the C<$app>'s dimensions:
 	glTranslatef( 0,0,-20);
 
 Additionally we will be initializing C<glut>, but just to draw something quick.
-	
+
 	#Using glut to draw something interesting really quick
 	glutInit();
 

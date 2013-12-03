@@ -57,7 +57,7 @@ C<SDLx::App> constructor. This represents the length, in seconds, of a movement
 step as managed by an C<SDLx::Controller> object. Because the C<SDLx::App>
 object is also an C<SDLx::Controller> object, it can handle C<SDL_QUIT> events.
 
-=for sidebar
+=begin sidebar
 
 B<Game Loop Granularity>
 
@@ -70,7 +70,7 @@ What is important to remember is that the C<dt> granularity must never be set so
 it fails to capture collisions and interaction between moving objects. This can especially
 happen with fast moving objects such as bullets, but the principle applies to many situation.
 On the other hand having a too fine granularity taxes the CPU resources. 
- 
+
 =end sidebar 
 
 =head1 Game Objects
@@ -818,6 +818,8 @@ C<color>, instead of the previously hardcoded value:
       );
 
 =end programlisting
+
+=back
 
 =head1 Author
 

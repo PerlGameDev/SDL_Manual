@@ -15,7 +15,7 @@ C<SDL::Event> object represents this queue in Perl, allowing you to add and
 remove events constantly:
 
 =begin programlisting
-		
+
 	use strict;
 	use warnings;
 	use SDL;
@@ -124,7 +124,7 @@ For more information look at:
 
 	perldoc SDL::Event 
 
-=end
+=end for
 
 =head1 Quitting with Grace
 
@@ -284,6 +284,7 @@ initialization rules apply.
 =head2 Mouse
 
 Handling mouse events is almost as straightforward as keyboard events:
+
 =begin programlisting
 
     # track the drawing status
