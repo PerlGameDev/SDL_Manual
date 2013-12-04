@@ -715,11 +715,15 @@ things:
 
 =over 4
 
-=item 1 Every time a player scores, the ball goes back to the middle but
+=item 1 
+
+Every time a player scores, the ball goes back to the middle but
 has the same sense and direction as before. See if you can make it restart
 at a random direction instead.
 
-=item 2 Red is boring. How about a psychedelic Pong? Pick three different
+=item 2 
+
+Red is boring. How about a psychedelic Pong? Pick three different
 colors and make each paddle oscillate between them every time the ball hits it.
 
 =back
@@ -728,7 +732,9 @@ colors and make each paddle oscillate between them every time the ball hits it.
 
 =over 4
 
-=item 1 To make the ball restart at a random direction, update C<reset_game()>
+=item 1 
+
+To make the ball restart at a random direction, update C<reset_game()>
 function to set the ball's C<v_x> and C<v_y> to a random value between.
 Anything between positive 1.5 and 2.5 works well:
 
@@ -744,7 +750,9 @@ Anything between positive 1.5 and 2.5 works well:
 
 =end programlisting
 
-=item 2 Start by representing the available colors. You could use separate
+=item 2 
+
+Start by representing the available colors. You could use separate
 colors or hues for each player, but for simplicity this code uses a single
 group of colors. Each player's hash will contain the index into this array:
 
