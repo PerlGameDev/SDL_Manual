@@ -99,7 +99,7 @@ To stop the music we can call C<halt_music>.
 =begin sidebar
 
 Controlling Volume can be as simple as:
-   
+
    #All channels indicated by the -1
    SDL::Mixer::Channels::volume(-1,10); 
 
@@ -579,7 +579,7 @@ A music effect reads stream data, then serializes it to share between threads:
 
 The program's single command-line option governs the number of lines to display
 in the visualizer.  The default is 50.
-	
+
     my $lines = $ARGV[0] || 50;
 
 The drawing callback for the C<SDLx::App> runs while a song plays.  It reads
@@ -677,7 +677,7 @@ C<$play_next_song_callback> callback to switch to the next song gracefully:
     };
 
 A move handler is attached to detect if music is playing or not:
- 
+
     $app->add_move_handler(
         sub {
             my $music_playing = SDL::Mixer::Music::playing_music();

@@ -72,9 +72,9 @@ We want the image to be 400x400, and C<SDL::GFX::Rotozoom> makes this possible. 
     $zoomed_src = SDL::GFX::Rotozoom::surface_xy($src, $angle, $x_zoom, $y_zoom, $smoothing)
 
 The zoom values are the multiplier for that component, or for both components at once as with C<$zoom>. C<$angle> is an angle of rotation in degrees. C<$smoothing> should be C<SMOOTHING_ON> or C<SMOOTHING_OFF> (which can be exported by C<SDL::GFX::Rotozoom>) or just 1 or 0.
-    
+
 Once the image is zoomed, it is added to the image array. The current image is then set to a random value of the array.
-    
+
 =head1 Handling Events
 
 The next part I like to write is the events. We're going to make Escape quit, and left click will move the pieces around. We C<use SDL::Events> for the constants.
@@ -97,7 +97,7 @@ The next part I like to write is the events. We're going to make Escape quit, an
     $App->run;
 
 =head1 Filling the Grid
- 
+
 Once we have something like this, it's a good time to put some C<warn> messages in to make sure the inputs are working correctly. Once they are, it's time to fill it in.
 
     my $x = int($e->button_x / 100);
@@ -144,7 +144,7 @@ Next we will write the move handler. All it needs to do is move any moving piece
             }
         }
     }
-    
+
 30 has been arbitrarily chosen as the speed of the move, as it felt the best after a little playing and tweaking. Always remember to multiply things like this by the step value in C<$_[0]> so that the animation moves in correct time with the updating.
 
 Once the offset is 100 or more, the grid place that the piece is moving to is set to the value of the piece, and the piece is set to the blank value. The move is then finished, so C<%Move> is deleted.
@@ -162,7 +162,7 @@ Now that we have all the functionality we need it's finally time to see the game
         }
         $App->flip;
     }
-    
+
 We start the show handler by drawing a black rect over the entire app. Entire surface and black are the defaults of C<draw_rect>, so letting it use the defaults is good. Next we iterate through a C<y> and C<x> of 0 to 3 so that we can go through each piece of the grid. At the end of the handler we update the app with a call to C<flip>.
 
     next unless my $val = $Grid[$y][$x];
@@ -196,7 +196,7 @@ When the code is run with all 3 handlers, we have a fully working game. The piec
         @Grid = map { [@new[ $_*4..$_*4+3 ]] } 0..3;
         $CurrentImg = $Img[rand @Img];
     }
-    
+
 We will replace the grid initialising we did with this sub. First it shffles the numbers 0 through 15 with C<List::Util::shuffle>. This array is then arranged into a 2D grid with a C<map> and put in to @Grid. Setting the current image is also put into this sub.
 
     sub won {
@@ -211,7 +211,7 @@ We will replace the grid initialising we did with this sub. First it shffles the
     }
 
 This sub returns whether the grid is in the winning configuration, that is, all piece values are in order from 0 to 15.
-    
+
 Now we put a call to C<new_grid> to replace the grid initialisation we had before. We put C<won> into the event handler to make click call C<new_grid> if you have won. Finally, C<won> is put into the show handler to show the blank piece if you have won.
 
 =head1 Complete Code
