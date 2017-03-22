@@ -203,7 +203,7 @@ the motion handlers come in handy:
         B<< my $paddle = $player1->{paddle}; >>
         B<< my $v_y    = $player1->{v_y}; >>
 
-        B<< $paddle->y( $paddle->y ( $v_y * $step ) ); >>
+        B<< $paddle->y($paddle->y + $v_y * $step); >>
     B<});>
 
 If you recall previous chapters, the code should be straightforward. When
@@ -238,7 +238,7 @@ And add another motion handler, just like our player's:
         B<< my $paddle = $player2->{paddle}; >>
         B<< my $v_y    = $player2->{v_y}; >>
 
-        B<< $paddle->y( $paddle->y ( $v_y * $step ) ); >>
+        B<< $paddle->y($paddle->y + $v_y * $step); >>
     B<});>
 
 =end programlisting
